@@ -1,0 +1,32 @@
+/* .quote {
+    max-width: 400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    padding: 2rem;
+    margin-bottom: 1rem;
+}
+
+.quote__user {
+    float: left;
+    display: flex;
+    align-items: center;
+}
+
+.quote__avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid black;
+}
+
+.quote__content {
+    padding: 2rem;
+    border: 1px solid black;
+}
+
+.quote__bottom {
+    display: flex;
+    justify-content: space-between;
+} */

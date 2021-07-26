@@ -1,0 +1,6 @@
+.createQuote {
+  max-width: 100rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
