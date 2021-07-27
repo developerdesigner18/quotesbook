@@ -55,45 +55,47 @@ export default function CreateQuote({ user }) {
   const types = ["image/png", "image/jpeg"];
 
   const [selectedImage, setSelectedImage] = useState(null);
+  const [url, setUrl] = useState("");
+  console.log("url", url);
 
-  // Audio Upload
-  const [audioError, setAudioError] = useState(null);
-
-  const audioTypes = ["audio/mp3"];
-
-  const [audioSelected, setAudioSelected] = useState(null);
-
-  // Firebase db
-  let quoteBookRef = db.collection("quotebook");
-
-  const handleQuoteSubmit = () => {
-    // Upload to Firebase Storage
+  const imageSelection = () => {
     if (selectedImage && types.includes(selectedImage.type)) {
       setImageError("");
       const imageStoreRef = imageStore.ref(selectedImage.name);
       imageStoreRef.put(selectedImage).then(() => {
         // Get the url
         imageStoreRef.getDownloadURL().then((url) => {
-          // Store to the Firestore Database
-          quoteBookRef.add({
-            uid: user.uid,
-            displayName: user.displayName,
-            text: quote,
-            image: url,
-            createdAt: timeStamp,
-          });
+          setUrl(url);
         });
       });
     } else {
       setImageError("Please select an image file (png or jpg).");
-      quoteBookRef.add({
-        uid: user.uid,
-        displayName: user.displayName,
-        text: quote,
-        image: null,
-        createdAt: timeStamp,
-      });
     }
+  };
+
+  // Audio Upload
+  const [audioError, setAudioError] = useState(null);
+
+  const audioTypes = ["audio/mp3"];
+
+  const [selectedAudio, setSelectedAudio] = useState(null);
+
+  // Firebase db
+  let quoteBookRef = db.collection("quotebook");
+
+  const handleQuoteSubmit = () => {
+    // imageURL
+    imageSelection();
+
+    // Upload to Firebase Storage
+    quoteBookRef.add({
+      uid: user.uid,
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+      text: quote,
+      image: url,
+      createdAt: timeStamp,
+    });
     setQuote("");
     setSelectedImage(null);
   };
@@ -110,7 +112,15 @@ export default function CreateQuote({ user }) {
           <CardHeader
             avatar={
               <Avatar aria-label="recipe" className={classes.avatar}>
-                {user.displayName ? user.displayName.charAt(0) : "QB"}
+                {user ? (
+                  <img
+                    src={user.photoURL}
+                    alt="user's profile picture"
+                    style={{ width: "100%" }}
+                  />
+                ) : (
+                  "QB"
+                )}
               </Avatar>
             }
           />
@@ -162,7 +172,7 @@ export default function CreateQuote({ user }) {
               <input
                 type="file"
                 onChange={(e) => {
-                  setAudioSelected(e.target.files[0]);
+                  setSelectedAudio(e.target.files[0]);
                 }}
               />
             </label>

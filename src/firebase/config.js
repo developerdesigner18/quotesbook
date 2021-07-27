@@ -28,4 +28,4 @@ const googleProvider = new firebase.auth.GoogleAuthProvider();
 const facebookProvider = new firebase.auth.FacebookAuthProvider();
 const timeStamp = firebase.firestore.FieldValue.serverTimestamp();
 
-export { db, imageStore, auth, googleProvider, timeStamp };
+export { db, imageStore, auth, googleProvider, facebookProvider, timeStamp };

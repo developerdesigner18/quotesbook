@@ -56,6 +56,7 @@ export default function Signin() {
 
   const history = useHistory();
 
+  // Signup with Email
   const handleOnSubmit = (e) => {
     console.log("object");
     e.preventDefault();

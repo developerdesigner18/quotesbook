@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Quote({ quote, quoteId }) {
+export default function Quote({ quote, quoteId, user }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
@@ -86,29 +86,41 @@ export default function Quote({ quote, quoteId }) {
       <CardHeader
         avatar={
           <Avatar aria-label="recipe" className={classes.avatar}>
-            {quote.displayName ? quote.displayName.charAt(0) : "QB"}
+            {quote ? (
+              <img
+                src={quote.photoURL}
+                alt="user's profile picture"
+                style={{ width: "100%" }}
+              />
+            ) : (
+              "QB"
+            )}
           </Avatar>
         }
         action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon
-              aria-controls="fade-menu"
-              aria-haspopup="true"
-              onClick={handleClick}
-            />
+          user.uid === quote.uid ? (
+            <IconButton aria-label="settings">
+              <MoreVertIcon
+                aria-controls="fade-menu"
+                aria-haspopup="true"
+                onClick={handleClick}
+              />
 
-            <Menu
-              id="fade-menu"
-              anchorEl={anchorEl}
-              keepMounted
-              open={open}
-              onClose={handleClose}
-              TransitionComponent={Fade}
-            >
-              <MenuItem onClick={handleClose}>Edit</MenuItem>
-              <MenuItem onClick={() => handleDelete(quoteId)}>Delete</MenuItem>
-            </Menu>
-          </IconButton>
+              <Menu
+                id="fade-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={open}
+                onClose={handleClose}
+                TransitionComponent={Fade}
+              >
+                <MenuItem onClick={handleClose}>Edit</MenuItem>
+                <MenuItem onClick={() => handleDelete(quoteId)}>
+                  Delete
+                </MenuItem>
+              </Menu>
+            </IconButton>
+          ) : null
         }
         title={quote.displayName}
         // subheader={new Date(quote.t.nanoseconds)}      <= Need to worrk on this later.

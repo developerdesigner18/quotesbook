@@ -12,7 +12,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useHistory, Link as RouterLink } from "react-router-dom";
-import { auth, googleProvider } from "../firebase/config";
+import { auth, facebookProvider, googleProvider } from "../firebase/config";
 import FacebookIcon from "@material-ui/icons/Facebook";
 import { MailOutline } from "@material-ui/icons";
 
@@ -57,6 +57,7 @@ export default function Signin() {
 
   const history = useHistory();
 
+  // Email Login
   const handleOnSubmit = (e) => {
     e.preventDefault();
     auth.signInWithEmailAndPassword(email, password).then((cred) => {
@@ -64,20 +65,28 @@ export default function Signin() {
     });
   };
 
-  const handleLoginWithEmail = () => {
+  // Gmail Login
+  const handleLoginWithGmail = () => {
     auth
       .signInWithPopup(googleProvider)
       .then((user) => {
         if (user) {
-          console.log(user);
           history.push("/quotes");
         }
       })
       .catch((error) => console.log(error.message));
   };
 
+  // Facebook Login
   const handleLoginWithFacebook = () => {
-    console.log("object2");
+    auth
+      .signInWithPopup(facebookProvider)
+      .then((user) => {
+        if (user) {
+          history.push("/quotes");
+        }
+      })
+      .catch((error) => console.log(error.message));
   };
 
   return (
@@ -86,7 +95,7 @@ export default function Signin() {
       <div className={classes.paper}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <Typography component="p">Sign in with</Typography>
-          <Avatar onClick={handleLoginWithEmail} className={classes.avatar}>
+          <Avatar onClick={handleLoginWithGmail} className={classes.avatar}>
             <MailOutline />
           </Avatar>
           <Avatar className={classes.avatar}>

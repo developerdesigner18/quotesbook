@@ -10,9 +10,10 @@ import Signup from "./components/Signup";
 import CreateQuote from "./components/CreateQuote";
 
 function App() {
-  const [user, setUser] = useState({
+  const [userData, setUserData] = useState({
     uid: "",
     displayName: "",
+    photoURL: "",
   });
 
   const [content, setContent] = useState([]);
@@ -21,9 +22,10 @@ function App() {
     auth.onAuthStateChanged((user) => {
       if (user) {
         // console.log("user logged in: ", user);
-        setUser({
+        setUserData({
           uid: user.uid,
           displayName: user.displayName,
+          photoURL: user.photoURL,
         });
       } else {
         console.log("user logged out");
@@ -48,14 +50,18 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Navbar user={user} />
-        {user.uid && <CreateQuote user={user} />}
+        <Navbar user={userData} />
+        {userData.uid && <CreateQuote user={userData} />}
         <Switch>
           <Route path="/quotes">
-            <Quotes content={content} />
+            <Quotes content={content} user={userData} />
           </Route>
           <Route exact path={"/"}>
-            {!user.uid ? <Signin /> : <Quotes content={content} />}
+            {!userData.uid ? (
+              <Signin />
+            ) : (
+              <Quotes content={content} user={userData} />
+            )}
           </Route>
           <Route path="/signup">
             <Signup />

@@ -16,6 +16,7 @@ import MicIcon from "@material-ui/icons/Mic";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import { useHistory } from "react-router-dom";
 import { auth } from "../firebase/config";
+import { Avatar } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -185,7 +186,11 @@ export default function Navbar({ user }) {
           aria-haspopup="true"
           color="inherit"
         >
-          <AccountCircle />
+          {!user.photoURL.length ? (
+            <AccountCircle />
+          ) : (
+            <Avatar src={user.photoURL} />
+          )}
         </IconButton>
         <p>Account</p>
       </MenuItem>
