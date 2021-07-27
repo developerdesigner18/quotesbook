@@ -32,12 +32,17 @@ function App() {
   }, []);
 
   useEffect(() => {
-    db.collection("quotebook")
-      .get()
-      .then((snapshot) => {
-        setContent(snapshot.docs);
-      })
-      .catch((error) => console.log(error));
+    const unsub = db
+      .collection("quotebook")
+      .orderBy("createdAt", "desc")
+      .onSnapshot((snap) => {
+        let documents = [];
+        snap.forEach((doc) => {
+          documents.push({ ...doc.data(), id: doc.id });
+        });
+        setContent(documents);
+      });
+    return () => unsub();
   }, []);
 
   return (

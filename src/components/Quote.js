@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import Card from "@material-ui/core/Card";
@@ -13,14 +13,20 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import ShareIcon from "@material-ui/icons/Share";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { CardMedia } from "@material-ui/core";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import Fade from "@material-ui/core/Fade";
+import { db, imageStore } from "../firebase/config";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 345,
     margin: "1rem auto",
+    textAlign: "left",
   },
   media: {
-    height: 0,
+    width: "100%",
+    margin: "0 auto",
     paddingTop: "56.25%", // 16:9
   },
   expand: {
@@ -38,7 +44,34 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Quote({ quote }) {
+export default function Quote({ quote, quoteId }) {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const [storage, setStorage] = useState([]);
+
+  const handleDelete = (quoteId) => {
+    const quoteRef = db.collection("quotebook").doc(quoteId);
+    if (window.confirm("Are you sure to delete this quote?")) {
+      quoteRef
+        .delete()
+        .then(() => {
+          console.log("Document successfully deleted!");
+        })
+        .catch((error) => {
+          console.error("Error removing document: ", error);
+        });
+    }
+  };
+
   // console.log(quote);
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
@@ -58,27 +91,39 @@ export default function Quote({ quote }) {
         }
         action={
           <IconButton aria-label="settings">
-            <MoreVertIcon />
+            <MoreVertIcon
+              aria-controls="fade-menu"
+              aria-haspopup="true"
+              onClick={handleClick}
+            />
+
+            <Menu
+              id="fade-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={open}
+              onClose={handleClose}
+              TransitionComponent={Fade}
+            >
+              <MenuItem onClick={handleClose}>Edit</MenuItem>
+              <MenuItem onClick={() => handleDelete(quoteId)}>Delete</MenuItem>
+            </Menu>
           </IconButton>
         }
         title={quote.displayName}
         // subheader={new Date(quote.t.nanoseconds)}      <= Need to worrk on this later.
       />
-      {quote.image ? (
-        <CardMedia
-          className={classes.media}
-          image={quote.image}
-          // title="Paella dish"
-        />
-      ) : (
-        ""
-      )}
 
       <CardContent>
         <Typography variant="body2" color="textSecondary" component="p">
           {quote.text}
         </Typography>
       </CardContent>
+      {quote.image ? (
+        <CardMedia className={classes.media} image={quote.image} />
+      ) : (
+        ""
+      )}
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">
           <FavoriteIcon />

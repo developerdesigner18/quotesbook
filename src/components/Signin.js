@@ -60,7 +60,6 @@ export default function Signin() {
   const handleOnSubmit = (e) => {
     e.preventDefault();
     auth.signInWithEmailAndPassword(email, password).then((cred) => {
-      console.log(cred.user);
       history.push("/quotes");
     });
   };

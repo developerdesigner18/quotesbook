@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
 import CreateIcon from "@material-ui/icons/Create";
+import ImageIcon from "@material-ui/icons/Image";
+import AudiotrackIcon from "@material-ui/icons/Audiotrack";
+import AddIcon from "@material-ui/icons/Add";
 import clsx from "clsx";
 import "./CreateQuote.css";
 
@@ -22,6 +26,16 @@ const useStyles = makeStyles((theme) => ({
       width: "25ch",
     },
   },
+  icon: {
+    cursor: "pointer",
+  },
+  card: {
+    width: "345px",
+    margin: "20px auto 0",
+  },
+  collapse: {
+    margin: "0 auto",
+  },
 }));
 
 export default function CreateQuote({ user }) {
@@ -36,79 +50,96 @@ export default function CreateQuote({ user }) {
   const [quote, setQuote] = useState("");
 
   // Image Upload
-  const [error, setError] = useState(null);
+  const [imageError, setImageError] = useState(null);
 
   const types = ["image/png", "image/jpeg"];
 
-  const [selected, setSelected] = useState(null);
-  console.log(selected);
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  const [uploadedImage, setUploadedImage] = useState();
-  console.log("uploaded name", uploadedImage);
+  // Audio Upload
+  const [audioError, setAudioError] = useState(null);
 
-  const handleImageChange = (e) => {
-    let selected = e.target.files[0];
-    setSelected(selected);
-  };
+  const audioTypes = ["audio/mp3"];
+
+  const [audioSelected, setAudioSelected] = useState(null);
 
   // Firebase db
   let quoteBookRef = db.collection("quotebook");
 
   const handleQuoteSubmit = () => {
     // Upload to Firebase Storage
-    if (selected && types.includes(selected.type)) {
-      setError("");
-      const imageStoreRef = imageStore.ref(selected.name);
-      imageStoreRef.put(selected);
-    } else {
-      setError("Please select an image file (png or jpg).");
-    }
-
-    // Retrieve the Image url
-    imageStore
-      .ref(selected.name)
-      .getDownloadURL()
-      .then((url) => {
-        console.log("url", url);
-
-        // Store to the Firestore Database
-        quoteBookRef.add({
-          uid: user.uid,
-          displayName: user.displayName,
-          text: quote,
-          image: url ? url : null,
-          createdAt: timeStamp,
+    if (selectedImage && types.includes(selectedImage.type)) {
+      setImageError("");
+      const imageStoreRef = imageStore.ref(selectedImage.name);
+      imageStoreRef.put(selectedImage).then(() => {
+        // Get the url
+        imageStoreRef.getDownloadURL().then((url) => {
+          // Store to the Firestore Database
+          quoteBookRef.add({
+            uid: user.uid,
+            displayName: user.displayName,
+            text: quote,
+            image: url,
+            createdAt: timeStamp,
+          });
         });
       });
-
+    } else {
+      setImageError("Please select an image file (png or jpg).");
+      quoteBookRef.add({
+        uid: user.uid,
+        displayName: user.displayName,
+        text: quote,
+        image: null,
+        createdAt: timeStamp,
+      });
+    }
     setQuote("");
-    setSelected(null);
+    setSelectedImage(null);
   };
 
   return (
-    <div>
-      <div className="createQuote">
-        <CardHeader
-          avatar={
-            <Avatar aria-label="recipe" className={classes.avatar}>
-              {user.displayName.charAt(0)}
-            </Avatar>
-          }
-        />
-        <p>Create your Quote</p>
-        <IconButton
-          className={clsx(classes.expand, {
-            [classes.expandOpen]: expanded,
-          })}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Card className={classes.card}>
+        <div className="createQuote">
+          <CardHeader
+            avatar={
+              <Avatar aria-label="recipe" className={classes.avatar}>
+                {user.displayName ? user.displayName.charAt(0) : "QB"}
+              </Avatar>
+            }
+          />
+          <p>Create your Quote</p>
+          <IconButton
+            className={clsx(classes.expand, {
+              [classes.expandOpen]: expanded,
+            })}
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="show more"
+          >
+            <CreateIcon />
+          </IconButton>
+        </div>
+      </Card>
+      <Collapse
+        className={classes.collapse}
+        in={expanded}
+        timeout="auto"
+        unmountOnExit
+      >
+        <CardContent
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          }}
         >
-          <CreateIcon />
-        </IconButton>
-      </div>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent style={{ width: "10rem", margin: "0 auto" }}>
           <textarea
             onChange={(e) => setQuote(e.target.value)}
             name="quote-text"
@@ -118,11 +149,40 @@ export default function CreateQuote({ user }) {
             placeholder="What do you want to quote about?"
           ></textarea>
           <div>
-            <input type="file" onChange={handleImageChange} />
-            {error && <div>{error}</div>}
+            <label>
+              <ImageIcon className={classes.icon} />
+              <input
+                type="file"
+                onChange={(e) => setSelectedImage(e.target.files[0])}
+              />
+            </label>
+            {imageError && <div>{imageError}</div>}
+            <label>
+              <AudiotrackIcon className={classes.icon} />
+              <input
+                type="file"
+                onChange={(e) => {
+                  setAudioSelected(e.target.files[0]);
+                }}
+              />
+            </label>
+            {audioError && <div>{audioError}</div>}
+
             {/* {image && <div>{image.name}</div>} */}
-            <input onClick={handleQuoteSubmit} type="submit" value="Quote" />
           </div>
+          <label>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+            >
+              <AddIcon className={classes.icon} />
+              <span>Quote</span>
+            </div>
+            <input onClick={handleQuoteSubmit} type="submit" value="Quote" />
+          </label>
         </CardContent>
       </Collapse>
     </div>

@@ -25,6 +25,7 @@ const db = firebase.firestore();
 const imageStore = firebase.storage();
 const auth = firebase.auth();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
+const facebookProvider = new firebase.auth.FacebookAuthProvider();
 const timeStamp = firebase.firestore.FieldValue.serverTimestamp();
 
 export { db, imageStore, auth, googleProvider, timeStamp };

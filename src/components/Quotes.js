@@ -1,12 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Quote from "./Quote";
 
 const Quotes = ({ content }) => {
-  console.log(content);
   return (
     <div>
       {content.map((doc) => (
-        <Quote key={doc.id} quote={doc.data()} />
+        <Quote key={doc.id} quoteId={doc.id} quote={doc} />
       ))}
     </div>
   );
