@@ -21,7 +21,7 @@ import { db, imageStore } from "../firebase/config";
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 345,
-    margin: "1rem auto",
+    marginBottom: "20px",
     textAlign: "left",
   },
   media: {
@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Quote({ quote, quoteId, user }) {
+export default function Quote({ quote, quoteImage, quoteId, user }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
@@ -56,10 +56,9 @@ export default function Quote({ quote, quoteId, user }) {
     setAnchorEl(null);
   };
 
-  const [storage, setStorage] = useState([]);
-
-  const handleDelete = (quoteId) => {
+  const handleDelete = (quoteId, quoteImage) => {
     const quoteRef = db.collection("quotebook").doc(quoteId);
+
     if (window.confirm("Are you sure to delete this quote?")) {
       quoteRef
         .delete()
@@ -69,17 +68,34 @@ export default function Quote({ quote, quoteId, user }) {
         .catch((error) => {
           console.error("Error removing document: ", error);
         });
+
+      quoteImage &&
+        imageStore
+          .refFromURL(quoteImage)
+          .delete()
+          .then(() => {
+            console.log("Image successfully deleted!");
+          })
+          .catch((error) => {
+            console.error("Error removing image: ", error);
+          });
     }
   };
 
-  // console.log(quote);
+  const [favoriteCount, setFavoriteCount] = useState(0);
+
+  const handleFavoriteClick = () => {
+    console.log("object");
+    let count = 0;
+    setFavoriteCount(count + 1);
+  };
+
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
-  // console.log(quote.createdAt);
 
   return (
     <Card className={classes.root}>
@@ -115,7 +131,7 @@ export default function Quote({ quote, quoteId, user }) {
                 TransitionComponent={Fade}
               >
                 <MenuItem onClick={handleClose}>Edit</MenuItem>
-                <MenuItem onClick={() => handleDelete(quoteId)}>
+                <MenuItem onClick={() => handleDelete(quoteId, quoteImage)}>
                   Delete
                 </MenuItem>
               </Menu>
@@ -137,9 +153,10 @@ export default function Quote({ quote, quoteId, user }) {
         ""
       )}
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
+        <IconButton onClick={handleFavoriteClick} aria-label="add to favorites">
           <FavoriteIcon />
         </IconButton>
+        <span>{favoriteCount}</span>
         <IconButton aria-label="share">
           <ShareIcon />
         </IconButton>

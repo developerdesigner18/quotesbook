@@ -31,11 +31,9 @@ const useStyles = makeStyles((theme) => ({
   },
   card: {
     width: "345px",
-    margin: "20px auto 0",
+    marginBottom: "20px",
   },
-  collapse: {
-    margin: "0 auto",
-  },
+  collapse: {},
 }));
 
 export default function CreateQuote({ user }) {
@@ -55,23 +53,6 @@ export default function CreateQuote({ user }) {
   const types = ["image/png", "image/jpeg"];
 
   const [selectedImage, setSelectedImage] = useState(null);
-  const [url, setUrl] = useState("");
-  console.log("url", url);
-
-  const imageSelection = () => {
-    if (selectedImage && types.includes(selectedImage.type)) {
-      setImageError("");
-      const imageStoreRef = imageStore.ref(selectedImage.name);
-      imageStoreRef.put(selectedImage).then(() => {
-        // Get the url
-        imageStoreRef.getDownloadURL().then((url) => {
-          setUrl(url);
-        });
-      });
-    } else {
-      setImageError("Please select an image file (png or jpg).");
-    }
-  };
 
   // Audio Upload
   const [audioError, setAudioError] = useState(null);
@@ -84,20 +65,45 @@ export default function CreateQuote({ user }) {
   let quoteBookRef = db.collection("quotebook");
 
   const handleQuoteSubmit = () => {
-    // imageURL
-    imageSelection();
+    if (!quote.length && !selectedImage) {
+      return alert("Please quote something!");
+    }
 
     // Upload to Firebase Storage
-    quoteBookRef.add({
-      uid: user.uid,
-      displayName: user.displayName,
-      photoURL: user.photoURL,
-      text: quote,
-      image: url,
-      createdAt: timeStamp,
-    });
+    if (selectedImage && types.includes(selectedImage.type)) {
+      setImageError("");
+      const imageStoreRef = imageStore.ref(Date.now() + selectedImage.name);
+      imageStoreRef.put(selectedImage).then(() => {
+        // Get the url
+        imageStoreRef.getDownloadURL().then((url) => {
+          // Store to the Firestore Database
+          quoteBookRef.add({
+            uid: user.uid,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            text: quote,
+            image: url,
+            createdAt: timeStamp,
+          });
+        });
+      });
+    } else {
+      if (selectedImage) {
+        setImageError("Please select an image file (png or jpg).");
+      } else {
+        quoteBookRef.add({
+          uid: user.uid,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          text: quote,
+          image: null,
+          createdAt: timeStamp,
+        });
+      }
+    }
     setQuote("");
     setSelectedImage(null);
+    setExpanded(!expanded);
   };
 
   return (
@@ -152,6 +158,7 @@ export default function CreateQuote({ user }) {
         >
           <textarea
             onChange={(e) => setQuote(e.target.value)}
+            value={quote}
             name="quote-text"
             id="quote-text"
             cols="30"
@@ -166,6 +173,7 @@ export default function CreateQuote({ user }) {
                 onChange={(e) => setSelectedImage(e.target.files[0])}
               />
             </label>
+            {selectedImage && <div>{selectedImage.name}</div>}
             {imageError && <div>{imageError}</div>}
             <label>
               <AudiotrackIcon className={classes.icon} />
@@ -177,8 +185,6 @@ export default function CreateQuote({ user }) {
               />
             </label>
             {audioError && <div>{audioError}</div>}
-
-            {/* {image && <div>{image.name}</div>} */}
           </div>
           <label>
             <div

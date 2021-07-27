@@ -198,8 +198,8 @@ export default function Navbar({ user }) {
   );
 
   return (
-    <div className={classes.grow}>
-      <AppBar position="static">
+    <div className={classes.grow} style={{ marginBottom: "100px" }}>
+      <AppBar position="fixed">
         <Toolbar>
           {/* <IconButton
             edge="start"
