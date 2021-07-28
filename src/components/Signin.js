@@ -12,7 +12,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useHistory, Link as RouterLink } from "react-router-dom";
-import { auth, facebookProvider, googleProvider } from "../firebase/config";
+import { auth, db, facebookProvider, googleProvider } from "../firebase/config";
 import FacebookIcon from "@material-ui/icons/Facebook";
 import { MailOutline } from "@material-ui/icons";
 
@@ -69,8 +69,20 @@ export default function Signin() {
   const handleLoginWithGmail = () => {
     auth
       .signInWithPopup(googleProvider)
-      .then((user) => {
-        if (user) {
+      .then((cred) => {
+        if (!cred.user.created) {
+          db.collection("users")
+            .doc(cred.user.uid)
+            .set({
+              favorites: 0,
+              created: 0,
+              uid: cred.user.uid,
+            })
+            .then(() => {
+              history.push("/quotes");
+            })
+            .catch((error) => console.log(error.message));
+        } else {
           history.push("/quotes");
         }
       })
@@ -81,8 +93,20 @@ export default function Signin() {
   const handleLoginWithFacebook = () => {
     auth
       .signInWithPopup(facebookProvider)
-      .then((user) => {
-        if (user) {
+      .then((cred) => {
+        if (!cred.user.created) {
+          db.collection("users")
+            .doc(cred.user.uid)
+            .set({
+              favorites: 0,
+              created: 0,
+              uid: cred.user.uid,
+            })
+            .then(() => {
+              history.push("/quotes");
+            })
+            .catch((error) => console.log(error.message));
+        } else {
           history.push("/quotes");
         }
       })

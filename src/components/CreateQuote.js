@@ -18,6 +18,7 @@ import {
 
 import "./CreateQuote.css";
 import { db, imageStore, timeStamp } from "../firebase/config";
+import firebase from "firebase";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
   collapse: {},
 }));
 
-export default function CreateQuote({ user }) {
+export default function CreateQuote({ currentUser }) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
 
@@ -62,7 +63,10 @@ export default function CreateQuote({ user }) {
   const [selectedAudio, setSelectedAudio] = useState(null);
 
   // Firebase db
-  let quoteBookRef = db.collection("quotebook");
+  let quotesRef = db.collection("quotes");
+
+  const increment = firebase.firestore.FieldValue.increment(1);
+  let usersRef = db.collection("users").doc(currentUser.uid);
 
   const handleQuoteSubmit = () => {
     if (!quote.length && !selectedImage) {
@@ -77,13 +81,16 @@ export default function CreateQuote({ user }) {
         // Get the url
         imageStoreRef.getDownloadURL().then((url) => {
           // Store to the Firestore Database
-          quoteBookRef.add({
-            uid: user.uid,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
+          quotesRef.add({
+            uid: currentUser.uid,
+            displayName: currentUser.displayName,
+            photoURL: currentUser.photoURL,
             text: quote,
             image: url,
             createdAt: timeStamp,
+          });
+          usersRef.update({
+            created: increment,
           });
         });
       });
@@ -91,13 +98,16 @@ export default function CreateQuote({ user }) {
       if (selectedImage) {
         setImageError("Please select an image file (png or jpg).");
       } else {
-        quoteBookRef.add({
-          uid: user.uid,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
+        quotesRef.add({
+          uid: currentUser.uid,
+          displayName: currentUser.displayName,
+          photoURL: currentUser.photoURL,
           text: quote,
           image: null,
           createdAt: timeStamp,
+        });
+        usersRef.update({
+          created: increment,
         });
       }
     }
@@ -118,9 +128,9 @@ export default function CreateQuote({ user }) {
           <CardHeader
             avatar={
               <Avatar aria-label="recipe" className={classes.avatar}>
-                {user ? (
+                {currentUser ? (
                   <img
-                    src={user.photoURL}
+                    src={currentUser.photoURL}
                     alt="user's profile picture"
                     style={{ width: "100%" }}
                   />

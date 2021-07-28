@@ -1,7 +1,7 @@
 import React from "react";
 import Quote from "./Quote";
 
-const Quotes = ({ content, user }) => {
+const Quotes = ({ content, currentUser }) => {
   return (
     <div>
       {content.map((doc) => (
@@ -9,7 +9,7 @@ const Quotes = ({ content, user }) => {
           key={doc.id}
           quoteId={doc.id}
           quote={doc}
-          user={user}
+          currentUser={currentUser}
           quoteImage={doc.image}
         />
       ))}

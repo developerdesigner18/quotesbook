@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 const useStyles = makeStyles({
   root: {
     maxWidth: 200,
+    marginTop: "20px",
   },
   bullet: {
     display: "inline-block",
@@ -22,24 +23,31 @@ const useStyles = makeStyles({
     transform: "scale(0.8)",
   },
   title: {
-    fontSize: 14,
+    fontSize: 12,
   },
   pos: {
     marginBottom: 12,
   },
+  avatar: {
+    width: "25px",
+    height: "25px",
+    marginRight: "10px",
+  },
 });
 
-export default function RandomAuthors() {
+export default function RandomAuthors({ currentUser }) {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
-  return user ? (
+  return (
     <Card className={classes.root}>
-      <CardContent>
+      <CardContent
+        style={{ display: "flex", alignItems: "center", padding: "10px" }}
+      >
         <Avatar aria-label="recipe" className={classes.avatar}>
-          {user ? (
+          {currentUser ? (
             <img
-              src={user.photoURL}
+              src={currentUser.photoURL}
               alt="user's profile picture"
               style={{ width: "100%" }}
             />
@@ -47,56 +55,28 @@ export default function RandomAuthors() {
             "QB"
           )}
         </Avatar>
-        <Typography
-          className={classes.title}
-          color="textSecondary"
-          gutterBottom
-        >
-          {user.displayName}
-        </Typography>
-        <LinkedInIcon />
-        <FacebookIcon />
-        <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <CreateIcon />
-            <span>999</span>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <StarBorderIcon />
-            <span>1001</span>
-          </div>
-        </div>
-      </CardContent>
-      <CardActions>
-        <Button variant="contained" color="primary" size="small">
-          Share
-        </Button>
-      </CardActions>
-    </Card>
-  ) : (
-    <Card className={classes.root}>
-      <CardContent>
-        <Typography variant="body2" component="p">
-          You're unique <Link to="/">Login</Link> to create your awesome quotes.
+        <Typography className={classes.title} color="textSecondary" gutterLeft>
+          {currentUser.displayName}
         </Typography>
       </CardContent>
-      <CardActions>
-        <Button variant="contained" color="primary" size="small">
-          Share
-        </Button>
-      </CardActions>
+      <CardContent
+        style={{ display: "flex", alignItems: "center", padding: "10px" }}
+      >
+        <Avatar aria-label="recipe" className={classes.avatar}>
+          {currentUser ? (
+            <img
+              src={currentUser.photoURL}
+              alt="user's profile picture"
+              style={{ width: "100%" }}
+            />
+          ) : (
+            "QB"
+          )}
+        </Avatar>
+        <Typography className={classes.title} color="textSecondary" gutterLeft>
+          {currentUser.displayName}
+        </Typography>
+      </CardContent>
     </Card>
   );
 }

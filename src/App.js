@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
 import { db, auth } from "./firebase/config";
 import "./App.css";
+import firebase from "firebase";
 
 import Navbar from "./components/Navbar";
 import Quotes from "./components/Quotes";
@@ -9,9 +10,10 @@ import Signin from "./components/Signin";
 import Signup from "./components/Signup";
 import CreateQuote from "./components/CreateQuote";
 import ProfileStatus from "./components/ProfileStatus";
+import RandomAuthors from "./components/RandomAuthors";
 
 function App() {
-  const [user, setUser] = useState({
+  const [currentUser, setCurrentUser] = useState({
     uid: "",
     displayName: "",
     photoURL: "",
@@ -23,7 +25,7 @@ function App() {
     auth.onAuthStateChanged((user) => {
       if (user) {
         // console.log("user logged in: ", user);
-        setUser({
+        setCurrentUser({
           uid: user.uid,
           displayName: user.displayName,
           photoURL: user.photoURL,
@@ -36,7 +38,7 @@ function App() {
 
   useEffect(() => {
     const unsub = db
-      .collection("quotebook")
+      .collection("quotes")
       .orderBy("createdAt", "desc")
       .onSnapshot((snap) => {
         let documents = [];
@@ -51,17 +53,21 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Navbar user={user} />
+        <Navbar currentUser={currentUser} />
         <Route exact path={"/"}>
-          {!user.uid ? <Signin /> : <Quotes content={content} user={user} />}
+          {!currentUser.uid ? (
+            <Signin />
+          ) : (
+            <Quotes content={content} currentUser={currentUser} />
+          )}
         </Route>
         <div className="main">
           <div className="left">
-            {user.uid && <CreateQuote user={user} />}
+            {currentUser.uid && <CreateQuote currentUser={currentUser} />}
 
             <Switch>
               <Route path="/quotes">
-                <Quotes content={content} user={user} />
+                <Quotes content={content} currentUser={currentUser} />
               </Route>
 
               <Route path="/signup">
@@ -73,7 +79,8 @@ function App() {
           <div className="right">
             <Switch>
               <Route path="/quotes">
-                <ProfileStatus user={user} />
+                <ProfileStatus currentUser={currentUser} />
+                <RandomAuthors currentUser={currentUser} />
               </Route>
             </Switch>
           </div>

@@ -82,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Navbar({ user }) {
+export default function Navbar({ currentUser }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -134,12 +134,12 @@ export default function Navbar({ user }) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>{user.displayName}</MenuItem>
-      {user.uid ? (
+      <MenuItem onClick={handleMenuClose}>{currentUser.displayName}</MenuItem>
+      {currentUser.uid ? (
         <MenuItem onClick={handleMenuClose}>My account</MenuItem>
       ) : null}
       <MenuItem onClick={handleSignOut}>
-        {user.uid ? "Sign Out" : "Sign In"}
+        {currentUser.uid ? "Sign Out" : "Sign In"}
       </MenuItem>
     </Menu>
   );
@@ -186,10 +186,10 @@ export default function Navbar({ user }) {
           aria-haspopup="true"
           color="inherit"
         >
-          {!user.photoURL.length ? (
+          {!currentUser.photoURL ? (
             <AccountCircle />
           ) : (
-            <Avatar src={user.photoURL} />
+            <Avatar src={currentUser.photoURL} />
           )}
         </IconButton>
         <p>Account</p>

@@ -13,7 +13,8 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useHistory, Link as RouterLink } from "react-router-dom";
-import { auth } from "../firebase/config";
+import { auth, db } from "../firebase/config";
+import { useEffect } from "react";
 
 function Copyright() {
   return (
@@ -51,19 +52,45 @@ const useStyles = makeStyles((theme) => ({
 export default function Signin() {
   const classes = useStyles();
 
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const history = useHistory();
 
+  // useEffect(() => {
+  //   const unsub = auth.onAuthStateChanged((authUser) => {
+  //     if(authUser) {
+  //       if(authUser.displayName) {
+
+  //       } else {
+  //         return authUser.updateProfile({displayName: fullName})
+  //       }
+  //     } else {
+
+  //     }
+  //   })
+  //   return () => unsub()
+  // }, [fullname])
+
   // Signup with Email
-  const handleOnSubmit = (e) => {
-    console.log("object");
-    e.preventDefault();
-    auth.createUserWithEmailAndPassword(email, password).then((cred) => {
-      console.log(cred.user);
-      history.push("/quotes");
-    });
+  const handleOnSubmit = () => {
+    auth
+      .createUserWithEmailAndPassword(email, password)
+      .then((cred) => {
+        // cred.user.updateProfile({ displayName: fullName });
+        db.collection("users")
+          .doc(cred.user.uid)
+          .set({
+            favorites: 0,
+            created: 0,
+            uid: cred.user.uid,
+          })
+          .then(() => {
+            history.push("/quotes");
+          });
+      })
+      .catch((error) => alert(error.message));
   };
 
   return (
@@ -77,6 +104,20 @@ export default function Signin() {
           Sign up
         </Typography>
         <form className={classes.form} noValidate>
+          <TextField
+            onChange={(e) => {
+              setFullName(e.target.value);
+            }}
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="fullname"
+            label="Full Name"
+            name="fullname"
+            autoComplete="fullname"
+            autoFocus
+          />
           <TextField
             onChange={(e) => {
               setEmail(e.target.value);

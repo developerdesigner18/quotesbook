@@ -17,6 +17,7 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Fade from "@material-ui/core/Fade";
 import { db, imageStore } from "../firebase/config";
+import firebase from "firebase";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -40,11 +41,11 @@ const useStyles = makeStyles((theme) => ({
     transform: "rotate(180deg)",
   },
   avatar: {
-    backgroundColor: red[500],
+    // backgroundColor: red[500],
   },
 }));
 
-export default function Quote({ quote, quoteImage, quoteId, user }) {
+export default function Quote({ quote, quoteImage, quoteId, currentUser }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
@@ -57,7 +58,10 @@ export default function Quote({ quote, quoteImage, quoteId, user }) {
   };
 
   const handleDelete = (quoteId, quoteImage) => {
-    const quoteRef = db.collection("quotebook").doc(quoteId);
+    const quoteRef = db.collection("quotes").doc(quoteId);
+
+    const increment = firebase.firestore.FieldValue.increment(-1);
+    let usersRef = db.collection("users").doc(currentUser.uid);
 
     if (window.confirm("Are you sure to delete this quote?")) {
       quoteRef
@@ -79,6 +83,10 @@ export default function Quote({ quote, quoteImage, quoteId, user }) {
           .catch((error) => {
             console.error("Error removing image: ", error);
           });
+
+      usersRef.update({
+        created: increment,
+      });
     }
   };
 
@@ -114,7 +122,7 @@ export default function Quote({ quote, quoteImage, quoteId, user }) {
           </Avatar>
         }
         action={
-          user.uid === quote.uid ? (
+          currentUser.uid === quote.uid ? (
             <IconButton aria-label="settings">
               <MoreVertIcon
                 aria-controls="fade-menu"
