@@ -107,9 +107,15 @@ export default function Quote({ quote, quoteImage, quoteId, currentUser }) {
       db.collection("users").doc(quote.uid).update({
         favorited: increment,
       });
+
       // In quote favorite
       db.collection("quotes").doc(quoteId).update({
         favorites: increment,
+      });
+
+      // Add favoriters' uid
+      db.collection("quotes").doc(quote.uid).collection("favoriters").add({
+        uid: currentUser.uid,
       });
     } else {
       // User's favorited

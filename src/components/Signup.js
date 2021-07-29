@@ -14,7 +14,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useHistory, Link as RouterLink } from "react-router-dom";
 import { auth, db } from "../firebase/config";
-import { useEffect } from "react";
 
 function Copyright() {
   return (
@@ -59,7 +58,7 @@ export default function Signin() {
   const history = useHistory();
 
   // Signup with Email
-  const handleOnSubmit = (e) => {
+  const handleOnSignup = (e) => {
     e.preventDefault();
     auth
       .createUserWithEmailAndPassword(email, password)
@@ -139,7 +138,7 @@ export default function Signin() {
             label="Remember me"
           />
           <Button
-            onClick={handleOnSubmit}
+            onClick={handleOnSignup}
             type="submit"
             fullWidth
             variant="contained"
@@ -149,7 +148,7 @@ export default function Signin() {
             Sign Up
           </Button>
           <Grid item>
-            <RouterLink href="/signin" variant="body2">
+            <RouterLink to="/" variant="body2">
               {"Already have an account? Sign In"}
             </RouterLink>
           </Grid>

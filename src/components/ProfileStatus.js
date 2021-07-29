@@ -66,7 +66,7 @@ export default function ProfileStatus({ currentUser }) {
                 style={{ width: "100%" }}
               />
             ) : (
-              currentUser.displayName.charAt(0)
+              currentUser.displayName?.charAt(0)
             )
           ) : (
             "QB"

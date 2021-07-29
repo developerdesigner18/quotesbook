@@ -70,7 +70,8 @@ export default function Signin() {
     auth
       .signInWithPopup(googleProvider)
       .then((cred) => {
-        if (!cred.user.created) {
+        console.log(cred.user);
+        if (!db.collection("users").doc(cred.user.uid)) {
           db.collection("users")
             .doc(cred.user.uid)
             .set({
@@ -96,7 +97,7 @@ export default function Signin() {
     auth
       .signInWithPopup(facebookProvider)
       .then((cred) => {
-        if (!cred.user.created) {
+        if (!db.collection("users").doc(cred.user.uid)) {
           db.collection("users")
             .doc(cred.user.uid)
             .set({

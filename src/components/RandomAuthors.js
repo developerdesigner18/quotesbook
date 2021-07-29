@@ -41,7 +41,6 @@ export default function RandomAuthors({ currentUser }) {
   const bull = <span className={classes.bullet}>•</span>;
 
   const [randomAuthors, setRandomAuthors] = useState([]);
-  console.log(randomAuthors);
 
   useEffect(() => {
     db.collection("users")
@@ -50,10 +49,8 @@ export default function RandomAuthors({ currentUser }) {
       .limit(8)
       .get()
       .then((users) => {
-        console.log(users);
         let usersData = [];
         users.forEach((user) => {
-          console.log(user.data());
           usersData.push(user.data());
         });
         setRandomAuthors(usersData);

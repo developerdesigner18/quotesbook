@@ -54,6 +54,7 @@ export default function CreateQuote({ currentUser }) {
   const types = ["image/png", "image/jpeg"];
 
   const [selectedImage, setSelectedImage] = useState(null);
+  const [progress, setProgress] = useState(0);
 
   // Audio Upload
   const [audioError, setAudioError] = useState(null);
@@ -76,7 +77,9 @@ export default function CreateQuote({ currentUser }) {
     // Upload to Firebase Storage
     if (selectedImage && types.includes(selectedImage.type)) {
       setImageError("");
-      const imageStoreRef = imageStore.ref(Date.now() + selectedImage.name);
+      const imageStoreRef = imageStore.ref(
+        `images/${Date.now() + selectedImage.name}`
+      );
       imageStoreRef.put(selectedImage).then(() => {
         // Get the url
         imageStoreRef.getDownloadURL().then((url) => {
@@ -115,6 +118,7 @@ export default function CreateQuote({ currentUser }) {
     }
     setQuote("");
     setSelectedImage(null);
+    setProgress(0);
     setExpanded(!expanded);
   };
 
@@ -138,7 +142,7 @@ export default function CreateQuote({ currentUser }) {
                       style={{ width: "100%" }}
                     />
                   ) : (
-                    currentUser.displayName.charAt(0)
+                    currentUser.displayName?.charAt(0)
                   )
                 ) : (
                   "QB"
