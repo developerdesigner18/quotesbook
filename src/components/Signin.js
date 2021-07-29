@@ -74,6 +74,8 @@ export default function Signin() {
           db.collection("users")
             .doc(cred.user.uid)
             .set({
+              displayName: cred.user.displayName,
+              photoURL: cred.user.photoURL,
               favorites: 0,
               created: 0,
               uid: cred.user.uid,
@@ -98,6 +100,8 @@ export default function Signin() {
           db.collection("users")
             .doc(cred.user.uid)
             .set({
+              displayName: cred.user.displayName,
+              photoURL: cred.user.photoURL,
               favorites: 0,
               created: 0,
               uid: cred.user.uid,

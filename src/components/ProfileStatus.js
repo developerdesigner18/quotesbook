@@ -33,32 +33,25 @@ const useStyles = makeStyles({
 export default function ProfileStatus({ currentUser }) {
   // console.log("logged in user", currentUser.uid);
   const classes = useStyles();
-  const bull = <span className={classes.bullet}>•</span>;
-
-  const userStats = db.collection("users");
-  // console.log(userStats);
 
   // Fetched Users' collection
-  const [fetchedUsers, setFetchedUsers] = useState([]);
-  const filteredUser = fetchedUsers.filter(
-    (user) => (user.uid = currentUser.uid)
-  );
-
-  console.log(filteredUser);
+  const [allUsers, setAllUsers] = useState([]);
+  const [fetchedUser, setFetchedUser] = useState({});
 
   useEffect(() => {
-    userStats
-      .get()
-      .then((data) => {
-        let users = [];
-        data.forEach((doc) => {
-          users.push(doc.data());
-          setFetchedUsers(users);
-        });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
+    if (allUsers.length) {
+      setFetchedUser(allUsers.find((user) => user.uid == currentUser.uid));
+    }
+  }, [allUsers]);
+
+  useEffect(() => {
+    let usersData = [];
+    db.collection("users").onSnapshot((snap) => {
+      snap.forEach((users) => {
+        usersData.push(users.data());
       });
+      setAllUsers(usersData);
+    });
   }, []);
 
   return currentUser ? (
@@ -66,11 +59,15 @@ export default function ProfileStatus({ currentUser }) {
       <CardContent>
         <Avatar aria-label="recipe" className={classes.avatar}>
           {currentUser ? (
-            <img
-              src={currentUser.photoURL}
-              alt="user's profile picture"
-              style={{ width: "100%" }}
-            />
+            currentUser.photoURL ? (
+              <img
+                src={currentUser.photoURL}
+                alt="user's profile picture"
+                style={{ width: "100%" }}
+              />
+            ) : (
+              currentUser.displayName.charAt(0)
+            )
           ) : (
             "QB"
           )}
@@ -93,7 +90,7 @@ export default function ProfileStatus({ currentUser }) {
             }}
           >
             <CreateIcon />
-            <span>999</span>
+            <span>{fetchedUser.created}</span>
           </div>
           <div
             style={{

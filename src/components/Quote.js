@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import Card from "@material-ui/core/Card";
@@ -43,6 +43,9 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     // backgroundColor: red[500],
   },
+  favorited: {
+    color: "red",
+  },
 }));
 
 export default function Quote({ quote, quoteImage, quoteId, currentUser }) {
@@ -60,7 +63,7 @@ export default function Quote({ quote, quoteImage, quoteId, currentUser }) {
   const handleDelete = (quoteId, quoteImage) => {
     const quoteRef = db.collection("quotes").doc(quoteId);
 
-    const increment = firebase.firestore.FieldValue.increment(-1);
+    const decrement = firebase.firestore.FieldValue.increment(-1);
     let usersRef = db.collection("users").doc(currentUser.uid);
 
     if (window.confirm("Are you sure to delete this quote?")) {
@@ -85,18 +88,55 @@ export default function Quote({ quote, quoteImage, quoteId, currentUser }) {
           });
 
       usersRef.update({
-        created: increment,
+        created: decrement,
       });
     }
   };
 
   const [favoriteCount, setFavoriteCount] = useState(0);
+  const [favorited, setFavorited] = useState(false);
 
   const handleFavoriteClick = () => {
-    console.log("object");
-    let count = 0;
-    setFavoriteCount(count + 1);
+    setFavorited(!favorited);
+
+    const increment = firebase.firestore.FieldValue.increment(1);
+    const decrement = firebase.firestore.FieldValue.increment(-1);
+
+    if (!favorited) {
+      // User's favorited
+      db.collection("users").doc(quote.uid).update({
+        favorited: increment,
+      });
+      // In quote favorite
+      db.collection("quotes").doc(quoteId).update({
+        favorites: increment,
+      });
+    } else {
+      // User's favorited
+      db.collection("users").doc(quote.uid).update({
+        favorited: decrement,
+      });
+      // In quote favorite
+      db.collection("quotes").doc(quoteId).update({
+        favorites: decrement,
+      });
+    }
+    db.collection("quotes")
+      .doc(quoteId)
+      .get()
+      .then((favorites) => {
+        setFavoriteCount(favorites.data().favorites);
+      });
   };
+
+  useEffect(() => {
+    db.collection("quotes")
+      .doc(quoteId)
+      .get()
+      .then((favorites) => {
+        setFavoriteCount(favorites.data().favorites);
+      });
+  }, []);
 
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
@@ -162,7 +202,7 @@ export default function Quote({ quote, quoteImage, quoteId, currentUser }) {
       )}
       <CardActions disableSpacing>
         <IconButton onClick={handleFavoriteClick} aria-label="add to favorites">
-          <FavoriteIcon />
+          <FavoriteIcon className={favorited && classes.favorited} />
         </IconButton>
         <span>{favoriteCount}</span>
         <IconButton aria-label="share">

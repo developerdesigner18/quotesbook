@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -11,6 +11,7 @@ import FacebookIcon from "@material-ui/icons/Facebook";
 import CreateIcon from "@material-ui/icons/Create";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
 import { Link } from "react-router-dom";
+import { db } from "../firebase/config";
 
 const useStyles = makeStyles({
   root: {
@@ -39,44 +40,52 @@ export default function RandomAuthors({ currentUser }) {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
+  const [randomAuthors, setRandomAuthors] = useState([]);
+  console.log(randomAuthors);
+
+  useEffect(() => {
+    db.collection("users")
+      .where("created", ">", 1)
+      .orderBy("created", "asc")
+      .limit(8)
+      .get()
+      .then((users) => {
+        console.log(users);
+        let usersData = [];
+        users.forEach((user) => {
+          console.log(user.data());
+          usersData.push(user.data());
+        });
+        setRandomAuthors(usersData);
+      });
+  }, []);
+
   return (
     <Card className={classes.root}>
-      <CardContent
-        style={{ display: "flex", alignItems: "center", padding: "10px" }}
-      >
-        <Avatar aria-label="recipe" className={classes.avatar}>
-          {currentUser ? (
-            <img
-              src={currentUser.photoURL}
-              alt="user's profile picture"
-              style={{ width: "100%" }}
-            />
-          ) : (
-            "QB"
-          )}
-        </Avatar>
-        <Typography className={classes.title} color="textSecondary" gutterLeft>
-          {currentUser.displayName}
-        </Typography>
-      </CardContent>
-      <CardContent
-        style={{ display: "flex", alignItems: "center", padding: "10px" }}
-      >
-        <Avatar aria-label="recipe" className={classes.avatar}>
-          {currentUser ? (
-            <img
-              src={currentUser.photoURL}
-              alt="user's profile picture"
-              style={{ width: "100%" }}
-            />
-          ) : (
-            "QB"
-          )}
-        </Avatar>
-        <Typography className={classes.title} color="textSecondary" gutterLeft>
-          {currentUser.displayName}
-        </Typography>
-      </CardContent>
+      {randomAuthors.map((randomAuthor) => (
+        <CardContent
+          style={{ display: "flex", alignItems: "center", padding: "10px" }}
+        >
+          <Avatar aria-label="recipe" className={classes.avatar}>
+            {randomAuthor.photoURL ? (
+              <img
+                src={randomAuthor.photoURL}
+                alt="user's profile picture"
+                style={{ width: "100%" }}
+              />
+            ) : (
+              randomAuthor.displayName.charAt(0)
+            )}
+          </Avatar>
+          <Typography
+            className={classes.title}
+            color="textSecondary"
+            gutterLeft
+          >
+            {randomAuthor.displayName}
+          </Typography>
+        </CardContent>
+      ))}
     </Card>
   );
 }

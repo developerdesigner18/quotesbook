@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
 import { db, auth } from "./firebase/config";
 import "./App.css";
-import firebase from "firebase";
 
 import Navbar from "./components/Navbar";
 import Quotes from "./components/Quotes";
@@ -24,14 +23,11 @@ function App() {
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        // console.log("user logged in: ", user);
         setCurrentUser({
           uid: user.uid,
           displayName: user.displayName,
           photoURL: user.photoURL,
         });
-      } else {
-        console.log("user logged out");
       }
     });
   }, []);
@@ -71,7 +67,7 @@ function App() {
               </Route>
 
               <Route path="/signup">
-                <Signup />
+                <Signup currentUser={currentUser} />
               </Route>
             </Switch>
           </div>

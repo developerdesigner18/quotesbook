@@ -87,6 +87,7 @@ export default function CreateQuote({ currentUser }) {
             photoURL: currentUser.photoURL,
             text: quote,
             image: url,
+            favorites: 0,
             createdAt: timeStamp,
           });
           usersRef.update({
@@ -104,6 +105,7 @@ export default function CreateQuote({ currentUser }) {
           photoURL: currentUser.photoURL,
           text: quote,
           image: null,
+          favorites: 0,
           createdAt: timeStamp,
         });
         usersRef.update({
@@ -129,11 +131,15 @@ export default function CreateQuote({ currentUser }) {
             avatar={
               <Avatar aria-label="recipe" className={classes.avatar}>
                 {currentUser ? (
-                  <img
-                    src={currentUser.photoURL}
-                    alt="user's profile picture"
-                    style={{ width: "100%" }}
-                  />
+                  currentUser.photoURL ? (
+                    <img
+                      src={currentUser.photoURL}
+                      alt="user's profile picture"
+                      style={{ width: "100%" }}
+                    />
+                  ) : (
+                    currentUser.displayName.charAt(0)
+                  )
                 ) : (
                   "QB"
                 )}

@@ -58,35 +58,23 @@ export default function Signin() {
 
   const history = useHistory();
 
-  // useEffect(() => {
-  //   const unsub = auth.onAuthStateChanged((authUser) => {
-  //     if(authUser) {
-  //       if(authUser.displayName) {
-
-  //       } else {
-  //         return authUser.updateProfile({displayName: fullName})
-  //       }
-  //     } else {
-
-  //     }
-  //   })
-  //   return () => unsub()
-  // }, [fullname])
-
   // Signup with Email
-  const handleOnSubmit = () => {
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((cred) => {
-        // cred.user.updateProfile({ displayName: fullName });
         db.collection("users")
           .doc(cred.user.uid)
           .set({
+            displayName: fullName,
+            photoURL: cred.user.photoURL,
             favorites: 0,
             created: 0,
             uid: cred.user.uid,
           })
           .then(() => {
+            cred.user.updateProfile({ displayName: fullName });
             history.push("/quotes");
           });
       })
@@ -161,7 +149,7 @@ export default function Signin() {
             Sign Up
           </Button>
           <Grid item>
-            <RouterLink href="#" variant="body2">
+            <RouterLink href="/signin" variant="body2">
               {"Already have an account? Sign In"}
             </RouterLink>
           </Grid>
