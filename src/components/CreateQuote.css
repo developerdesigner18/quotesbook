@@ -18,6 +18,7 @@ label ImageIcon {
 }
 
 textarea {
+  width: 100%;
   background: transparent;
   border-top: 1px solid black;
   resize: none;

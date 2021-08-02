@@ -68,13 +68,13 @@ export default function Signin() {
           .set({
             displayName: fullName,
             photoURL: cred.user.photoURL,
-            favorites: 0,
+            favorited: 0,
             created: 0,
             uid: cred.user.uid,
           })
           .then(() => {
             cred.user.updateProfile({ displayName: fullName });
-            history.push("/quotes");
+            history.push("/");
           });
       })
       .catch((error) => alert(error.message));

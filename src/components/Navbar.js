@@ -14,7 +14,7 @@ import FormatQuoteIcon from "@material-ui/icons/FormatQuote";
 import BorderColorIcon from "@material-ui/icons/BorderColor";
 import MicIcon from "@material-ui/icons/Mic";
 import MoreIcon from "@material-ui/icons/MoreVert";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link as RouterLink } from "react-router-dom";
 import { auth } from "../firebase/config";
 import { Avatar } from "@material-ui/core";
 
@@ -30,6 +30,8 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("sm")]: {
       display: "block",
     },
+    textDecoration: "none",
+    color: "white",
   },
   search: {
     position: "relative",
@@ -112,15 +114,12 @@ export default function Navbar({ currentUser }) {
     auth
       .signOut()
       .then(() => {
-        history.push("/");
-        window.location.reload();
+        setAnchorEl(null);
+        handleMobileMenuClose();
+        history.push("/signin");
+        // window.location.reload();
       })
       .catch((error) => console.log(error));
-  };
-
-  const handleQuoteClick = () => {
-    window.location.reload();
-    history.push("/quotes");
   };
 
   const menuId = "primary-search-account-menu";
@@ -155,7 +154,7 @@ export default function Navbar({ currentUser }) {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem onClick={handleQuoteClick}>
+      <MenuItem component={RouterLink} to={"/"}>
         <IconButton aria-label="show 4 new mails" color="inherit">
           {/* <Badge badgeContent={4} color="secondary"> */}
           <FormatQuoteIcon />
@@ -209,7 +208,13 @@ export default function Navbar({ currentUser }) {
           >
             <MenuIcon />
           </IconButton> */}
-          <Typography className={classes.title} variant="h6" noWrap>
+          <Typography
+            component={RouterLink}
+            to={"/"}
+            className={classes.title}
+            variant="h6"
+            noWrap
+          >
             Quote Book
           </Typography>
           <div className={classes.search}>
@@ -228,7 +233,8 @@ export default function Navbar({ currentUser }) {
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             <IconButton
-              onClick={handleQuoteClick}
+              component={RouterLink}
+              to={"/"}
               aria-label="show 4 new mails"
               color="inherit"
             >

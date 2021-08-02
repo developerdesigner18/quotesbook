@@ -36,7 +36,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function RandomAuthors({ currentUser }) {
+export default function RandomAuthors() {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
@@ -44,7 +44,7 @@ export default function RandomAuthors({ currentUser }) {
 
   useEffect(() => {
     db.collection("users")
-      .where("created", ">", 1)
+      .where("created", ">", 0)
       .orderBy("created", "asc")
       .limit(8)
       .get()

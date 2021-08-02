@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -65,28 +65,51 @@ export default function Signin() {
     });
   };
 
+  // Fetch existing users
+  const [existingUsers, setExistingUsers] = useState([]);
+
+  useEffect(() => {
+    db.collection("users")
+      .get()
+      .then((doc) => {
+        let fetchedUsersData = [];
+        doc.forEach((doc) => {
+          fetchedUsersData.push(doc.data());
+        });
+        setExistingUsers(fetchedUsersData);
+      })
+      .catch((error) => {
+        console.log("Error getting document:", error);
+      });
+  }, []);
+
   // Gmail Login
   const handleLoginWithGmail = () => {
     auth
       .signInWithPopup(googleProvider)
       .then((cred) => {
-        console.log(cred.user);
-        if (!db.collection("users").doc(cred.user.uid)) {
+        if (
+          existingUsers.find(
+            (existingUser) => existingUser.uid === cred.user.uid
+          )
+        ) {
+          console.log("exists");
+          history.push("/");
+        } else {
+          console.log("does not exist");
           db.collection("users")
             .doc(cred.user.uid)
             .set({
               displayName: cred.user.displayName,
               photoURL: cred.user.photoURL,
-              favorites: 0,
+              starred: 0,
               created: 0,
               uid: cred.user.uid,
             })
             .then(() => {
-              history.push("/quotes");
+              history.push("/");
             })
             .catch((error) => console.log(error.message));
-        } else {
-          history.push("/quotes");
         }
       })
       .catch((error) => console.log(error.message));
@@ -97,22 +120,26 @@ export default function Signin() {
     auth
       .signInWithPopup(facebookProvider)
       .then((cred) => {
-        if (!db.collection("users").doc(cred.user.uid)) {
+        if (
+          existingUsers.find(
+            (existingUser) => existingUser.uid === cred.user.uid
+          )
+        ) {
+          history.push("/");
+        } else {
           db.collection("users")
             .doc(cred.user.uid)
             .set({
               displayName: cred.user.displayName,
               photoURL: cred.user.photoURL,
-              favorites: 0,
+              starred: 0,
               created: 0,
               uid: cred.user.uid,
             })
             .then(() => {
-              history.push("/quotes");
+              history.push("/");
             })
             .catch((error) => console.log(error.message));
-        } else {
-          history.push("/quotes");
         }
       })
       .catch((error) => console.log(error.message));

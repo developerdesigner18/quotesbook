@@ -22,10 +22,17 @@ if (!firebase.apps.length) {
 }
 
 const db = firebase.firestore();
-const imageStore = firebase.storage();
+const firebaseStorage = firebase.storage();
 const auth = firebase.auth();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 const facebookProvider = new firebase.auth.FacebookAuthProvider();
 const timeStamp = firebase.firestore.FieldValue.serverTimestamp();
 
-export { db, imageStore, auth, googleProvider, facebookProvider, timeStamp };
+export {
+  db,
+  firebaseStorage,
+  auth,
+  googleProvider,
+  facebookProvider,
+  timeStamp,
+};

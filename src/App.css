@@ -1,11 +1,5 @@
-.main {
+.app__main {
   display: flex;
   padding: 1rem 3rem;
   justify-content: space-around;
-}
-
-.sidebar {
-  position: fixed;
-  top: 74px;
-  right: 10rem;
 }

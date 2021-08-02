@@ -54,7 +54,7 @@ export default function ProfileStatus({ currentUser }) {
     });
   }, []);
 
-  return currentUser ? (
+  return currentUser.uid ? (
     <Card className={classes.root}>
       <CardContent>
         <Avatar aria-label="recipe" className={classes.avatar}>
@@ -90,7 +90,7 @@ export default function ProfileStatus({ currentUser }) {
             }}
           >
             <CreateIcon />
-            <span>{fetchedUser.created}</span>
+            <span>{fetchedUser?.created}</span>
           </div>
           <div
             style={{
@@ -114,7 +114,8 @@ export default function ProfileStatus({ currentUser }) {
     <Card className={classes.root}>
       <CardContent>
         <Typography variant="body2" component="p">
-          You're unique <Link to="/">Login</Link> to create your awesome quotes.
+          You're unique. <br />
+          <Link to="/signin">Sign in</Link> to create your awesome quotes.
         </Typography>
       </CardContent>
       <CardActions>

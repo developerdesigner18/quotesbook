@@ -48,37 +48,26 @@ function App() {
 
   return (
     <Router>
-      <div className="App">
+      <div className="app">
         <Navbar currentUser={currentUser} />
-        <Route exact path={"/"}>
-          {!currentUser.uid ? (
-            <Signin />
-          ) : (
-            <Quotes content={content} currentUser={currentUser} />
-          )}
+        <Route exact path="/signin">
+          <Signin />
         </Route>
-        <div className="main">
-          <div className="left">
+        <Route path="/signup">
+          <Signup currentUser={currentUser} />
+        </Route>
+        <div className="app__main">
+          <div className="app__left">
             {currentUser.uid && <CreateQuote currentUser={currentUser} />}
-
-            <Switch>
-              <Route path="/quotes">
-                <Quotes content={content} currentUser={currentUser} />
-              </Route>
-
-              <Route path="/signup">
-                <Signup currentUser={currentUser} />
-              </Route>
-            </Switch>
+            <Route exact path="/">
+              <Quotes content={content} currentUser={currentUser} />
+            </Route>
           </div>
-
-          <div className="right">
-            <Switch>
-              <Route path="/quotes">
-                <ProfileStatus currentUser={currentUser} />
-                <RandomAuthors currentUser={currentUser} />
-              </Route>
-            </Switch>
+          <div className="app__right">
+            <Route exact path="/">
+              <ProfileStatus currentUser={currentUser} />
+              <RandomAuthors />
+            </Route>
           </div>
         </div>
       </div>
