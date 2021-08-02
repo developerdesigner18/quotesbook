@@ -69,6 +69,7 @@ export default function Signin() {
             displayName: fullName,
             photoURL: cred.user.photoURL,
             favorited: 0,
+            starred: 0,
             created: 0,
             uid: cred.user.uid,
           })

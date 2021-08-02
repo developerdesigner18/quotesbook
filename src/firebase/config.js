@@ -27,6 +27,8 @@ const auth = firebase.auth();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 const facebookProvider = new firebase.auth.FacebookAuthProvider();
 const timeStamp = firebase.firestore.FieldValue.serverTimestamp();
+const increment = firebase.firestore.FieldValue.increment(1);
+const decrement = firebase.firestore.FieldValue.increment(-1);
 
 export {
   db,
@@ -35,4 +37,6 @@ export {
   googleProvider,
   facebookProvider,
   timeStamp,
+  increment,
+  decrement,
 };

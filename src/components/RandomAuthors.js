@@ -61,7 +61,12 @@ export default function RandomAuthors() {
     <Card className={classes.root}>
       {randomAuthors.map((randomAuthor) => (
         <CardContent
-          style={{ display: "flex", alignItems: "center", padding: "10px" }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            padding: "10px",
+            borderBottom: "1px solid rgba(128, 128, 128, 0.1)",
+          }}
         >
           <Avatar aria-label="recipe" className={classes.avatar}>
             {randomAuthor.photoURL ? (

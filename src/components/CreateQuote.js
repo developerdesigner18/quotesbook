@@ -18,7 +18,7 @@ import {
 } from "@material-ui/core";
 
 import "./CreateQuote.css";
-import { db, firebaseStorage, timeStamp } from "../firebase/config";
+import { db, firebaseStorage, increment, timeStamp } from "../firebase/config";
 import firebase from "firebase";
 import { Delete } from "@material-ui/icons";
 
@@ -55,84 +55,101 @@ export default function CreateQuote({ currentUser }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [progress, setProgress] = useState(0);
 
+  // onChange image input
+  const handleImageChange = (e) => {
+    let selected = e.target.files[0];
+    if (selected && imageTypes.includes(selected.type)) {
+      setImageError(null);
+      setSelectedImage(selected);
+    } else {
+      setSelectedImage(null);
+      setImageError("Please select a valid image file(png, jpeg).");
+    }
+  };
+
   // Audio Upload
-  // const audioTypes = ["audio/mp3"];
-  // const [audioError, setAudioError] = useState(null);
-  // const [selectedAudio, setSelectedAudio] = useState(null);
+  const audioTypes = ["audio/mpeg"];
+  const [audioError, setAudioError] = useState(null);
+  const [selectedAudio, setSelectedAudio] = useState(null);
 
-  // Firebase db
-  let quotesRef = db.collection("quotes");
-  let usersRef = db.collection("users").doc(currentUser.uid);
-  const increment = firebase.firestore.FieldValue.increment(1);
+  // onChange audio input
+  const handleAudioChange = (e) => {
+    let selected = e.target.files[0];
+    if (selected && audioTypes.includes(selected.type)) {
+      setAudioError(null);
+      setSelectedAudio(selected);
+    } else {
+      setSelectedAudio(null);
+      setAudioError("Please select a valid audio file(mpeg).");
+    }
+  };
 
-  const handleQuoteSubmit = () => {
-    console.log("object");
-    if (!quote.length && !selectedImage) {
+  // Get image url from firebase storage
+  async function getImageUrl() {
+    return new Promise((resolve, reject) => {
+      const imageStorageRef = firebaseStorage.ref(
+        `images/${Date.now() + selectedImage?.name}`
+      );
+      // Put image to the storage
+      selectedImage &&
+        imageStorageRef.put(selectedImage).then(() => {
+          // Get the image download url
+          imageStorageRef.getDownloadURL().then((url) => {
+            resolve(url);
+          });
+        });
+    });
+  }
+
+  // Get audio url from firebase storage
+  async function getAudioUrl() {
+    return new Promise((resolve, reject) => {
+      const audioStorageRef = firebaseStorage.ref(
+        `audio/${Date.now() + selectedAudio?.name}`
+      );
+      audioStorageRef.put(selectedAudio).then(() => {
+        // Get the audio download url
+        audioStorageRef.getDownloadURL().then((url) => {
+          // Store all submitted datas to the database
+          resolve(url);
+        });
+      });
+    });
+  }
+
+  const handleQuoteSubmit = async () => {
+    if (!quote.length && !selectedImage && !selectedAudio) {
       return alert("Please quote something!");
     }
 
-    // Upload to Firebase Storage
+    if (quote || selectedImage || selectedAudio) {
+      // Firebase db refs
+      const quotesRef = db.collection("quotes");
+      const usersRef = db.collection("users").doc(currentUser.uid);
 
-    // Image
-    if (selectedImage && imageTypes.includes(selectedImage.type)) {
-      setImageError("");
-      const imageStoreRef = firebaseStorage.ref(
-        `images/${Date.now() + selectedImage.name}`
-      );
-      imageStoreRef.put(selectedImage).then(() => {
-        // Get the url
-        imageStoreRef.getDownloadURL().then((url) => {
-          // Store to the Firestore Database
-          quotesRef.add({
-            uid: currentUser.uid,
-            displayName: currentUser.displayName,
-            photoURL: currentUser.photoURL,
-            text: quote,
-            image: url,
-            favorites: 0,
-            stars: 0,
-            createdAt: timeStamp,
-          });
-          usersRef.update({
-            created: increment,
-          });
-        });
+      // Put all datas to the firestore
+      quotesRef.add({
+        uid: currentUser.uid,
+        displayName: currentUser.displayName,
+        photoURL: currentUser.photoURL,
+        text: quote ? quote : "",
+        image: selectedImage ? await getImageUrl() : null,
+        audio: selectedAudio ? await getAudioUrl() : null,
+        favorites: 0,
+        stars: 0,
+        createdAt: timeStamp,
       });
-    } else {
-      if (selectedImage) {
-        setImageError("Please select an image file (png or jpg).");
-      } else {
-        quotesRef.add({
-          uid: currentUser.uid,
-          displayName: currentUser.displayName,
-          photoURL: currentUser.photoURL,
-          text: quote,
-          image: null,
-          favorites: 0,
-          stars: 0,
-          createdAt: timeStamp,
-        });
-        usersRef.update({
-          created: increment,
-        });
-      }
+      usersRef.update({
+        created: increment,
+      });
     }
 
-    // Audio
-    // if (selectedAudio && audioTypes.includes(selectedAudio.type)) {
-    //   setAudioError("");
-    //   const audioStoreRef = firebaseStorage.ref(
-    //     `audio/${Date.now() + selectedAudio.name}`
-    //   );
-    //   audioStoreRef.put(selectedAudio).then(() => {
-    //     audioStoreRef.getDownloadURL().then((url) => {});
-    //   });
-    // }
-
+    // Reset all states after submit a quote
     setQuote("");
     setSelectedImage(null);
-    // setSelectedAudio(null);
+    setImageError(null);
     setProgress(0);
+    setSelectedAudio(null);
     setExpanded(!expanded);
   };
 
@@ -205,13 +222,10 @@ export default function CreateQuote({ currentUser }) {
               rows="5"
               placeholder="What do you want to quote about?"
             ></textarea>
-            <div>
+            <div style={{ display: "flex" }}>
               <label>
                 <ImageIcon className={classes.icon} />
-                <input
-                  type="file"
-                  onChange={(e) => setSelectedImage(e.target.files[0])}
-                />
+                <input type="file" onChange={handleImageChange} />
               </label>
               <div onClick={() => setSelectedImage(null)}>
                 {selectedImage && (
@@ -222,28 +236,21 @@ export default function CreateQuote({ currentUser }) {
                 )}
               </div>
               {imageError && <div>{imageError}</div>}
-              {/* 
+
               <label>
                 <AudiotrackIcon className={classes.icon} />
-                <input
-                  type="file"
-                  onChange={(e) => {
-                    setSelectedAudio(e.target.files[0]);
-                  }}
-                />
+                <input type="file" onChange={handleAudioChange} />
               </label>
 
               <div onClick={() => setSelectedAudio(null)}>
                 {selectedAudio && (
                   <Button>
-                    <div>{selectedAudio?.name}</div>
+                    <div>{selectedAudio.name}</div>
                     <Delete />
                   </Button>
                 )}
               </div>
-
               {audioError && <div>{audioError}</div>}
-               */}
             </div>
             <label>
               <div
@@ -253,12 +260,13 @@ export default function CreateQuote({ currentUser }) {
                   cursor: "pointer",
                 }}
               >
-                <input type="submit" value="Quote" />
+                <input type="submit" value="Quote" style={{ padding: "0" }} />
                 <Button
                   onClick={handleQuoteSubmit}
                   variant="contained"
                   color="primary"
                   size="small"
+                  style={{ marginTop: "8px" }}
                 >
                   <AddIcon className={classes.icon} />
                   Quote

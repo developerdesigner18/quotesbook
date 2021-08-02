@@ -93,15 +93,14 @@ export default function Signin() {
             (existingUser) => existingUser.uid === cred.user.uid
           )
         ) {
-          console.log("exists");
           history.push("/");
         } else {
-          console.log("does not exist");
           db.collection("users")
             .doc(cred.user.uid)
             .set({
               displayName: cred.user.displayName,
               photoURL: cred.user.photoURL,
+              favorited: 0,
               starred: 0,
               created: 0,
               uid: cred.user.uid,
@@ -132,6 +131,7 @@ export default function Signin() {
             .set({
               displayName: cred.user.displayName,
               photoURL: cred.user.photoURL,
+              favorited: 0,
               starred: 0,
               created: 0,
               uid: cred.user.uid,

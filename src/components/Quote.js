@@ -16,7 +16,7 @@ import { CardMedia } from "@material-ui/core";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Fade from "@material-ui/core/Fade";
-import { db, firebaseStorage } from "../firebase/config";
+import { db, decrement, firebaseStorage, increment } from "../firebase/config";
 import firebase from "firebase";
 
 const useStyles = makeStyles((theme) => ({
@@ -51,7 +51,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Quote({ quote, quoteImage, quoteId, currentUser }) {
+export default function Quote({
+  quote,
+  quoteImage,
+  quoteId,
+  quoteCreatedAt,
+  currentUser,
+}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
@@ -101,9 +107,6 @@ export default function Quote({ quote, quoteImage, quoteId, currentUser }) {
   // console.log(isFavorited);
 
   const handleFavoriteClick = (currentUser) => {
-    const increment = firebase.firestore.FieldValue.increment(1);
-    const decrement = firebase.firestore.FieldValue.increment(-1);
-
     if (!isFavorited) {
       // User's favorited
       db.collection("users").doc(currentUser.uid).update({
@@ -250,7 +253,9 @@ export default function Quote({ quote, quoteImage, quoteId, currentUser }) {
           ) : null
         }
         title={quote.displayName}
-        // subheader={new Date(quote.t.nanoseconds)}      <= Need to worrk on this later.
+        // subheader={new Date(quote.createdAt._seconds * 1000).toLocaleDateString(
+        //   "en-US"
+        // )}
       />
 
       <CardContent>
