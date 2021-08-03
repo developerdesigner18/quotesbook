@@ -11,6 +11,7 @@ const Quotes = ({ content, currentUser }) => {
           quote={doc}
           currentUser={currentUser}
           quoteImage={doc.image}
+          quoteAudio={doc.audio}
           quoteCreatedAt={doc.createdAt}
         />
       ))}

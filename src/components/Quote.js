@@ -54,6 +54,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Quote({
   quote,
   quoteImage,
+  quoteAudio,
   quoteId,
   quoteCreatedAt,
   currentUser,
@@ -69,7 +70,7 @@ export default function Quote({
     setAnchorEl(null);
   };
 
-  const handleDelete = (quoteId, quoteImage) => {
+  const handleDelete = (quoteId, quoteImage, quoteAudio) => {
     const quoteRef = db.collection("quotes").doc(quoteId);
 
     const decrement = firebase.firestore.FieldValue.increment(-1);
@@ -94,6 +95,17 @@ export default function Quote({
           })
           .catch((error) => {
             console.error("Error removing image: ", error);
+          });
+
+      quoteAudio &&
+        firebaseStorage
+          .refFromURL(quoteAudio)
+          .delete()
+          .then(() => {
+            console.log("Audio successfully deleted!");
+          })
+          .catch((error) => {
+            console.error("Error removing audio: ", error);
           });
 
       usersRef.update({
@@ -245,7 +257,9 @@ export default function Quote({
                 TransitionComponent={Fade}
               >
                 <MenuItem onClick={handleClose}>Edit</MenuItem>
-                <MenuItem onClick={() => handleDelete(quoteId, quoteImage)}>
+                <MenuItem
+                  onClick={() => handleDelete(quoteId, quoteImage, quoteAudio)}
+                >
                   Delete
                 </MenuItem>
               </Menu>
