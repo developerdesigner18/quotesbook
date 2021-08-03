@@ -74,7 +74,6 @@ export default function CreateQuote({ currentUser }) {
   const [audioError, setAudioError] = useState(null);
   const [selectedAudio, setSelectedAudio] = useState(null);
   const [audioProgress, setAudioProgress] = useState(0);
-  console.log("percentage uploaded", audioProgress);
 
   // onChange audio input
   const handleAudioChange = (e) => {

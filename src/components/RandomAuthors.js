@@ -43,18 +43,19 @@ export default function RandomAuthors() {
   const [randomAuthors, setRandomAuthors] = useState([]);
 
   useEffect(() => {
-    db.collection("users")
+    const unsub = db
+      .collection("users")
       .where("created", ">", 0)
       .orderBy("created", "asc")
       .limit(8)
-      .get()
-      .then((users) => {
+      .onSnapshot((users) => {
         let usersData = [];
         users.forEach((user) => {
           usersData.push(user.data());
         });
         setRandomAuthors(usersData);
       });
+    return () => unsub();
   }, []);
 
   return (

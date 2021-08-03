@@ -38,6 +38,8 @@ export default function ProfileStatus({ currentUser }) {
   const [allUsers, setAllUsers] = useState([]);
   const [fetchedUser, setFetchedUser] = useState({});
 
+  console.log(fetchedUser);
+
   useEffect(() => {
     if (allUsers.length) {
       setFetchedUser(allUsers.find((user) => user.uid == currentUser.uid));
@@ -45,8 +47,8 @@ export default function ProfileStatus({ currentUser }) {
   }, [allUsers]);
 
   useEffect(() => {
-    let usersData = [];
     db.collection("users").onSnapshot((snap) => {
+      let usersData = [];
       snap.forEach((users) => {
         usersData.push(users.data());
       });
