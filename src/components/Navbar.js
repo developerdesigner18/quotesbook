@@ -17,6 +17,7 @@ import MoreIcon from "@material-ui/icons/MoreVert";
 import { useHistory, Link as RouterLink } from "react-router-dom";
 import { auth } from "../firebase/config";
 import { Avatar } from "@material-ui/core";
+import logo from "../assets/logo.png";
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -117,7 +118,7 @@ export default function Navbar({ currentUser }) {
         setAnchorEl(null);
         handleMobileMenuClose();
         history.push("/signin");
-        // window.location.reload();
+        window.location.reload();
       })
       .catch((error) => console.log(error));
   };
@@ -205,18 +206,12 @@ export default function Navbar({ currentUser }) {
             className={classes.menuButton}
             color="inherit"
             aria-label="open drawer"
-          >
+            >
             <MenuIcon />
           </IconButton> */}
-          <Typography
-            component={RouterLink}
-            to={"/"}
-            className={classes.title}
-            variant="h6"
-            noWrap
-          >
-            Quote Book
-          </Typography>
+          <IconButton component={RouterLink} to={"/"}>
+            <img src={logo} alt="logo" width="30px" />
+          </IconButton>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
               <SearchIcon />

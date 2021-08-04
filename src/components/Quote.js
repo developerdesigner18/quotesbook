@@ -21,7 +21,7 @@ import firebase from "firebase";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minWidth: 345,
+    maxWidth: 545,
     marginBottom: "20px",
     textAlign: "left",
   },
@@ -55,6 +55,8 @@ export default function Quote({
   quote,
   quoteImage,
   quoteAudio,
+  quoteFavorites,
+  quoteStars,
   quoteId,
   quoteCreatedAt,
   currentUser,
@@ -65,7 +67,6 @@ export default function Quote({
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -114,107 +115,88 @@ export default function Quote({
     }
   };
 
-  const [favoriteCount, setFavoriteCount] = useState(0);
+  // Favorite
   const [isFavorited, setIsFavorited] = useState(false);
-  // console.log(isFavorited);
-
-  const handleFavoriteClick = (currentUser) => {
-    if (!isFavorited) {
-      // User's favorited
-      db.collection("users").doc(currentUser.uid).update({
-        favorited: increment,
-      });
-
-      // In quote favorite
-      db.collection("quotes").doc(quoteId).update({
-        favorites: increment,
-      });
-      db.collection("quotes").doc(quoteId).collection("favoriters").add({
-        displayName: currentUser.displayName,
-        uid: currentUser.uid,
-        isFavorited: isFavorited,
-      });
-    } else {
-      // User's favorited
-      db.collection("users").doc(currentUser.uid).update({
-        favorited: decrement,
-      });
-      // In quote favorite
-      db.collection("quotes").doc(quoteId).update({
-        favorites: decrement,
-      });
-      if (
-        !db
-          .collection("quotes")
-          .doc(quoteId)
-          .collection("favoriters")
-          .doc(currentUser.uid)
-      ) {
-        db.collection("quotes")
-          .doc(quoteId)
-          .collection("favoriters")
-          .doc("LA")
-          .set({
-            displayName: currentUser.displayName,
-            uid: currentUser.uid,
-            isFavorited: !isFavorited,
-          });
-      }
-    }
-    db.collection("quotes")
-      .doc(quoteId)
-      .get()
-      .then((favorites) => {
-        setFavoriteCount(favorites.data().favorites);
-      });
-  };
-
-  // Star
-  const [starCount, setStarCount] = useState(0);
-  const [isStarred, setIsStarred] = useState(false);
-
-  const handleStarClick = () => {
-    setIsStarred(!isStarred);
-
-    const increment = firebase.firestore.FieldValue.increment(1);
-    const decrement = firebase.firestore.FieldValue.increment(-1);
-
-    if (!isStarred) {
-      // User's starred
-      db.collection("users").doc(currentUser.uid).update({
-        starred: increment,
-      });
-
-      // In quote star
-      db.collection("quotes").doc(quoteId).update({
-        stars: increment,
-      });
-    } else {
-      // User's starred
-      db.collection("users").doc(currentUser.uid).update({
-        starred: decrement,
-      });
-      // In quote star
-      db.collection("quotes").doc(quoteId).update({
-        stars: decrement,
-      });
-    }
-    db.collection("quotes")
-      .doc(quoteId)
-      .get()
-      .then((stars) => {
-        setStarCount(stars.data().stars);
-      });
-  };
 
   useEffect(() => {
-    db.collection("quotes")
-      .doc(quoteId)
-      .get()
-      .then((favorites) => {
-        setFavoriteCount(favorites.data().favorites);
-      });
-  }, []);
+    if (
+      quoteFavorites.find((quoteFavorite) => quoteFavorite === currentUser.uid)
+    ) {
+      setIsFavorited(true);
+    }
+  }, [quoteFavorites]);
+
+  const handleFavoriteClick = (currentUser, quoteId, quoteFavorites) => {
+    setIsFavorited(!isFavorited);
+
+    if (!quoteFavorites.includes(currentUser.uid)) {
+      db.collection("users")
+        .doc(currentUser.uid)
+        .update({
+          favorited: firebase.firestore.FieldValue.arrayUnion(quoteId),
+        });
+
+      db.collection("quotes")
+        .doc(quoteId)
+        .update({
+          favorites: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
+        });
+    } else {
+      db.collection("users")
+        .doc(currentUser.uid)
+        .update({
+          favorited: firebase.firestore.FieldValue.arrayRemove(quoteId),
+        });
+
+      db.collection("quotes")
+        .doc(quoteId)
+        .update({
+          favorites: firebase.firestore.FieldValue.arrayRemove(currentUser.uid),
+        });
+    }
+  };
+
+  // // Star
+  // const [isStarred, setIsStarred] = useState(false);
+
+  // useEffect(() => {
+  //   if (
+  //     quoteFavorites.find((quoteStars) => quoteFavorite === currentUser.uid)
+  //   ) {
+  //     setIsStarred(true);
+  //   }
+  // }, [quoteStars]);
+
+  // const handleStarClick = (currentUser, quoteId, quoteStars) => {
+  //   setIsStarred(!isStarred);
+
+  //   if (!quoteFavorites.includes(currentUser.uid)) {
+  //     db.collection("users")
+  //       .doc(currentUser.uid)
+  //       .update({
+  //         favorited: firebase.firestore.FieldValue.arrayUnion(quoteId),
+  //       });
+
+  //     db.collection("quotes")
+  //       .doc(quoteId)
+  //       .update({
+  //         favorites: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
+  //       });
+  //   } else {
+  //     db.collection("users")
+  //       .doc(currentUser.uid)
+  //       .update({
+  //         favorited: firebase.firestore.FieldValue.arrayRemove(quoteId),
+  //       });
+
+  //     db.collection("quotes")
+  //       .doc(quoteId)
+  //       .update({
+  //         favorites: firebase.firestore.FieldValue.arrayRemove(currentUser.uid),
+  //       });
+  //   }
+
+  // };
 
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
@@ -225,6 +207,7 @@ export default function Quote({
 
   return (
     <Card className={classes.root}>
+      {console.log("is faviote value ", isFavorited)}
       <CardHeader
         avatar={
           <Avatar aria-label="recipe" className={classes.avatar}>
@@ -266,7 +249,9 @@ export default function Quote({
             </IconButton>
           ) : null
         }
-        title={quote.displayName}
+        title={`${quote.displayName.split(" ")[0]} ${quote.displayName
+          .split(" ")[1]
+          .charAt(0)}.`}
         // subheader={new Date(quote.createdAt._seconds * 1000).toLocaleDateString(
         //   "en-US"
         // )}
@@ -284,16 +269,21 @@ export default function Quote({
       )}
       <CardActions disableSpacing>
         <IconButton
-          onClick={() => handleFavoriteClick(currentUser)}
+          onClick={() =>
+            handleFavoriteClick(currentUser, quoteId, quoteFavorites)
+          }
           aria-label="add to favorites"
         >
-          <FavoriteIcon className={isFavorited && classes.favorited} />
+          <FavoriteIcon style={{ color: isFavorited ? "red" : "" }} />
         </IconButton>
-        <span>{favoriteCount}</span>
-        <IconButton onClick={handleStarClick} aria-label="add to favorites">
-          <StarIcon className={isStarred && classes.starred} />
+        <span>{quoteFavorites?.length}</span>
+        <IconButton
+          // onClick={() => handleStarClick(quoteId)}
+          aria-label="add to favorites"
+        >
+          {/* <StarIcon className={isStarred && classes.starred} /> */}
         </IconButton>
-        <span>{starCount}</span>
+        {/* <span>{starCount}</span> */}
         <IconButton aria-label="share">
           <ShareIcon />
         </IconButton>

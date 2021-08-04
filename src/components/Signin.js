@@ -16,19 +16,6 @@ import { auth, db, facebookProvider, googleProvider } from "../firebase/config";
 import FacebookIcon from "@material-ui/icons/Facebook";
 import { MailOutline } from "@material-ui/icons";
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -101,9 +88,9 @@ export default function Signin() {
             .set({
               displayName: cred.user.displayName,
               photoURL: cred.user.photoURL,
-              favorited: 0,
-              starred: 0,
-              created: 0,
+              favorited: [],
+              starred: [],
+              created: [],
               uid: cred.user.uid,
             })
             .then(() => {
@@ -132,9 +119,9 @@ export default function Signin() {
             .set({
               displayName: cred.user.displayName,
               photoURL: cred.user.photoURL,
-              favorited: 0,
-              starred: 0,
-              created: 0,
+              favorited: [],
+              starred: [],
+              created: [],
               uid: cred.user.uid,
             })
             .then(() => {
@@ -219,9 +206,6 @@ export default function Signin() {
           </Grid>
         </form>
       </div>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
     </Container>
   );
 }

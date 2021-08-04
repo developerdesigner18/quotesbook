@@ -6,8 +6,6 @@ import ImageIcon from "@material-ui/icons/Image";
 import AudiotrackIcon from "@material-ui/icons/Audiotrack";
 import AddIcon from "@material-ui/icons/Add";
 import clsx from "clsx";
-import CircularProgressWithLabel from "../materialComponents/ProgressCircle";
-import SelectCatagory from "../materialComponents/SelectCatagory";
 
 import {
   Avatar,
@@ -21,7 +19,6 @@ import {
 
 import "./CreateQuote.css";
 import { db, firebaseStorage, increment, timeStamp } from "../firebase/config";
-import firebase from "firebase";
 import { Delete } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
@@ -35,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
   },
   card: {
-    width: "345px",
+    width: "545px",
     marginBottom: "20px",
   },
 }));
@@ -157,7 +154,7 @@ export default function CreateQuote({ currentUser }) {
         text: quote ? quote : "",
         image: selectedImage ? await getImageUrl() : null,
         audio: selectedAudio ? await getAudioUrl() : null,
-        favorites: 0,
+        favorites: [],
         stars: 0,
         createdAt: timeStamp,
       });
@@ -208,7 +205,6 @@ export default function CreateQuote({ currentUser }) {
               </Avatar>
             }
           />
-          <p>Create your Quote</p>
           <IconButton
             className={clsx(classes.expand, {
               [classes.expandOpen]: expanded,
@@ -217,6 +213,7 @@ export default function CreateQuote({ currentUser }) {
             aria-expanded={expanded}
             aria-label="show more"
           >
+            <span>Create your Quote</span>
             <CreateIcon />
           </IconButton>
         </div>
@@ -309,7 +306,7 @@ export default function CreateQuote({ currentUser }) {
                   style={{ marginTop: "8px" }}
                 >
                   <AddIcon className={classes.icon} />
-                  Quote
+                  Post Quote
                 </Button>
               </div>
             </label>

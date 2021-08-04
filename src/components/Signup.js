@@ -15,19 +15,6 @@ import Container from "@material-ui/core/Container";
 import { useHistory, Link as RouterLink } from "react-router-dom";
 import { auth, db } from "../firebase/config";
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -68,9 +55,9 @@ export default function Signin() {
           .set({
             displayName: fullName,
             photoURL: cred.user.photoURL,
-            favorited: 0,
-            starred: 0,
-            created: 0,
+            favorited: [],
+            starred: [],
+            created: [],
             uid: cred.user.uid,
           })
           .then(() => {
@@ -155,9 +142,6 @@ export default function Signin() {
           </Grid>
         </form>
       </div>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
     </Container>
   );
 }

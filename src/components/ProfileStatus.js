@@ -15,7 +15,7 @@ import { db } from "../firebase/config";
 
 const useStyles = makeStyles({
   root: {
-    maxWidth: 200,
+    width: 300,
   },
   bullet: {
     display: "inline-block",
@@ -35,26 +35,24 @@ export default function ProfileStatus({ currentUser }) {
   const classes = useStyles();
 
   // Fetched Users' collection
-  const [allUsers, setAllUsers] = useState([]);
-  const [fetchedUser, setFetchedUser] = useState({});
+  // const [allUsers, setAllUsers] = useState([]);
+  // const [fetchedUser, setFetchedUser] = useState({});
 
-  console.log(fetchedUser);
+  // useEffect(() => {
+  //   if (allUsers.length) {
+  //     setFetchedUser(allUsers.find((user) => user.uid == currentUser.uid));
+  //   }
+  // }, [allUsers]);
 
-  useEffect(() => {
-    if (allUsers.length) {
-      setFetchedUser(allUsers.find((user) => user.uid == currentUser.uid));
-    }
-  }, [allUsers]);
-
-  useEffect(() => {
-    db.collection("users").onSnapshot((snap) => {
-      let usersData = [];
-      snap.forEach((users) => {
-        usersData.push(users.data());
-      });
-      setAllUsers(usersData);
-    });
-  }, []);
+  // useEffect(() => {
+  //   db.collection("users").onSnapshot((snap) => {
+  //     let usersData = [];
+  //     snap.forEach((users) => {
+  //       usersData.push(users.data().starred);
+  //     });
+  //     setAllUsers(usersData);
+  //   });
+  // }, []);
 
   return currentUser.uid ? (
     <Card className={classes.root}>
@@ -92,7 +90,7 @@ export default function ProfileStatus({ currentUser }) {
             }}
           >
             <CreateIcon />
-            <span>{fetchedUser?.created}</span>
+            <span>{/* {fetchedUser?.created} */}</span>
           </div>
           <div
             style={{
@@ -102,15 +100,15 @@ export default function ProfileStatus({ currentUser }) {
             }}
           >
             <StarBorderIcon />
-            <span>1001</span>
+            <span>{111}</span>
           </div>
         </div>
       </CardContent>
-      <CardActions>
+      {/* <CardActions>
         <Button variant="contained" color="primary" size="small">
           Share
         </Button>
-      </CardActions>
+      </CardActions> */}
     </Card>
   ) : (
     <Card className={classes.root}>
