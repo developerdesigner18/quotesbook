@@ -22,7 +22,6 @@ const Quotes = ({ currentUser }) => {
 
   return (
     <div>
-      {/* {console.log("component called", content.length)} */}
       {content.map((doc) => (
         <Quote
           key={doc.id}

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import firebase from "firebase";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CreateIcon from "@material-ui/icons/Create";
@@ -150,20 +151,23 @@ export default function CreateQuote({ currentUser }) {
       const usersRef = db.collection("users").doc(currentUser.uid);
 
       // Put all datas to the firestore
-      quotesRef.add({
-        uid: currentUser.uid,
-        displayName: currentUser.displayName,
-        photoURL: currentUser.photoURL,
-        text: quote ? quote : "",
-        image: selectedImage ? await getImageUrl() : null,
-        audio: selectedAudio ? await getAudioUrl() : null,
-        favorites: [],
-        stars: [],
-        createdAt: timeStamp,
-      });
-      usersRef.update({
-        created: increment,
-      });
+      quotesRef
+        .add({
+          uid: currentUser.uid,
+          displayName: currentUser.displayName,
+          photoURL: currentUser.photoURL,
+          text: quote ? quote : "",
+          image: selectedImage ? await getImageUrl() : null,
+          audio: selectedAudio ? await getAudioUrl() : null,
+          favorites: [],
+          stars: [],
+          createdAt: timeStamp,
+        })
+        .then((docRef) =>
+          usersRef.update({
+            created: firebase.firestore.FieldValue.arrayUnion(docRef.id),
+          })
+        );
     }
 
     // Reset all states after submit a quote

@@ -16,7 +16,7 @@ import { CardMedia } from "@material-ui/core";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Fade from "@material-ui/core/Fade";
-import { db, decrement, firebaseStorage, increment } from "../firebase/config";
+import { db, firebaseStorage } from "../firebase/config";
 import firebase from "firebase";
 import { useHistory } from "react-router-dom";
 
@@ -62,7 +62,6 @@ export default function Quote({
   quoteFavorites,
   quoteStars,
   quoteId,
-  quoteCreatedAt,
   currentUser,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -88,8 +87,6 @@ export default function Quote({
   const handleDelete = (quoteId, quoteImage, quoteAudio) => {
     const quoteRef = db.collection("quotes").doc(quoteId);
     const usersRef = db.collection("users").doc(currentUser.uid);
-
-    const decrement = firebase.firestore.FieldValue.increment(-1);
 
     if (window.confirm("Are you sure to delete this quote?")) {
       quoteRef
@@ -124,7 +121,7 @@ export default function Quote({
           });
 
       usersRef.update({
-        created: decrement,
+        created: firebase.firestore.FieldValue.arrayRemove(quoteId),
       });
     }
   };
