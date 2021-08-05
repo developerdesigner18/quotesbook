@@ -15,7 +15,7 @@ import { db } from "../firebase/config";
 
 const useStyles = makeStyles({
   root: {
-    width: 300,
+    maxWidth: 300,
   },
   bullet: {
     display: "inline-block",
@@ -31,28 +31,22 @@ const useStyles = makeStyles({
 });
 
 export default function ProfileStatus({ currentUser }) {
-  // console.log("logged in user", currentUser.uid);
   const classes = useStyles();
 
-  // Fetched Users' collection
-  // const [allUsers, setAllUsers] = useState([]);
-  // const [fetchedUser, setFetchedUser] = useState({});
+  const [created, setCreated] = useState([]);
+  const [starred, setStarred] = useState([]);
 
-  // useEffect(() => {
-  //   if (allUsers.length) {
-  //     setFetchedUser(allUsers.find((user) => user.uid == currentUser.uid));
-  //   }
-  // }, [allUsers]);
+  useEffect(() => {
+    if (currentUser.uid) {
+      db.collection("users")
+        .doc(currentUser.uid)
+        .onSnapshot((snap) => setCreated(snap.data().created));
 
-  // useEffect(() => {
-  //   db.collection("users").onSnapshot((snap) => {
-  //     let usersData = [];
-  //     snap.forEach((users) => {
-  //       usersData.push(users.data().starred);
-  //     });
-  //     setAllUsers(usersData);
-  //   });
-  // }, []);
+      db.collection("users")
+        .doc(currentUser.uid)
+        .onSnapshot((snap) => setStarred(snap.data().starred));
+    }
+  }, [currentUser.uid]);
 
   return currentUser.uid ? (
     <Card className={classes.root}>
@@ -90,7 +84,7 @@ export default function ProfileStatus({ currentUser }) {
             }}
           >
             <CreateIcon />
-            <span>{/* {fetchedUser?.created} */}</span>
+            <span>{created?.length}</span>
           </div>
           <div
             style={{
@@ -100,7 +94,7 @@ export default function ProfileStatus({ currentUser }) {
             }}
           >
             <StarBorderIcon />
-            <span>{111}</span>
+            <span>{starred?.length}</span>
           </div>
         </div>
       </CardContent>

@@ -18,10 +18,14 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Fade from "@material-ui/core/Fade";
 import { db, decrement, firebaseStorage, increment } from "../firebase/config";
 import firebase from "firebase";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 545,
+    [theme.breakpoints.down("sm")]: {
+      maxWidth: 340,
+    },
     marginBottom: "20px",
     textAlign: "left",
   },
@@ -64,6 +68,8 @@ export default function Quote({
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
+  const history = useHistory();
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -71,11 +77,19 @@ export default function Quote({
     setAnchorEl(null);
   };
 
+  const classes = useStyles();
+  const [expanded, setExpanded] = React.useState(false);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
+  // Delete Quote from firestore & files from firebase storage
   const handleDelete = (quoteId, quoteImage, quoteAudio) => {
     const quoteRef = db.collection("quotes").doc(quoteId);
+    const usersRef = db.collection("users").doc(currentUser.uid);
 
     const decrement = firebase.firestore.FieldValue.increment(-1);
-    let usersRef = db.collection("users").doc(currentUser.uid);
 
     if (window.confirm("Are you sure to delete this quote?")) {
       quoteRef
@@ -117,7 +131,6 @@ export default function Quote({
 
   // Favorite
   const [isFavorited, setIsFavorited] = useState(false);
-
   useEffect(() => {
     if (
       quoteFavorites.find((quoteFavorite) => quoteFavorite === currentUser.uid)
@@ -156,58 +169,47 @@ export default function Quote({
     }
   };
 
-  // // Star
-  // const [isStarred, setIsStarred] = useState(false);
+  // Star
+  const [isStarred, setIsStarred] = useState(false);
 
-  // useEffect(() => {
-  //   if (
-  //     quoteFavorites.find((quoteStars) => quoteFavorite === currentUser.uid)
-  //   ) {
-  //     setIsStarred(true);
-  //   }
-  // }, [quoteStars]);
+  useEffect(() => {
+    if (quoteStars.find((quoteStar) => quoteStar === currentUser.uid)) {
+      setIsStarred(true);
+    }
+  }, [quoteStars]);
 
-  // const handleStarClick = (currentUser, quoteId, quoteStars) => {
-  //   setIsStarred(!isStarred);
+  const handleStarClick = (currentUser, quoteId, quoteStars) => {
+    setIsStarred(!isStarred);
 
-  //   if (!quoteFavorites.includes(currentUser.uid)) {
-  //     db.collection("users")
-  //       .doc(currentUser.uid)
-  //       .update({
-  //         favorited: firebase.firestore.FieldValue.arrayUnion(quoteId),
-  //       });
+    if (!quoteStars.includes(currentUser.uid)) {
+      db.collection("users")
+        .doc(currentUser.uid)
+        .update({
+          starred: firebase.firestore.FieldValue.arrayUnion(quoteId),
+        });
 
-  //     db.collection("quotes")
-  //       .doc(quoteId)
-  //       .update({
-  //         favorites: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
-  //       });
-  //   } else {
-  //     db.collection("users")
-  //       .doc(currentUser.uid)
-  //       .update({
-  //         favorited: firebase.firestore.FieldValue.arrayRemove(quoteId),
-  //       });
+      db.collection("quotes")
+        .doc(quoteId)
+        .update({
+          stars: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
+        });
+    } else {
+      db.collection("users")
+        .doc(currentUser.uid)
+        .update({
+          starred: firebase.firestore.FieldValue.arrayRemove(quoteId),
+        });
 
-  //     db.collection("quotes")
-  //       .doc(quoteId)
-  //       .update({
-  //         favorites: firebase.firestore.FieldValue.arrayRemove(currentUser.uid),
-  //       });
-  //   }
-
-  // };
-
-  const classes = useStyles();
-  const [expanded, setExpanded] = React.useState(false);
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
+      db.collection("quotes")
+        .doc(quoteId)
+        .update({
+          stars: firebase.firestore.FieldValue.arrayRemove(currentUser.uid),
+        });
+    }
   };
 
   return (
     <Card className={classes.root}>
-      {console.log("is faviote value ", isFavorited)}
       <CardHeader
         avatar={
           <Avatar aria-label="recipe" className={classes.avatar}>
@@ -274,16 +276,16 @@ export default function Quote({
           }
           aria-label="add to favorites"
         >
-          <FavoriteIcon style={{ color: isFavorited ? "red" : "" }} />
+          <FavoriteIcon className={isFavorited && classes.favorited} />
         </IconButton>
         <span>{quoteFavorites?.length}</span>
         <IconButton
-          // onClick={() => handleStarClick(quoteId)}
+          onClick={() => handleStarClick(currentUser, quoteId, quoteStars)}
           aria-label="add to favorites"
         >
-          {/* <StarIcon className={isStarred && classes.starred} /> */}
+          <StarIcon className={isStarred && classes.starred} />
         </IconButton>
-        {/* <span>{starCount}</span> */}
+        <span>{quoteStars?.length}</span>
         <IconButton aria-label="share">
           <ShareIcon />
         </IconButton>

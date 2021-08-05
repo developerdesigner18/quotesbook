@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
+import {
+  Switch,
+  Route,
+  BrowserRouter as Router,
+  Redirect,
+} from "react-router-dom";
 import { db, auth } from "./firebase/config";
 import "./App.css";
 
@@ -18,8 +23,6 @@ function App() {
     photoURL: "",
   });
 
-  const [content, setContent] = useState([]);
-
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
@@ -30,20 +33,6 @@ function App() {
         });
       }
     });
-  }, []);
-
-  useEffect(() => {
-    const unsub = db
-      .collection("quotes")
-      .orderBy("createdAt", "desc")
-      .onSnapshot((snap) => {
-        let documents = [];
-        snap.forEach((doc) => {
-          documents.push({ ...doc.data(), id: doc.id });
-        });
-        setContent(documents);
-      });
-    return () => unsub();
   }, []);
 
   return (
@@ -60,13 +49,13 @@ function App() {
           <div className="app__left">
             {currentUser.uid && <CreateQuote currentUser={currentUser} />}
             <Route exact path="/">
-              <Quotes content={content} currentUser={currentUser} />
+              <Quotes currentUser={currentUser} />
             </Route>
           </div>
           <div className="app__right">
             <Route exact path="/">
               <ProfileStatus currentUser={currentUser} />
-              <RandomAuthors />
+              {/* <RandomAuthors /> */}
             </Route>
           </div>
         </div>

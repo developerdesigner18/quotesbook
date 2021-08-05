@@ -49,7 +49,7 @@ export default function Signin() {
   const handleOnSubmit = (e) => {
     e.preventDefault();
     auth.signInWithEmailAndPassword(email, password).then((cred) => {
-      history.push("/quotes");
+      history.push("/");
     });
   };
 

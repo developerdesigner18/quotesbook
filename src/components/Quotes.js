@@ -1,10 +1,28 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { withRouter } from "react-router-dom";
+import { db } from "../firebase/config";
 import Quote from "./Quote";
 
-const Quotes = ({ content, currentUser }) => {
+const Quotes = ({ currentUser }) => {
+  const [content, setContent] = useState([]);
+
+  useEffect(() => {
+    const unsub = db
+      .collection("quotes")
+      .orderBy("createdAt", "desc")
+      .onSnapshot((snap) => {
+        let documents = [];
+        snap.forEach((doc) => {
+          documents.push({ ...doc.data(), id: doc.id });
+        });
+        setContent(documents);
+      });
+    return () => unsub();
+  }, []);
+
   return (
     <div>
-      {console.log("component called", content.length)}
+      {/* {console.log("component called", content.length)} */}
       {content.map((doc) => (
         <Quote
           key={doc.id}
@@ -22,4 +40,4 @@ const Quotes = ({ content, currentUser }) => {
   );
 };
 
-export default Quotes;
+export default withRouter(Quotes);

@@ -15,6 +15,7 @@ import {
   CircularProgress,
   Collapse,
   IconButton,
+  Typography,
 } from "@material-ui/core";
 
 import "./CreateQuote.css";
@@ -23,6 +24,9 @@ import { Delete } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    [theme.breakpoints.down("sm")]: {
+      maxWidth: 340,
+    },
     "& > *": {
       margin: theme.spacing(1),
       width: "25ch",
@@ -32,7 +36,6 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
   },
   card: {
-    width: "545px",
     marginBottom: "20px",
   },
 }));
@@ -155,7 +158,7 @@ export default function CreateQuote({ currentUser }) {
         image: selectedImage ? await getImageUrl() : null,
         audio: selectedAudio ? await getAudioUrl() : null,
         favorites: [],
-        stars: 0,
+        stars: [],
         createdAt: timeStamp,
       });
       usersRef.update({
@@ -213,7 +216,7 @@ export default function CreateQuote({ currentUser }) {
             aria-expanded={expanded}
             aria-label="show more"
           >
-            <span>Create your Quote</span>
+            <Typography variant="h6">Create your Quote</Typography>
             <CreateIcon />
           </IconButton>
         </div>
