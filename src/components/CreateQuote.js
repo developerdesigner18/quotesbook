@@ -156,9 +156,9 @@ export default function CreateQuote({ currentUser }) {
           image: selectedImage ? await getImageUrl() : null,
           audio: selectedAudio ? await getAudioUrl() : null,
           favorites: [],
-          favoritesCount: increment,
+          favoritesCount: 0,
           stars: [],
-          starsCount: increment,
+          starsCount: 0,
           createdAt: timeStamp,
         })
         .then((ref) =>
@@ -167,8 +167,8 @@ export default function CreateQuote({ currentUser }) {
             .doc(currentUser.uid)
             .update({
               created: firebase.firestore.FieldValue.arrayUnion(ref.id),
-              favoritedCount: increment,
-              starredCount: increment,
+              favoritedCount: 0,
+              starredCount: 0,
               createdCount: increment,
             })
         );

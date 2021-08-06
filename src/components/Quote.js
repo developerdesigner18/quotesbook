@@ -122,6 +122,7 @@ export default function Quote({
         .doc(currentUser.uid)
         .update({
           created: firebase.firestore.FieldValue.arrayRemove(quoteId),
+          createdCount: decrement,
         });
     }
   };

@@ -11,6 +11,7 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import Quotes from "./components/Quotes";
 import Signin from "./components/Signin";
+import ForgotPassword from "./components/ForgotPassword";
 import Signup from "./components/Signup";
 import CreateQuote from "./components/CreateQuote";
 import ProfileStatus from "./components/ProfileStatus";
@@ -47,6 +48,9 @@ function App() {
         <Navbar currentUser={currentUser} />
         <Route exact path="/signin">
           <Signin />
+        </Route>
+        <Route exact path="/forgot-password">
+          <ForgotPassword />
         </Route>
         <Route path="/signup">
           <Signup currentUser={currentUser} />
