@@ -61,7 +61,7 @@ function App() {
           <div className="app__right">
             <Route exact path="/">
               <ProfileStatus currentUser={currentUser} />
-              {/* <RandomAuthors /> */}
+              <RandomAuthors />
             </Route>
           </div>
         </div>

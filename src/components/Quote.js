@@ -16,7 +16,7 @@ import { CardMedia } from "@material-ui/core";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Fade from "@material-ui/core/Fade";
-import { db, firebaseStorage } from "../firebase/config";
+import { db, decrement, firebaseStorage, increment } from "../firebase/config";
 import firebase from "firebase";
 import { useHistory } from "react-router-dom";
 
@@ -136,41 +136,45 @@ export default function Quote({
     }
   }, [quoteFavorites]);
 
+  // Refs
+  const userRef = db.collection("users").doc(currentUser.uid);
+  const quoteRef = db.collection("quotes").doc(quoteId);
+
   const handleFavoriteClick = (currentUser, quoteId, quoteFavorites) => {
     setIsFavorited(!isFavorited);
 
     if (!quoteFavorites.includes(currentUser.uid)) {
-      db.collection("users")
-        .doc(currentUser.uid)
+      userRef
         .update({
           favorited: firebase.firestore.FieldValue.arrayUnion(quoteId),
+          favoritedCount: increment,
         })
         .catch((error) => {
           console.error(error);
         });
 
-      db.collection("quotes")
-        .doc(quoteId)
+      quoteRef
         .update({
           favorites: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
+          favoritesCount: increment,
         })
         .catch((error) => {
           console.error(error);
         });
     } else {
-      db.collection("users")
-        .doc(currentUser.uid)
+      userRef
         .update({
           favorited: firebase.firestore.FieldValue.arrayRemove(quoteId),
+          favoritedCount: decrement,
         })
         .catch((error) => {
           console.error(error);
         });
 
-      db.collection("quotes")
-        .doc(quoteId)
+      quoteRef
         .update({
           favorites: firebase.firestore.FieldValue.arrayRemove(currentUser.uid),
+          favoritesCount: decrement,
         })
         .catch((error) => {
           console.error(error);
@@ -191,37 +195,37 @@ export default function Quote({
     setIsStarred(!isStarred);
 
     if (!quoteStars.includes(currentUser.uid)) {
-      db.collection("users")
-        .doc(currentUser.uid)
+      userRef
         .update({
           starred: firebase.firestore.FieldValue.arrayUnion(quoteId),
+          starredCount: increment,
         })
         .catch((error) => {
           console.error(error);
         });
 
-      db.collection("quotes")
-        .doc(quoteId)
+      quoteRef
         .update({
           stars: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
+          starsCount: increment,
         })
         .catch((error) => {
           console.error(error);
         });
     } else {
-      db.collection("users")
-        .doc(currentUser.uid)
+      userRef
         .update({
           starred: firebase.firestore.FieldValue.arrayRemove(quoteId),
+          starredCount: decrement,
         })
         .catch((error) => {
           console.error(error);
         });
 
-      db.collection("quotes")
-        .doc(quoteId)
+      quoteRef
         .update({
           stars: firebase.firestore.FieldValue.arrayRemove(currentUser.uid),
+          starsCount: decrement,
         })
         .catch((error) => {
           console.error(error);
@@ -272,8 +276,8 @@ export default function Quote({
             </IconButton>
           ) : null
         }
-        title={`${quote.displayName.split(" ")[0]} ${quote.displayName
-          .split(" ")[1]
+        title={`${quote.displayName?.split(" ")[0]} ${quote.displayName
+          ?.split(" ")[1]
           .charAt(0)}.`}
         // subheader={new Date(quote.createdAt._seconds * 1000).toLocaleDateString(
         //   "en-US"

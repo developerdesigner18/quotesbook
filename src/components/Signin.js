@@ -89,8 +89,11 @@ export default function Signin() {
               displayName: cred.user.displayName,
               photoURL: cred.user.photoURL,
               favorited: [],
+              favoritedCount: 0,
               starred: [],
+              starredCount: 0,
               created: [],
+              createdCount: 0,
               uid: cred.user.uid,
             })
             .then(() => {
@@ -120,8 +123,11 @@ export default function Signin() {
               displayName: cred.user.displayName,
               photoURL: cred.user.photoURL,
               favorited: [],
+              favoritedCount: 0,
               starred: [],
+              starredCount: 0,
               created: [],
+              createdCount: 0,
               uid: cred.user.uid,
             })
             .then(() => {

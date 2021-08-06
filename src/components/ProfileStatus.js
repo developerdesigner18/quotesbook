@@ -44,7 +44,7 @@ export default function ProfileStatus({ currentUser }) {
 
       db.collection("users")
         .doc(currentUser.uid)
-        .onSnapshot((snap) => setStarred(snap.data().starred));
+        .onSnapshot((snap) => setStarred(snap.data()?.starred));
     }
   }, [currentUser.uid]);
 

@@ -56,14 +56,18 @@ export default function Signin() {
             displayName: fullName,
             photoURL: cred.user.photoURL,
             favorited: [],
+            favoritedCount: 0,
             starred: [],
+            starredCount: 0,
             created: [],
+            createdCount: 0,
             uid: cred.user.uid,
           })
           .then(() => {
             cred.user.updateProfile({ displayName: fullName });
             history.push("/");
-          });
+          })
+          .catch((error) => console.log(error));
       })
       .catch((error) => alert(error.message));
   };

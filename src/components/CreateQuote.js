@@ -156,13 +156,21 @@ export default function CreateQuote({ currentUser }) {
           image: selectedImage ? await getImageUrl() : null,
           audio: selectedAudio ? await getAudioUrl() : null,
           favorites: [],
+          favoritesCount: increment,
           stars: [],
+          starsCount: increment,
           createdAt: timeStamp,
         })
         .then((ref) =>
-          db.collection("users").update({
-            created: firebase.firestore.FieldValue.arrayUnion(ref.id),
-          })
+          db
+            .collection("users")
+            .doc(currentUser.uid)
+            .update({
+              created: firebase.firestore.FieldValue.arrayUnion(ref.id),
+              favoritedCount: increment,
+              starredCount: increment,
+              createdCount: increment,
+            })
         );
     }
 

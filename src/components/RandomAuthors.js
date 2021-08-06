@@ -45,8 +45,8 @@ export default function RandomAuthors() {
   useEffect(() => {
     const unsub = db
       .collection("users")
-      .where("created", ">", 0)
-      .orderBy("created", "asc")
+      .where("createdCount", ">=", 2)
+      .orderBy("createdCount", "asc")
       .limit(8)
       .onSnapshot((users) => {
         let usersData = [];
@@ -60,6 +60,9 @@ export default function RandomAuthors() {
 
   return (
     <Card className={classes.root}>
+      <Typography variant="subtitle2" color="textSecondary" align="center">
+        Top Authors
+      </Typography>
       {randomAuthors.map((randomAuthor) => (
         <CardContent
           style={{
