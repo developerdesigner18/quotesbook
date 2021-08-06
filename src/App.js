@@ -31,6 +31,12 @@ function App() {
           displayName: user.displayName,
           photoURL: user.photoURL,
         });
+      } else {
+        setCurrentUser({
+          uid: "",
+          displayName: "",
+          photoURL: "",
+        });
       }
     });
   }, []);

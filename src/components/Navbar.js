@@ -110,6 +110,7 @@ export default function Navbar({ currentUser }) {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  // Sign out
   const history = useHistory();
   const handleSignOut = () => {
     auth
@@ -118,7 +119,6 @@ export default function Navbar({ currentUser }) {
         setAnchorEl(null);
         handleMobileMenuClose();
         history.push("/signin");
-        window.location.reload();
       })
       .catch((error) => console.log(error));
   };
@@ -201,14 +201,6 @@ export default function Navbar({ currentUser }) {
     <div className={classes.grow} style={{ marginBottom: "100px" }}>
       <AppBar position="fixed">
         <Toolbar>
-          {/* <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="open drawer"
-            >
-            <MenuIcon />
-          </IconButton> */}
           <IconButton component={RouterLink} to={"/"}>
             <img src={logo} alt="logo" width="30px" />
           </IconButton>
@@ -255,7 +247,11 @@ export default function Navbar({ currentUser }) {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <AccountCircle />
+              {!currentUser.photoURL ? (
+                <AccountCircle />
+              ) : (
+                <Avatar src={currentUser.photoURL} />
+              )}
             </IconButton>
           </div>
           <div className={classes.sectionMobile}>

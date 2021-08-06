@@ -146,12 +146,8 @@ export default function CreateQuote({ currentUser }) {
     }
 
     if (quote || selectedImage || selectedAudio) {
-      // Firebase db refs
-      const quotesRef = db.collection("quotes");
-      const usersRef = db.collection("users").doc(currentUser.uid);
-
       // Put all datas to the firestore
-      quotesRef
+      db.collection("quotes")
         .add({
           uid: currentUser.uid,
           displayName: currentUser.displayName,
@@ -163,9 +159,9 @@ export default function CreateQuote({ currentUser }) {
           stars: [],
           createdAt: timeStamp,
         })
-        .then((docRef) =>
-          usersRef.update({
-            created: firebase.firestore.FieldValue.arrayUnion(docRef.id),
+        .then((ref) =>
+          db.collection("users").update({
+            created: firebase.firestore.FieldValue.arrayUnion(ref.id),
           })
         );
     }

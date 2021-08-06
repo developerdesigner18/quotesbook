@@ -1,3 +1,4 @@
+import { Typography } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import { db } from "../firebase/config";
@@ -11,16 +12,21 @@ const Quotes = ({ currentUser }) => {
       .collection("quotes")
       .orderBy("createdAt", "desc")
       .onSnapshot((snap) => {
-        let documents = [];
-        snap.forEach((doc) => {
-          documents.push({ ...doc.data(), id: doc.id });
+        let data = [];
+        snap.docs.forEach((doc) => {
+          data.push({ ...doc.data(), id: doc.id });
         });
-        setContent(documents);
+        setContent(data);
       });
     return () => unsub();
   }, []);
 
-  return (
+  return !content.length ? (
+    <Typography align="center">
+      No quotes to display on timeline!!! <br />
+      {"Create your first quote.  :)"}
+    </Typography>
+  ) : (
     <div>
       {content.map((doc) => (
         <Quote

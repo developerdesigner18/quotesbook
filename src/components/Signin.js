@@ -60,11 +60,11 @@ export default function Signin() {
     db.collection("users")
       .get()
       .then((doc) => {
-        let fetchedUsersData = [];
+        let data = [];
         doc.forEach((doc) => {
-          fetchedUsersData.push(doc.data());
+          data.push(doc.data());
         });
-        setExistingUsers(fetchedUsersData);
+        setExistingUsers(data);
       })
       .catch((error) => {
         console.log("Error getting document:", error);

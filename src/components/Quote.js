@@ -85,11 +85,9 @@ export default function Quote({
 
   // Delete Quote from firestore & files from firebase storage
   const handleDelete = (quoteId, quoteImage, quoteAudio) => {
-    const quoteRef = db.collection("quotes").doc(quoteId);
-    const usersRef = db.collection("users").doc(currentUser.uid);
-
     if (window.confirm("Are you sure to delete this quote?")) {
-      quoteRef
+      db.collection("quotes")
+        .doc(quoteId)
         .delete()
         .then(() => {
           console.log("Document successfully deleted!");
@@ -120,9 +118,11 @@ export default function Quote({
             console.error("Error removing audio: ", error);
           });
 
-      usersRef.update({
-        created: firebase.firestore.FieldValue.arrayRemove(quoteId),
-      });
+      db.collection("users")
+        .doc(currentUser.uid)
+        .update({
+          created: firebase.firestore.FieldValue.arrayRemove(quoteId),
+        });
     }
   };
 
@@ -144,24 +144,36 @@ export default function Quote({
         .doc(currentUser.uid)
         .update({
           favorited: firebase.firestore.FieldValue.arrayUnion(quoteId),
+        })
+        .catch((error) => {
+          console.error(error);
         });
 
       db.collection("quotes")
         .doc(quoteId)
         .update({
           favorites: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
+        })
+        .catch((error) => {
+          console.error(error);
         });
     } else {
       db.collection("users")
         .doc(currentUser.uid)
         .update({
           favorited: firebase.firestore.FieldValue.arrayRemove(quoteId),
+        })
+        .catch((error) => {
+          console.error(error);
         });
 
       db.collection("quotes")
         .doc(quoteId)
         .update({
           favorites: firebase.firestore.FieldValue.arrayRemove(currentUser.uid),
+        })
+        .catch((error) => {
+          console.error(error);
         });
     }
   };
@@ -183,24 +195,36 @@ export default function Quote({
         .doc(currentUser.uid)
         .update({
           starred: firebase.firestore.FieldValue.arrayUnion(quoteId),
+        })
+        .catch((error) => {
+          console.error(error);
         });
 
       db.collection("quotes")
         .doc(quoteId)
         .update({
           stars: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
+        })
+        .catch((error) => {
+          console.error(error);
         });
     } else {
       db.collection("users")
         .doc(currentUser.uid)
         .update({
           starred: firebase.firestore.FieldValue.arrayRemove(quoteId),
+        })
+        .catch((error) => {
+          console.error(error);
         });
 
       db.collection("quotes")
         .doc(quoteId)
         .update({
           stars: firebase.firestore.FieldValue.arrayRemove(currentUser.uid),
+        })
+        .catch((error) => {
+          console.error(error);
         });
     }
   };
