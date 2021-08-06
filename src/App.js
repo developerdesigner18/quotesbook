@@ -1,11 +1,6 @@
 import { useState, useEffect } from "react";
-import {
-  Switch,
-  Route,
-  BrowserRouter as Router,
-  Redirect,
-} from "react-router-dom";
-import { db, auth } from "./firebase/config";
+import { Route, BrowserRouter as Router } from "react-router-dom";
+import { auth } from "./firebase/config";
 import "./App.css";
 
 import Navbar from "./components/Navbar";

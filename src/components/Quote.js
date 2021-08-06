@@ -137,15 +137,17 @@ export default function Quote({
     }
   }, [quoteFavorites]);
 
-  // Refs
-  const userRef = db.collection("users").doc(currentUser.uid);
-  const quoteRef = db.collection("quotes").doc(quoteId);
-
   const handleFavoriteClick = (currentUser, quoteId, quoteFavorites) => {
+    if (!currentUser.uid) {
+      alert("Please sign in to use the app!");
+      return history.push("/signin");
+    }
+
     setIsFavorited(!isFavorited);
 
     if (!quoteFavorites.includes(currentUser.uid)) {
-      userRef
+      db.collection("users")
+        .doc(currentUser.uid)
         .update({
           favorited: firebase.firestore.FieldValue.arrayUnion(quoteId),
           favoritedCount: increment,
@@ -154,7 +156,8 @@ export default function Quote({
           console.error(error);
         });
 
-      quoteRef
+      db.collection("quotes")
+        .doc(quoteId)
         .update({
           favorites: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
           favoritesCount: increment,
@@ -163,7 +166,8 @@ export default function Quote({
           console.error(error);
         });
     } else {
-      userRef
+      db.collection("users")
+        .doc(currentUser.uid)
         .update({
           favorited: firebase.firestore.FieldValue.arrayRemove(quoteId),
           favoritedCount: decrement,
@@ -172,7 +176,8 @@ export default function Quote({
           console.error(error);
         });
 
-      quoteRef
+      db.collection("quotes")
+        .doc(quoteId)
         .update({
           favorites: firebase.firestore.FieldValue.arrayRemove(currentUser.uid),
           favoritesCount: decrement,
@@ -193,10 +198,16 @@ export default function Quote({
   }, [quoteStars]);
 
   const handleStarClick = (currentUser, quoteId, quoteStars) => {
+    if (!currentUser.uid) {
+      alert("Please sign in to use the app!");
+      return history.push("/signin");
+    }
+
     setIsStarred(!isStarred);
 
     if (!quoteStars.includes(currentUser.uid)) {
-      userRef
+      db.collection("users")
+        .doc(currentUser.uid)
         .update({
           starred: firebase.firestore.FieldValue.arrayUnion(quoteId),
           starredCount: increment,
@@ -205,7 +216,8 @@ export default function Quote({
           console.error(error);
         });
 
-      quoteRef
+      db.collection("quotes")
+        .doc(quoteId)
         .update({
           stars: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
           starsCount: increment,
@@ -214,7 +226,8 @@ export default function Quote({
           console.error(error);
         });
     } else {
-      userRef
+      db.collection("users")
+        .doc(currentUser.uid)
         .update({
           starred: firebase.firestore.FieldValue.arrayRemove(quoteId),
           starredCount: decrement,
@@ -223,7 +236,8 @@ export default function Quote({
           console.error(error);
         });
 
-      quoteRef
+      db.collection("quotes")
+        .doc(quoteId)
         .update({
           stars: firebase.firestore.FieldValue.arrayRemove(currentUser.uid),
           starsCount: decrement,
