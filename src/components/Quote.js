@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Speech from "react-speech";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import Card from "@material-ui/core/Card";
@@ -50,13 +49,9 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "10px",
   },
   equalizer: {
-    display: "flex",
-    alignItems: "center",
     cursor: "pointer",
   },
 }));
-
-const style = {};
 
 export default function Quote({
   quote,
@@ -251,6 +246,19 @@ export default function Quote({
     }
   };
 
+  // Text-To-Speech
+
+  // Initialize new SpeechSynthesisUtterance object
+  let speech = new SpeechSynthesisUtterance();
+
+  const handleSpeech = () => {
+    // Set the text property with the value of the textarea
+    speech.text = quote.text;
+
+    // Start Speaking
+    window.speechSynthesis.speak(speech);
+  };
+
   return (
     <Card className={classes.root}>
       <CardHeader
@@ -303,14 +311,11 @@ export default function Quote({
       />
 
       <CardContent>
-        <div>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
           <Typography variant="body2" color="textSecondary" component="p">
             {quote.text}
           </Typography>
-          <div style={{ marginTop: "20px" }}>
-            <Speech text={quote.text} />{" "}
-            <Typography component="span">Speech</Typography>
-          </div>
+          <Equalizer className={classes.equalizer} onClick={handleSpeech} />
         </div>
         {quote.audio && (
           <audio className={classes.audio} controls src={quote.audio} />
