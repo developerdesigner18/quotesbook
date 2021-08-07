@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Speech from "react-speech";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import Card from "@material-ui/core/Card";
@@ -19,6 +20,7 @@ import Fade from "@material-ui/core/Fade";
 import { db, decrement, firebaseStorage, increment } from "../firebase/config";
 import firebase from "firebase";
 import { useHistory } from "react-router-dom";
+import { Equalizer } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,16 +46,17 @@ const useStyles = makeStyles((theme) => ({
   expandOpen: {
     transform: "rotate(180deg)",
   },
-  avatar: {
-    // backgroundColor: red[500],
+  audio: {
+    marginTop: "10px",
   },
-  favorited: {
-    color: "red",
-  },
-  starred: {
-    color: "gold",
+  equalizer: {
+    display: "flex",
+    alignItems: "center",
+    cursor: "pointer",
   },
 }));
+
+const style = {};
 
 export default function Quote({
   quote,
@@ -300,9 +303,18 @@ export default function Quote({
       />
 
       <CardContent>
-        <Typography variant="body2" color="textSecondary" component="p">
-          {quote.text}
-        </Typography>
+        <div>
+          <Typography variant="body2" color="textSecondary" component="p">
+            {quote.text}
+          </Typography>
+          <div style={{ marginTop: "20px" }}>
+            <Speech text={quote.text} />{" "}
+            <Typography component="span">Speech</Typography>
+          </div>
+        </div>
+        {quote.audio && (
+          <audio className={classes.audio} controls src={quote.audio} />
+        )}
       </CardContent>
       {quote.image ? (
         <CardMedia className={classes.media} image={quote.image} />
@@ -316,14 +328,14 @@ export default function Quote({
           }
           aria-label="add to favorites"
         >
-          <FavoriteIcon className={isFavorited && classes.favorited} />
+          <FavoriteIcon style={{ color: isFavorited && "red" }} />
         </IconButton>
         <span>{quoteFavorites?.length}</span>
         <IconButton
           onClick={() => handleStarClick(currentUser, quoteId, quoteStars)}
           aria-label="add to favorites"
         >
-          <StarIcon className={isStarred && classes.starred} />
+          <StarIcon style={{ color: isStarred && "gold" }} />
         </IconButton>
         <span>{quoteStars?.length}</span>
         <IconButton aria-label="share">
