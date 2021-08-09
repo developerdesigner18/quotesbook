@@ -61,7 +61,6 @@ export default function Quote({
   quoteStars,
   quoteId,
 }) {
-  console.log(quote.uid, quoteId, currentUser.uid);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 

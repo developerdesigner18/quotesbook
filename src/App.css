@@ -1,13 +1,18 @@
-.app__main {
+.app__main,
+.app__author {
   display: flex;
   padding: 1rem 5rem;
   justify-content: space-around;
 }
 
-.app__left {
+.app__left,
+.author__left {
   flex: 2;
+  padding: 0 20px;
 }
 
-.app_-right {
+.app_-right,
+.author__right {
   flex: 1;
+  padding: 0 20px;
 }

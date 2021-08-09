@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
-import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { Avatar } from "@material-ui/core";
-import LinkedInIcon from "@material-ui/icons/LinkedIn";
-import FacebookIcon from "@material-ui/icons/Facebook";
-import CreateIcon from "@material-ui/icons/Create";
-import StarBorderIcon from "@material-ui/icons/StarBorder";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { db } from "../firebase/config";
 
 const useStyles = makeStyles({
   root: {
-    maxWidth: 200,
+    maxWidth: 300,
     marginTop: "20px",
   },
   bullet: {
@@ -38,7 +32,6 @@ const useStyles = makeStyles({
 
 export default function RandomAuthors() {
   const classes = useStyles();
-  const bull = <span className={classes.bullet}>•</span>;
 
   const [randomAuthors, setRandomAuthors] = useState([]);
 

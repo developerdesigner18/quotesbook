@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Route, BrowserRouter as Router } from "react-router-dom";
+import { Route, BrowserRouter as Router, useParams } from "react-router-dom";
 import { auth } from "./firebase/config";
 import "./App.css";
 
@@ -12,6 +12,7 @@ import CreateQuote from "./components/CreateQuote";
 import ProfileStatus from "./components/ProfileStatus";
 import RandomAuthors from "./components/RandomAuthors";
 import Author from "./components/Author";
+import GuestUser from "./components/GuestUser";
 
 function App() {
   const [currentUser, setCurrentUser] = useState({
@@ -38,6 +39,12 @@ function App() {
     });
   }, []);
 
+  const [authorId, setAuthorId] = useState(null);
+
+  const handleLoadAuthorId = (data) => {
+    setAuthorId(data);
+  };
+
   return (
     <Router>
       <div className="app">
@@ -60,15 +67,27 @@ function App() {
           </div>
           <div className="app__right">
             <Route exact path="/">
-              <ProfileStatus currentUser={currentUser} />
+              {/* <ProfileStatus currentUser={currentUser} /> */}
               <RandomAuthors />
+              {!currentUser && <GuestUser />}
             </Route>
           </div>
         </div>
         <div className="app__author">
-          <Route exact path={`/author/:userId`}>
-            <Author currentUser={currentUser} />
-          </Route>
+          <div className="author__left">
+            <Route exact path={`/author/:authorId`}>
+              <Author
+                loadAuthorId={handleLoadAuthorId}
+                currentUser={currentUser}
+              />
+            </Route>
+          </div>
+          <div className="author__right">
+            <Route exact path={`/author/:authorId`}>
+              {authorId && <ProfileStatus authorId={authorId} />}
+              {!currentUser && <GuestUser />}
+            </Route>
+          </div>
         </div>
       </div>
     </Router>

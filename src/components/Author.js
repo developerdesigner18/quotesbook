@@ -2,19 +2,19 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../firebase/config";
 import Quote from "./Quote";
-import Quotes from "./Quotes";
 
-const Author = ({ currentUser }) => {
-  const { userId } = useParams();
+const Author = ({ currentUser, loadAuthorId }) => {
+  const { authorId } = useParams();
 
   const [user, setUser] = useState(null);
   const [quotes, setQuotes] = useState(null);
 
-  console.log(quotes);
-
   useEffect(() => {
+    // Load authorId to App component
+    authorId && loadAuthorId(authorId);
+
     db.collection("users")
-      .doc(userId)
+      .doc(authorId)
       .get()
       .then((user) => {
         setUser(user.data());
@@ -25,9 +25,9 @@ const Author = ({ currentUser }) => {
       .onSnapshot((quotes) => {
         let data = [];
         quotes.forEach((quote) => data.push({ ...quote.data(), id: quote.id }));
-        setQuotes(data.filter((quote) => quote.uid === userId));
+        setQuotes(data.filter((quote) => quote.uid === authorId));
       });
-  }, [userId]);
+  }, [authorId]);
 
   return user === null ? (
     <h1>Loading...</h1>
@@ -38,7 +38,7 @@ const Author = ({ currentUser }) => {
       {quotes.map((doc) => (
         <Quote
           currentUser={currentUser}
-          authorId={userId}
+          authorId={authorId}
           key={doc.id}
           quoteId={doc.id}
           quote={doc}
