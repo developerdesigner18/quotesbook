@@ -10,7 +10,7 @@ import LinkedInIcon from "@material-ui/icons/LinkedIn";
 import FacebookIcon from "@material-ui/icons/Facebook";
 import CreateIcon from "@material-ui/icons/Create";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { db } from "../firebase/config";
 
 const useStyles = makeStyles({
@@ -65,33 +65,35 @@ export default function RandomAuthors() {
       </Typography>
 
       {randomAuthors.map((randomAuthor) => (
-        <CardContent
-          style={{
-            display: "flex",
-            alignItems: "center",
-            padding: "10px",
-            borderBottom: "1px solid rgba(128, 128, 128, 0.1)",
-          }}
-        >
-          <Avatar aria-label="recipe" className={classes.avatar}>
-            {randomAuthor.photoURL ? (
-              <img
-                src={randomAuthor.photoURL}
-                alt="user's profile picture"
-                style={{ width: "100%" }}
-              />
-            ) : (
-              randomAuthor.displayName.charAt(0)
-            )}
-          </Avatar>
-          <Typography
-            className={classes.title}
-            color="textSecondary"
-            gutterLeft
+        <Link to={`/author/${randomAuthor.uid}`}>
+          <CardContent
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "10px",
+              borderBottom: "1px solid rgba(128, 128, 128, 0.1)",
+            }}
           >
-            {randomAuthor.displayName}
-          </Typography>
-        </CardContent>
+            <Avatar aria-label="recipe" className={classes.avatar}>
+              {randomAuthor.photoURL ? (
+                <img
+                  src={randomAuthor.photoURL}
+                  alt="user's profile picture"
+                  style={{ width: "100%" }}
+                />
+              ) : (
+                randomAuthor.displayName.charAt(0)
+              )}
+            </Avatar>
+            <Typography
+              className={classes.title}
+              color="textSecondary"
+              gutterLeft
+            >
+              {randomAuthor.displayName}
+            </Typography>
+          </CardContent>
+        </Link>
       ))}
     </Card>
   );

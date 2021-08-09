@@ -11,6 +11,7 @@ import Signup from "./components/Signup";
 import CreateQuote from "./components/CreateQuote";
 import ProfileStatus from "./components/ProfileStatus";
 import RandomAuthors from "./components/RandomAuthors";
+import Author from "./components/Author";
 
 function App() {
   const [currentUser, setCurrentUser] = useState({
@@ -52,8 +53,8 @@ function App() {
         </Route>
         <div className="app__main">
           <div className="app__left">
-            {currentUser.uid && <CreateQuote currentUser={currentUser} />}
             <Route exact path="/">
+              {currentUser.uid && <CreateQuote currentUser={currentUser} />}
               <Quotes currentUser={currentUser} />
             </Route>
           </div>
@@ -63,6 +64,11 @@ function App() {
               <RandomAuthors />
             </Route>
           </div>
+        </div>
+        <div className="app__author">
+          <Route exact path={`/author/:userId`}>
+            <Author currentUser={currentUser} />
+          </Route>
         </div>
       </div>
     </Router>

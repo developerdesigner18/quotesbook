@@ -1,5 +1,13 @@
 .app__main {
   display: flex;
-  padding: 1rem 3rem;
+  padding: 1rem 5rem;
   justify-content: space-around;
+}
+
+.app__left {
+  flex: 2;
+}
+
+.app_-right {
+  flex: 1;
 }

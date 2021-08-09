@@ -25,9 +25,6 @@ import { Delete } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    [theme.breakpoints.down("sm")]: {
-      maxWidth: 340,
-    },
     "& > *": {
       margin: theme.spacing(1),
       width: "25ch",
@@ -37,6 +34,11 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
   },
   card: {
+    maxWidth: 545,
+    [theme.breakpoints.down("sm")]: {
+      maxWidth: 340,
+    },
+
     marginBottom: "20px",
   },
 }));
