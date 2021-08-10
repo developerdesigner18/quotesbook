@@ -1,3 +1,8 @@
+/* gloabal styles */
+Link > * {
+  text-decoration: none;
+}
+
 .app__main,
 .app__author {
   display: flex;
@@ -11,8 +16,11 @@
   padding: 0 20px;
 }
 
-.app_-right,
+.app__right,
 .author__right {
   flex: 1;
   padding: 0 20px;
+  height: 100%;
+  position: fixed;
+  right: 0;
 }

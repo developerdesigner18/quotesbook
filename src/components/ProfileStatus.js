@@ -9,6 +9,7 @@ import FacebookIcon from "@material-ui/icons/Facebook";
 import CreateIcon from "@material-ui/icons/Create";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
 import { db } from "../firebase/config";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles({
   root: {
@@ -89,6 +90,9 @@ export default function ProfileStatus({ authorId }) {
             <span>{author.starred?.length}</span>
           </div>
         </div>
+        <Link to={`/author/${authorId}/favorite-quotes`}>
+          <Typography>{`Favorite Quotes (${author.favoritedCount})`}</Typography>
+        </Link>
       </CardContent>
     </Card>
   );

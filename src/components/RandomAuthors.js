@@ -10,7 +10,6 @@ import { db } from "../firebase/config";
 const useStyles = makeStyles({
   root: {
     maxWidth: 300,
-    marginTop: "20px",
   },
   bullet: {
     display: "inline-block",
@@ -58,7 +57,10 @@ export default function RandomAuthors() {
       </Typography>
 
       {randomAuthors.map((randomAuthor) => (
-        <Link to={`/author/${randomAuthor.uid}`}>
+        <Link
+          to={`/author/${randomAuthor.uid}`}
+          style={{ textDecoration: "none" }}
+        >
           <CardContent
             style={{
               display: "flex",

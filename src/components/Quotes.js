@@ -1,4 +1,3 @@
-import { Typography } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import { db } from "../firebase/config";
@@ -6,6 +5,10 @@ import Quote from "./Quote";
 
 const Quotes = ({ currentUser }) => {
   const [content, setContent] = useState([]);
+
+  const filteredContent = content.filter(
+    (quote) => !quote.favorites.includes(currentUser.uid)
+  );
 
   useEffect(() => {
     const unsub = db
@@ -22,13 +25,10 @@ const Quotes = ({ currentUser }) => {
   }, []);
 
   return !content.length ? (
-    <Typography align="center">
-      No quotes to display on timeline!!! <br />
-      {"Create your first quote.  :)"}
-    </Typography>
+    <h1>Loading...</h1>
   ) : (
     <div>
-      {content.map((doc) => (
+      {filteredContent.map((doc) => (
         <Quote
           key={doc.id}
           quoteId={doc.id}

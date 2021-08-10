@@ -131,7 +131,6 @@ export default function Quote({
   }, [quoteFavorites]);
 
   const handleFavoriteClick = (currentUser, quoteId, quoteFavorites) => {
-    console.log(currentUser, quoteId, quoteFavorites);
     if (!currentUser.uid) {
       alert("Please sign in to use the app!");
       return history.push("/signin");
@@ -259,7 +258,7 @@ export default function Quote({
     <Card className={classes.root}>
       <CardHeader
         avatar={
-          <Link to={`/author/${quote.uid}`}>
+          <Link to={`/author/${quote.uid}`} style={{ textDecoration: "none" }}>
             <Avatar aria-label="recipe" className={classes.avatar}>
               {quote ? (
                 <img

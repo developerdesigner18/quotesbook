@@ -24,6 +24,7 @@ if (!firebase.apps.length) {
 const db = firebase.firestore();
 const firebaseStorage = firebase.storage();
 const auth = firebase.auth();
+// const functions = firebase.functions();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 const facebookProvider = new firebase.auth.FacebookAuthProvider();
 const timeStamp = firebase.firestore.FieldValue.serverTimestamp();
@@ -34,6 +35,7 @@ export {
   db,
   firebaseStorage,
   auth,
+  // functions,
   googleProvider,
   facebookProvider,
   timeStamp,
