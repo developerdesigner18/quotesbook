@@ -5,11 +5,16 @@ import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
+import {
+  Divider,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from "@material-ui/core";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 300,
-    marginTop: "20px",
   },
   bullet: {
     display: "inline-block",
@@ -22,23 +27,27 @@ const useStyles = makeStyles({
   pos: {
     marginBottom: 12,
   },
-});
+  // necessary for content to be below app bar
+  toolbar: theme.mixins.toolbar,
+}));
 
 export default function GuestUser() {
   const classes = useStyles();
   return (
-    <Card className={classes.root}>
-      <CardContent>
-        <Typography variant="body2" component="p">
+    <div>
+      <div className={classes.toolbar} />
+      <Divider />
+      <ListItem>
+        <ListItemText>
           You're unique. <br />
           <Link to="/signin">Sign in</Link> to create your awesome quotes.
-        </Typography>
-      </CardContent>
-      <CardActions>
+        </ListItemText>
+      </ListItem>
+      <ListItem>
         <Button variant="contained" color="primary" size="small">
           Share
         </Button>
-      </CardActions>
-    </Card>
+      </ListItem>
+    </div>
   );
 }

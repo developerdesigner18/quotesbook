@@ -13,25 +13,25 @@ import FormatQuoteIcon from "@material-ui/icons/FormatQuote";
 import BorderColorIcon from "@material-ui/icons/BorderColor";
 import MicIcon from "@material-ui/icons/Mic";
 import MoreIcon from "@material-ui/icons/MoreVert";
-import { useHistory, Link as RouterLink } from "react-router-dom";
+import { useHistory, Link as RouterLink, Link } from "react-router-dom";
 import { auth } from "../firebase/config";
 import { Avatar } from "@material-ui/core";
 import logo from "../assets/logo.png";
 
+const drawerWidth = 240;
+
 const useStyles = makeStyles((theme) => ({
+  appBar: {
+    [theme.breakpoints.up("sm")]: {
+      width: `calc(100% - ${drawerWidth}px)`,
+      marginLeft: drawerWidth,
+    },
+    [theme.breakpoints.up("md")]: {
+      width: `calc(100% - ${drawerWidth}px)`,
+    },
+  },
   grow: {
     flexGrow: 1,
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  title: {
-    display: "none",
-    [theme.breakpoints.up("sm")]: {
-      display: "block",
-    },
-    textDecoration: "none",
-    color: "white",
   },
   search: {
     position: "relative",
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: alpha(theme.palette.common.white, 0.25),
     },
     marginRight: theme.spacing(2),
-    marginLeft: 0,
+    // marginLeft: 0,
     width: "100%",
     [theme.breakpoints.up("sm")]: {
       marginLeft: theme.spacing(3),
@@ -72,13 +72,13 @@ const useStyles = makeStyles((theme) => ({
   },
   sectionDesktop: {
     display: "none",
-    [theme.breakpoints.up("sm")]: {
+    [theme.breakpoints.up("md")]: {
       display: "flex",
     },
   },
   sectionMobile: {
     display: "flex",
-    [theme.breakpoints.up("sm")]: {
+    [theme.breakpoints.up("md")]: {
       display: "none",
     },
   },
@@ -162,7 +162,7 @@ export default function Navbar({ currentUser }) {
         </IconButton>
         <p>Quotes</p>
       </MenuItem>
-      <MenuItem>
+      <MenuItem component={Link} to={"/authors"}>
         <IconButton aria-label="show 11 new notifications" color="inherit">
           {/* <Badge badgeContent={11} color="secondary"> */}
           <BorderColorIcon />
@@ -197,8 +197,8 @@ export default function Navbar({ currentUser }) {
   );
 
   return (
-    <div className={classes.grow} style={{ marginBottom: "100px" }}>
-      <AppBar position="fixed">
+    <div className={classes.grow}>
+      <AppBar className={classes.appBar}>
         <Toolbar>
           <IconButton component={RouterLink} to={"/"}>
             <img src={logo} alt="logo" width="30px" />
@@ -228,7 +228,12 @@ export default function Navbar({ currentUser }) {
               <FormatQuoteIcon />
               {/* </Badge> */}
             </IconButton>
-            <IconButton aria-label="show 17 new notifications" color="inherit">
+            <IconButton
+              aria-label="show 17 new notifications"
+              color="inherit"
+              component={Link}
+              to={"/authors"}
+            >
               {/* <Badge badgeContent={17} color="secondary"> */}
               <BorderColorIcon />
               {/* </Badge> */}

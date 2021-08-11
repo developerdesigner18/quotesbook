@@ -3,7 +3,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import { Avatar } from "@material-ui/core";
+import { Avatar, Divider, ListItem, ListItemIcon } from "@material-ui/core";
+import ListItemText from "@material-ui/core/ListItemText";
+
 import LinkedInIcon from "@material-ui/icons/LinkedIn";
 import FacebookIcon from "@material-ui/icons/Facebook";
 import CreateIcon from "@material-ui/icons/Create";
@@ -11,7 +13,7 @@ import StarBorderIcon from "@material-ui/icons/StarBorder";
 import { db } from "../firebase/config";
 import { Link } from "react-router-dom";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 300,
   },
@@ -26,7 +28,9 @@ const useStyles = makeStyles({
   pos: {
     marginBottom: 12,
   },
-});
+  // necessary for content to be below app bar
+  toolbar: theme.mixins.toolbar,
+}));
 
 export default function ProfileStatus({ authorId }) {
   const classes = useStyles();
@@ -40,34 +44,32 @@ export default function ProfileStatus({ authorId }) {
   }, [authorId]);
 
   return !author ? (
-    <h1>Loading...</h1>
+    <Typography>Loading...</Typography>
   ) : (
-    <Card className={classes.root}>
-      <CardContent>
-        <Avatar aria-label="recipe" className={classes.avatar}>
-          {author ? (
-            author.photoURL ? (
-              <img
-                src={author.photoURL}
-                alt="author's profile picture"
-                style={{ width: "100%" }}
-              />
+    <div>
+      <Divider />
+      <ListItem
+        component={Link}
+        to={`/author/${author.uid}`}
+        button
+        key={author.uid}
+      >
+        <ListItemIcon>
+          <Avatar className={classes.avatar}>
+            {author.photoURL ? (
+              <img src={author.photoURL} style={{ width: "100%" }} />
             ) : (
-              author.displayName?.charAt(0)
-            )
-          ) : (
-            "QB"
-          )}
-        </Avatar>
-        <Typography
-          className={classes.title}
-          color="textSecondary"
-          gutterBottom
-        >
-          {author.displayName}
-        </Typography>
+              author.displayName.charAt(0)
+            )}
+          </Avatar>
+        </ListItemIcon>
+        <ListItemText primary={author.displayName} />
+      </ListItem>
+      <ListItem>
         <LinkedInIcon />
         <FacebookIcon />
+      </ListItem>
+      <ListItem>
         <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
           <div
             style={{
@@ -90,10 +92,15 @@ export default function ProfileStatus({ authorId }) {
             <span>{author.starred?.length}</span>
           </div>
         </div>
-        <Link to={`/author/${authorId}/favorite-quotes`}>
+      </ListItem>
+      <ListItem button>
+        <Link
+          to={`/author/${authorId}/favorite-quotes`}
+          style={{ textDecoration: "none" }}
+        >
           <Typography>{`Favorite Quotes (${author.favoritedCount})`}</Typography>
         </Link>
-      </CardContent>
-    </Card>
+      </ListItem>
+    </div>
   );
 }

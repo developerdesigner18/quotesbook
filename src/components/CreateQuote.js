@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
+
 import firebase from "firebase";
+
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CreateIcon from "@material-ui/icons/Create";
@@ -34,18 +36,17 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
   },
   card: {
-    maxWidth: 545,
+    width: 445,
     [theme.breakpoints.down("sm")]: {
       maxWidth: 340,
     },
-
     marginBottom: "20px",
   },
 }));
 
 export default function CreateQuote({ currentUser }) {
   const classes = useStyles();
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -134,7 +135,6 @@ export default function CreateQuote({ currentUser }) {
         () => {
           // Get the audio download url
           audioStorageRef.getDownloadURL().then((url) => {
-            // Store all submitted datas to the database
             resolve(url);
           });
         }
@@ -201,7 +201,7 @@ export default function CreateQuote({ currentUser }) {
         <div className="createQuote">
           <CardHeader
             avatar={
-              <Avatar aria-label="recipe" className={classes.avatar}>
+              <Avatar className={classes.avatar}>
                 {currentUser ? (
                   currentUser.photoURL ? (
                     <img
@@ -226,7 +226,7 @@ export default function CreateQuote({ currentUser }) {
             aria-expanded={expanded}
             aria-label="show more"
           >
-            <Typography variant="h6">Create your Quote</Typography>
+            <Typography>Create your Quote</Typography>
             <CreateIcon />
           </IconButton>
         </div>

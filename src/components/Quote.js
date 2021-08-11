@@ -22,7 +22,7 @@ import { Equalizer } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    maxWidth: 545,
+    width: 445,
     [theme.breakpoints.down("sm")]: {
       maxWidth: 340,
     },
@@ -75,6 +75,12 @@ export default function Quote({
 
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
+
+  // Edit quote
+  // const handleEdit = (quoteId, quoteImage, quoteAudio) => {
+  //   console.log("object");
+
+  // };
 
   // Delete Quote from firestore & files from firebase storage
   const handleDelete = (quoteId, quoteImage, quoteAudio) => {
@@ -289,7 +295,11 @@ export default function Quote({
                 onClose={handleClose}
                 TransitionComponent={Fade}
               >
-                <MenuItem onClick={handleClose}>Edit</MenuItem>
+                {/* <MenuItem
+                  onClick={() => handleEdit(quoteId, quoteImage, quoteAudio)}
+                >
+                  Edit
+                </MenuItem> */}
                 <MenuItem
                   onClick={() => handleDelete(quoteId, quoteImage, quoteAudio)}
                 >
@@ -302,9 +312,7 @@ export default function Quote({
         title={`${quote.displayName?.split(" ")[0]} ${quote.displayName
           ?.split(" ")[1]
           .charAt(0)}.`}
-        // subheader={new Date(quote.createdAt._seconds * 1000).toLocaleDateString(
-        //   "en-US"
-        // )}
+        subheader={new Date(quote.createdAt?.seconds * 1000).toDateString()}
       />
 
       <CardContent>
@@ -312,7 +320,9 @@ export default function Quote({
           <Typography variant="body2" color="textSecondary" component="p">
             {quote.text}
           </Typography>
-          <Equalizer className={classes.equalizer} onClick={handleSpeech} />
+          {quote.text && (
+            <Equalizer className={classes.equalizer} onClick={handleSpeech} />
+          )}
         </div>
       </CardContent>
       {quote.image ? (

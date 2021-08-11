@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../firebase/config";
+
 import Quote from "./Quote";
+
+import { Typography } from "@material-ui/core";
 
 const Author = ({ currentUser, loadAuthorId }) => {
   const { authorId } = useParams();
 
   const [user, setUser] = useState(null);
   const [quotes, setQuotes] = useState(null);
+
+  console.log(quotes);
 
   useEffect(() => {
     // Load authorId to App component
@@ -31,8 +36,10 @@ const Author = ({ currentUser, loadAuthorId }) => {
 
   return user === null ? (
     <h1>Loading...</h1>
-  ) : quotes === null ? (
-    <h1>Loading...</h1>
+  ) : !quotes?.length ? (
+    <Typography>{`${
+      user.displayName.split(" ")[0]
+    } has not created a quote yet!`}</Typography>
   ) : (
     <div>
       {quotes.map((doc) => (

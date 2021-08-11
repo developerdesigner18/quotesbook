@@ -8,8 +8,6 @@ const Quotes = ({ currentUser }) => {
   const { authorId } = useParams();
   const [user, setUser] = useState([]);
 
-  console.log(user);
-
   const [favoritedQuotes, setFavoritedQuotes] = useState([]);
   const [quotes, setQuotes] = useState([]);
 
@@ -18,12 +16,11 @@ const Quotes = ({ currentUser }) => {
   );
 
   useEffect(() => {
-    console.log(authorId);
     // Get user's favorite quotes
     db.collection("users")
       .doc(authorId)
       .onSnapshot((doc) => {
-        setFavoritedQuotes(doc.data().favorited);
+        setFavoritedQuotes(doc.data()?.favorited);
       });
 
     // Get user
@@ -34,7 +31,8 @@ const Quotes = ({ currentUser }) => {
         if (doc.exists) {
           setUser(doc.data());
         }
-      });
+      })
+      .catch((error) => console.error(error));
 
     // Get all quotes
     db.collection("quotes")
@@ -50,7 +48,6 @@ const Quotes = ({ currentUser }) => {
 
   return !filteredQuotes.length ? (
     <Typography>
-      {console.log(user)}
       {`${user.displayName} has not favorited any quotes yet!`}
     </Typography>
   ) : (
