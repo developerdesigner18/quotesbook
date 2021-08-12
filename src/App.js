@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import { auth } from "./firebase/config";
 
@@ -62,13 +62,11 @@ const useStyles = makeStyles((theme) => ({
 function App() {
   const classes = useStyles();
 
-  const theme = React.useMemo(() =>
-    createTheme({
-      palette: {
-        type: "dark",
-      },
-    })
-  );
+  const [theme, setTheme] = useState(null);
+
+  const handleLoadDarkMode = (data) => {
+    setTheme(data);
+  };
 
   const [currentUser, setCurrentUser] = useState({
     uid: "",
@@ -123,7 +121,10 @@ function App() {
         <div className={classes.root}>
           <CssBaseline />
           <Route path="/">
-            <Navbar currentUser={currentUser} />
+            <Navbar
+              currentUser={currentUser}
+              loadDarkMode={handleLoadDarkMode}
+            />
             <nav className={classes.drawer}>
               <Hidden xsDown implementation="css">
                 <Drawer

@@ -1,7 +1,16 @@
-import React from "react";
+import { useMemo, useState } from "react";
+
+import { useHistory, Link as RouterLink, Link } from "react-router-dom";
+
+import { auth } from "../firebase/config";
+
+import logo from "../assets/logo.png";
+
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
+import Brightness4Icon from "@material-ui/icons/Brightness4";
+import Brightness7Icon from "@material-ui/icons/Brightness7";
 import IconButton from "@material-ui/core/IconButton";
 import InputBase from "@material-ui/core/InputBase";
 // import Badge from '@material-ui/core/Badge';
@@ -13,10 +22,8 @@ import FormatQuoteIcon from "@material-ui/icons/FormatQuote";
 import BorderColorIcon from "@material-ui/icons/BorderColor";
 import MicIcon from "@material-ui/icons/Mic";
 import MoreIcon from "@material-ui/icons/MoreVert";
-import { useHistory, Link as RouterLink, Link } from "react-router-dom";
-import { auth } from "../firebase/config";
-import { Avatar } from "@material-ui/core";
-import logo from "../assets/logo.png";
+import { Avatar, Icon } from "@material-ui/core";
+import { createTheme } from "@material-ui/core";
 
 const drawerWidth = 240;
 
@@ -84,10 +91,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Navbar({ currentUser }) {
+export default function Navbar({ currentUser, loadDarkMode }) {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -107,6 +114,24 @@ export default function Navbar({ currentUser }) {
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
+  };
+
+  // Light/Dark Mode
+  const [darkMode, setDarkMode] = useState(false);
+
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          type: darkMode ? "dark" : "light",
+        },
+      }),
+    [darkMode]
+  );
+
+  const handleToggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    loadDarkMode(theme);
   };
 
   // Sign out
@@ -218,6 +243,10 @@ export default function Navbar({ currentUser }) {
           </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
+            <IconButton onClick={handleToggleDarkMode}>
+              {darkMode ? <Brightness4Icon /> : <Brightness7Icon />}
+            </IconButton>
+
             <IconButton
               component={RouterLink}
               to={"/"}
