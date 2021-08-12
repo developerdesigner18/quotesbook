@@ -223,7 +223,10 @@ export default function Navbar({ currentUser, loadDarkMode }) {
 
   return (
     <div className={classes.grow}>
-      <AppBar className={classes.appBar}>
+      <AppBar
+        className={classes.appBar}
+        color={!darkMode ? "default" : "primary"}
+      >
         <Toolbar>
           <IconButton component={RouterLink} to={"/"}>
             <img src={logo} alt="logo" width="30px" />
@@ -241,12 +244,12 @@ export default function Navbar({ currentUser, loadDarkMode }) {
               inputProps={{ "aria-label": "search" }}
             />
           </div>
+
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             <IconButton onClick={handleToggleDarkMode}>
               {darkMode ? <Brightness4Icon /> : <Brightness7Icon />}
             </IconButton>
-
             <IconButton
               component={RouterLink}
               to={"/"}
@@ -288,6 +291,9 @@ export default function Navbar({ currentUser, loadDarkMode }) {
             </IconButton>
           </div>
           <div className={classes.sectionMobile}>
+            <IconButton onClick={handleToggleDarkMode}>
+              {darkMode ? <Brightness4Icon /> : <Brightness7Icon />}
+            </IconButton>
             <IconButton
               aria-label="show more"
               aria-controls={mobileMenuId}
@@ -300,6 +306,7 @@ export default function Navbar({ currentUser, loadDarkMode }) {
           </div>
         </Toolbar>
       </AppBar>
+
       {renderMobileMenu}
       {renderMenu}
     </div>
