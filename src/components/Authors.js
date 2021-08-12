@@ -19,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "36ch",
     backgroundColor: theme.palette.background.paper,
     textDecoration: "none",
-    color: "black",
     "&:hover": {
       color: theme.palette.info.dark,
     },

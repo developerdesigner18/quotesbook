@@ -15,6 +15,7 @@ import FavoriteQuotes from "./components/FavoriteQuotes";
 import GuestUser from "./components/GuestUser";
 import ProfileStatus from "./components/ProfileStatus";
 
+import { createTheme, ThemeProvider } from "@material-ui/core/styles";
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
@@ -60,6 +61,14 @@ const useStyles = makeStyles((theme) => ({
 
 function App() {
   const classes = useStyles();
+
+  const theme = React.useMemo(() =>
+    createTheme({
+      palette: {
+        type: "dark",
+      },
+    })
+  );
 
   const [currentUser, setCurrentUser] = useState({
     uid: "",
@@ -109,59 +118,61 @@ function App() {
   );
 
   return (
-    <Router>
-      <div className={classes.root}>
-        <CssBaseline />
-        <Route path="/">
-          <Navbar currentUser={currentUser} />
-          <nav className={classes.drawer}>
-            <Hidden xsDown implementation="css">
-              <Drawer
-                classes={{
-                  paper: classes.drawerPaper,
-                }}
-                variant="permanent"
-                open
-              >
-                {drawer}
-              </Drawer>
-            </Hidden>
-          </nav>
-        </Route>
-        <main className={classes.content}>
-          <div className={classes.toolbar} />
-          <Route exact path="/signin">
-            <Signin />
+    <ThemeProvider theme={theme}>
+      <Router>
+        <div className={classes.root}>
+          <CssBaseline />
+          <Route path="/">
+            <Navbar currentUser={currentUser} />
+            <nav className={classes.drawer}>
+              <Hidden xsDown implementation="css">
+                <Drawer
+                  classes={{
+                    paper: classes.drawerPaper,
+                  }}
+                  variant="permanent"
+                  open
+                >
+                  {drawer}
+                </Drawer>
+              </Hidden>
+            </nav>
           </Route>
-          <Route exact path="/forgot-password">
-            <ForgotPassword />
-          </Route>
-          <Route path="/signup">
-            <Signup currentUser={currentUser} />
-          </Route>
-          <div>
-            <Switch>
-              <Route exact path="/">
-                {currentUser.uid && <CreateQuote currentUser={currentUser} />}
-                <Quotes currentUser={currentUser} />
-              </Route>
-              <Route path={`/author/:authorId/favorite-quotes`}>
-                <FavoriteQuotes currentUser={currentUser} />
-              </Route>
-              <Route exact path={`/author/:authorId`}>
-                <Author
-                  loadAuthorId={handleLoadAuthorId}
-                  currentUser={currentUser}
-                />
-              </Route>
-              <Route path={"/authors"}>
-                <Authors />
-              </Route>
-            </Switch>
-          </div>
-        </main>
-      </div>
-    </Router>
+          <main className={classes.content}>
+            <div className={classes.toolbar} />
+            <Route exact path="/signin">
+              <Signin />
+            </Route>
+            <Route exact path="/forgot-password">
+              <ForgotPassword />
+            </Route>
+            <Route path="/signup">
+              <Signup currentUser={currentUser} />
+            </Route>
+            <div>
+              <Switch>
+                <Route exact path="/">
+                  {currentUser.uid && <CreateQuote currentUser={currentUser} />}
+                  <Quotes currentUser={currentUser} />
+                </Route>
+                <Route path={`/author/:authorId/favorite-quotes`}>
+                  <FavoriteQuotes currentUser={currentUser} />
+                </Route>
+                <Route exact path={`/author/:authorId`}>
+                  <Author
+                    loadAuthorId={handleLoadAuthorId}
+                    currentUser={currentUser}
+                  />
+                </Route>
+                <Route path={"/authors"}>
+                  <Authors />
+                </Route>
+              </Switch>
+            </div>
+          </main>
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 
