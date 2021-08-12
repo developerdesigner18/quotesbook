@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useHistory, Link as RouterLink } from "react-router-dom";
+
+import { auth, db, facebookProvider, googleProvider } from "../firebase/config";
+
+import { makeStyles } from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -7,12 +12,8 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import { useHistory, Link as RouterLink } from "react-router-dom";
-import { auth, db, facebookProvider, googleProvider } from "../firebase/config";
 import FacebookIcon from "@material-ui/icons/Facebook";
 import { MailOutline } from "@material-ui/icons";
 

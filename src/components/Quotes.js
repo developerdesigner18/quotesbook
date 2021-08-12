@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
+
 import { db } from "../firebase/config";
+
 import Quote from "./Quote";
+import { QuoteSkeleton } from "./Skeletons";
 
 const Quotes = ({ currentUser }) => {
   const [content, setContent] = useState([]);
@@ -24,8 +27,8 @@ const Quotes = ({ currentUser }) => {
     return () => unsub();
   }, []);
 
-  return !content.length ? (
-    <h1>Loading...</h1>
+  return !filteredContent.length ? (
+    [1, 2, 3, 4].map((skeleton) => <QuoteSkeleton />)
   ) : (
     <div>
       {filteredContent.map((doc) => (

@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { Link, useHistory } from "react-router-dom";
+
+import { db, decrement, firebaseStorage, increment } from "../firebase/config";
+import firebase from "firebase";
+
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -15,9 +20,6 @@ import { CardMedia } from "@material-ui/core";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Fade from "@material-ui/core/Fade";
-import { db, decrement, firebaseStorage, increment } from "../firebase/config";
-import firebase from "firebase";
-import { Link, useHistory } from "react-router-dom";
 import { Equalizer } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
@@ -50,6 +52,13 @@ const useStyles = makeStyles((theme) => ({
   equalizer: {
     cursor: "pointer",
   },
+  textBackground: {
+    width: "100%",
+    height: "200px",
+    backgroundColor: "#63C6EF",
+    display: "grid",
+    placeItems: "center",
+  },
 }));
 
 export default function Quote({
@@ -61,7 +70,7 @@ export default function Quote({
   quoteStars,
   quoteId,
 }) {
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
   const history = useHistory();
@@ -74,7 +83,6 @@ export default function Quote({
   };
 
   const classes = useStyles();
-  const [expanded, setExpanded] = React.useState(false);
 
   // Edit quote
   // const handleEdit = (quoteId, quoteImage, quoteAudio) => {
@@ -134,7 +142,7 @@ export default function Quote({
     ) {
       setIsFavorited(true);
     }
-  }, [quoteFavorites]);
+  }, [quoteFavorites, currentUser.uid]);
 
   const handleFavoriteClick = (currentUser, quoteId, quoteFavorites) => {
     if (!currentUser.uid) {
@@ -191,10 +199,11 @@ export default function Quote({
   const [isStarred, setIsStarred] = useState(false);
 
   useEffect(() => {
+    console.log("useEffect called");
     if (quoteStars.find((quoteStar) => quoteStar === currentUser.uid)) {
       setIsStarred(true);
     }
-  }, [quoteStars]);
+  }, [quoteStars, currentUser.uid]);
 
   const handleStarClick = (currentUser, quoteId, quoteStars) => {
     if (!currentUser.uid) {
@@ -269,7 +278,7 @@ export default function Quote({
               {quote ? (
                 <img
                   src={quote.photoURL}
-                  alt="user's profile picture"
+                  alt={quote.displayName}
                   style={{ width: "100%" }}
                 />
               ) : (
@@ -317,13 +326,21 @@ export default function Quote({
 
       <CardContent>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography variant="body2" color="textSecondary" component="p">
-            {quote.text}
-          </Typography>
-          {quote.text && (
-            <Equalizer className={classes.equalizer} onClick={handleSpeech} />
+          {quote.image ? (
+            <Typography variant="body2" color="textSecondary" component="p">
+              {quote.text}
+            </Typography>
+          ) : (
+            <div className={classes.textBackground}>
+              <Typography align="center" variant="h6" color="textSecondary">
+                {quote.text}
+              </Typography>
+            </div>
           )}
         </div>
+        {quote.text && (
+          <Equalizer className={classes.equalizer} onClick={handleSpeech} />
+        )}
       </CardContent>
       {quote.image ? (
         <CardMedia className={classes.media} image={quote.image} />

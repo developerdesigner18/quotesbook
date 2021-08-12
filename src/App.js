@@ -15,8 +15,8 @@ import FavoriteQuotes from "./components/FavoriteQuotes";
 import GuestUser from "./components/GuestUser";
 import ProfileStatus from "./components/ProfileStatus";
 
-import { createTheme, ThemeProvider } from "@material-ui/core/styles";
-import { makeStyles } from "@material-ui/core/styles";
+import { createTheme } from "@material-ui/core";
+import { makeStyles, ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
@@ -62,11 +62,18 @@ const useStyles = makeStyles((theme) => ({
 function App() {
   const classes = useStyles();
 
-  const [theme, setTheme] = useState(null);
+  // Dark mode
+  const [darkMode, setDarkMode] = useState(false);
 
-  const handleLoadDarkMode = (data) => {
-    setTheme(data);
-  };
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          type: darkMode ? "dark" : "light",
+        },
+      }),
+    [darkMode]
+  );
 
   const [currentUser, setCurrentUser] = useState({
     uid: "",
@@ -123,7 +130,9 @@ function App() {
           <Route path="/">
             <Navbar
               currentUser={currentUser}
-              loadDarkMode={handleLoadDarkMode}
+              loadDarkMode={(data) => {
+                setDarkMode(data);
+              }}
             />
             <nav className={classes.drawer}>
               <Hidden xsDown implementation="css">

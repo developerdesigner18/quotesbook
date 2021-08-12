@@ -206,7 +206,7 @@ export default function CreateQuote({ currentUser }) {
                   currentUser.photoURL ? (
                     <img
                       src={currentUser.photoURL}
-                      alt="user's profile picture"
+                      alt={currentUser.displayName}
                       style={{ width: "100%" }}
                     />
                   ) : (
@@ -240,7 +240,7 @@ export default function CreateQuote({ currentUser }) {
                 {currentUser.photoURL ? (
                   <img
                     src={currentUser.photoURL}
-                    alt="user's profile picture"
+                    alt={currentUser.displayName}
                     style={{ width: "100%" }}
                   />
                 ) : (

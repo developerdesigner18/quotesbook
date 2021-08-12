@@ -12,6 +12,7 @@ import {
 } from "@material-ui/core";
 import { db } from "../firebase/config";
 import { Link } from "react-router-dom";
+import { AuthorsSkeleton } from "./Skeletons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -48,56 +49,57 @@ const Authors = () => {
 
   return (
     <div>
-      {users &&
-        users.map((user) => (
-          <List
-            component={Link}
-            to={`/author/${user.uid}`}
-            className={classes.root}
-          >
-            <ListItem alignItems="flex-start">
-              <ListItemAvatar>
-                <Avatar alt="Remy Sharp" src={user.photoURL} />
-              </ListItemAvatar>
-              <ListItemText
-                primary={user.displayName}
-                secondary={
-                  <>
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      className={classes.inline}
-                      color="textPrimary"
-                    >
-                      {"Favorite Quote"}
-                    </Typography>
-                    {
-                      " — You will face many defeats in life, but never let yourself be defeated."
-                    }
-                    <CardActions style={{ paddingLeft: "0" }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          marginRight: "12px",
-                        }}
+      {!users
+        ? [1, 2, 3, 4].map((skeleton) => <AuthorsSkeleton />)
+        : users.map((user) => (
+            <List
+              component={Link}
+              to={`/author/${user.uid}`}
+              className={classes.root}
+            >
+              <ListItem alignItems="flex-start">
+                <ListItemAvatar>
+                  <Avatar alt="Remy Sharp" src={user.photoURL} />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={user.displayName}
+                  secondary={
+                    <>
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        className={classes.inline}
+                        color="textPrimary"
                       >
-                        <BorderColorIcon
+                        {"Favorite Quote"}
+                      </Typography>
+                      {
+                        " — You will face many defeats in life, but never let yourself be defeated."
+                      }
+                      <CardActions style={{ paddingLeft: "0" }}>
+                        <div
                           style={{
-                            fontSize: "18px",
-                            marginRight: "10px",
+                            display: "flex",
+                            alignItems: "center",
+                            marginRight: "12px",
                           }}
-                        />
-                        <Typography>{user.createdCount}</Typography>
-                      </div>
-                    </CardActions>
-                  </>
-                }
-              />
-            </ListItem>
-            <Divider variant="inset" component="li" />
-          </List>
-        ))}
+                        >
+                          <BorderColorIcon
+                            style={{
+                              fontSize: "18px",
+                              marginRight: "10px",
+                            }}
+                          />
+                          <Typography>{user.createdCount}</Typography>
+                        </div>
+                      </CardActions>
+                    </>
+                  }
+                />
+              </ListItem>
+              <Divider variant="inset" component="li" />
+            </List>
+          ))}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useHistory, Link as RouterLink, Link } from "react-router-dom";
 
@@ -22,8 +22,7 @@ import FormatQuoteIcon from "@material-ui/icons/FormatQuote";
 import BorderColorIcon from "@material-ui/icons/BorderColor";
 import MicIcon from "@material-ui/icons/Mic";
 import MoreIcon from "@material-ui/icons/MoreVert";
-import { Avatar, Icon } from "@material-ui/core";
-import { createTheme } from "@material-ui/core";
+import { Avatar } from "@material-ui/core";
 
 const drawerWidth = 240;
 
@@ -116,23 +115,30 @@ export default function Navbar({ currentUser, loadDarkMode }) {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  // Light/Dark Mode
+  // Light/Dark Mode   =>   Need to fix local storage
   const [darkMode, setDarkMode] = useState(false);
 
-  const theme = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          type: darkMode ? "dark" : "light",
-        },
-      }),
-    [darkMode]
-  );
-
   const handleToggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    loadDarkMode(theme);
+    if (darkMode === false) {
+      setDarkMode(true);
+      localStorage.setItem("darkMode", darkMode);
+    } else {
+      setDarkMode(false);
+      localStorage.setItem("darkMode", darkMode);
+    }
+    loadDarkMode(darkMode);
   };
+
+  useEffect(() => {
+    const storedDarkMode = localStorage.getItem("darkMode");
+    if (storedDarkMode) {
+      storedDarkMode === true ? setDarkMode(true) : setDarkMode(false);
+    } else {
+      setDarkMode(false);
+      localStorage.setItem("darkMode", false);
+    }
+    setDarkMode(true);
+  }, []);
 
   // Sign out
   const history = useHistory();
@@ -225,7 +231,7 @@ export default function Navbar({ currentUser, loadDarkMode }) {
     <div className={classes.grow}>
       <AppBar
         className={classes.appBar}
-        color={!darkMode ? "default" : "primary"}
+        color={darkMode ? "primary" : "default"}
       >
         <Toolbar>
           <IconButton component={RouterLink} to={"/"}>

@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+
+import { db } from "../firebase/config";
+
 import { makeStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import { Avatar, Divider, ListItem, ListItemIcon } from "@material-ui/core";
 import ListItemText from "@material-ui/core/ListItemText";
-
 import LinkedInIcon from "@material-ui/icons/LinkedIn";
 import FacebookIcon from "@material-ui/icons/Facebook";
 import CreateIcon from "@material-ui/icons/Create";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
-import { db } from "../firebase/config";
-import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -57,7 +56,11 @@ export default function ProfileStatus({ authorId }) {
         <ListItemIcon>
           <Avatar className={classes.avatar}>
             {author.photoURL ? (
-              <img src={author.photoURL} style={{ width: "100%" }} />
+              <img
+                src={author.photoURL}
+                style={{ width: "100%" }}
+                alt={author.displayName}
+              />
             ) : (
               author.displayName.charAt(0)
             )}
