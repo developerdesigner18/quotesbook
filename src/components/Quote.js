@@ -6,6 +6,14 @@ import tinycolor from "tinycolor2";
 import { db, decrement, firebaseStorage, increment } from "../firebase/config";
 import firebase from "firebase";
 
+import { QuoteSkeleton } from "./Skeletons";
+import {
+  FacebookIcon,
+  FacebookShareButton,
+  LinkedinIcon,
+  LinkedinShareButton,
+} from "react-share";
+
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -18,12 +26,11 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import StarIcon from "@material-ui/icons/Star";
 import ShareIcon from "@material-ui/icons/Share";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import { CardMedia } from "@material-ui/core";
+import { CardMedia, Modal } from "@material-ui/core";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Fade from "@material-ui/core/Fade";
 import { Equalizer } from "@material-ui/icons";
-import { QuoteSkeleton } from "./Skeletons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -75,6 +82,7 @@ export default function Quote({
   quoteStars,
   quoteId,
 }) {
+  const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -87,7 +95,15 @@ export default function Quote({
     setAnchorEl(null);
   };
 
-  const classes = useStyles();
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
 
   // Edit quote
   // const handleEdit = (quoteId, quoteImage, quoteAudio) => {
@@ -386,9 +402,24 @@ export default function Quote({
           <StarIcon style={{ color: isStarred && "gold" }} />
         </IconButton>
         <span>{quoteStars?.length}</span>
-        <IconButton aria-label="share">
-          <ShareIcon />
+        <IconButton onClick={handleOpenModal}>
+          <ShareIcon aria-controls="panel2bh-content" id="panel2bh-header" />
         </IconButton>
+        <Modal
+          open={openModal}
+          onClose={handleCloseModal}
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+        >
+          <div style={{ position: "absolute", top: "45vh", left: "45vw" }}>
+            <FacebookShareButton url={`http://google.com`} quote={quote.text}>
+              <FacebookIcon />
+            </FacebookShareButton>
+            <LinkedinShareButton url={`http://google.com`}>
+              <LinkedinIcon />
+            </LinkedinShareButton>
+          </div>
+        </Modal>
       </CardActions>
     </Card>
   );
