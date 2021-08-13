@@ -43,7 +43,7 @@ export default function RandomAuthors() {
         Top Authors
       </Typography>
       {!randomAuthors.length ? (
-        [1, 2, 3, 4].map((skeleton) => <AuthorSkeleton />)
+        [1, 2, 3, 4].map((skeleton) => <AuthorSkeleton key={skeleton} />)
       ) : (
         <List>
           {randomAuthors.map((randomAuthor) => (

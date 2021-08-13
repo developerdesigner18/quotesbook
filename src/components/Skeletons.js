@@ -33,7 +33,7 @@ export const AuthorSkeleton = () => {
           </Skeleton>
         </Box>
         <Box margin={1} width="100%">
-          <Skeleton variant="h4" width="100%">
+          <Skeleton variant="text" width="100%">
             <Typography>.</Typography>
           </Skeleton>
         </Box>

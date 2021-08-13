@@ -20,6 +20,7 @@ import { makeStyles, ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 const drawerWidth = 240;
 
@@ -63,17 +64,30 @@ function App() {
   const classes = useStyles();
 
   // Dark mode
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode"));
+  let prefersDarkMode = useMediaQuery(
+    `(prefers-color-scheme: ${localStorage.getItem("darkMode")})`
+  );
 
   const theme = useMemo(
     () =>
       createTheme({
         palette: {
-          type: darkMode ? "dark" : "light",
+          type: prefersDarkMode ? "dark" : "light",
         },
       }),
-    [darkMode]
+    [prefersDarkMode]
   );
+
+  useEffect(() => {
+    if (localStorage.getItem("darkMode") === "dark") setDarkMode(true);
+    else setDarkMode(false);
+  }, []);
+
+  const handleDarkMode = (data) => {
+    if (data === true) setDarkMode(true);
+    else setDarkMode(false);
+  };
 
   const [currentUser, setCurrentUser] = useState({
     uid: "",
@@ -128,12 +142,8 @@ function App() {
         <div className={classes.root}>
           <CssBaseline />
           <Route path="/">
-            <Navbar
-              currentUser={currentUser}
-              loadDarkMode={(data) => {
-                setDarkMode(data);
-              }}
-            />
+            <Navbar currentUser={currentUser} loadDarkMode={handleDarkMode} />
+
             <nav className={classes.drawer}>
               <Hidden xsDown implementation="css">
                 <Drawer

@@ -51,6 +51,7 @@ const useStyles = makeStyles((theme) => ({
   },
   equalizer: {
     cursor: "pointer",
+    float: "right",
   },
   textBackground: {
     width: "100%",
@@ -58,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#63C6EF",
     display: "grid",
     placeItems: "center",
+    padding: "20px",
   },
 }));
 
@@ -199,7 +201,6 @@ export default function Quote({
   const [isStarred, setIsStarred] = useState(false);
 
   useEffect(() => {
-    console.log("useEffect called");
     if (quoteStars.find((quoteStar) => quoteStar === currentUser.uid)) {
       setIsStarred(true);
     }
@@ -325,21 +326,19 @@ export default function Quote({
       />
 
       <CardContent>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          {quote.image ? (
-            <Typography variant="body2" color="textSecondary" component="p">
-              {quote.text}
-            </Typography>
-          ) : (
-            <div className={classes.textBackground}>
-              <Typography align="center" variant="h6" color="textSecondary">
-                {quote.text}
-              </Typography>
-            </div>
-          )}
-        </div>
         {quote.text && (
           <Equalizer className={classes.equalizer} onClick={handleSpeech} />
+        )}
+        {quote.image ? (
+          <Typography variant="body2" color="textSecondary" component="p">
+            {quote.text}
+          </Typography>
+        ) : (
+          <div className={classes.textBackground}>
+            <Typography align="center" variant="h6" color="textSecondary">
+              {quote.text}
+            </Typography>
+          </div>
         )}
       </CardContent>
       {quote.image ? (

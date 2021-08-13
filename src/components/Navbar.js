@@ -120,24 +120,23 @@ export default function Navbar({ currentUser, loadDarkMode }) {
 
   const handleToggleDarkMode = () => {
     if (darkMode === false) {
+      console.log("dark mode value in if ", darkMode);
       setDarkMode(true);
-      localStorage.setItem("darkMode", darkMode);
+      loadDarkMode(true);
+      localStorage.setItem("darkMode", "dark");
     } else {
+      console.log("dark mode value in else ", darkMode);
       setDarkMode(false);
-      localStorage.setItem("darkMode", darkMode);
+      localStorage.setItem("darkMode", "light");
+      loadDarkMode(false);
     }
-    loadDarkMode(darkMode);
   };
 
   useEffect(() => {
-    const storedDarkMode = localStorage.getItem("darkMode");
-    if (storedDarkMode) {
-      storedDarkMode === true ? setDarkMode(true) : setDarkMode(false);
-    } else {
-      setDarkMode(false);
-      localStorage.setItem("darkMode", false);
+    if (localStorage.getItem("darkMode")) {
+      if (localStorage.getItem("darkMode") === "dark") setDarkMode(true);
+      else setDarkMode(false);
     }
-    setDarkMode(true);
   }, []);
 
   // Sign out
@@ -231,7 +230,7 @@ export default function Navbar({ currentUser, loadDarkMode }) {
     <div className={classes.grow}>
       <AppBar
         className={classes.appBar}
-        color={darkMode ? "primary" : "default"}
+        color={!darkMode ? "default" : "primary"}
       >
         <Toolbar>
           <IconButton component={RouterLink} to={"/"}>
