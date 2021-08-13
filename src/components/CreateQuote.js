@@ -54,6 +54,7 @@ export default function CreateQuote({ currentUser }) {
 
   // Quote Upload
   const [quote, setQuote] = useState("");
+  const [quoteColor, setQuoteColor] = useState("");
 
   // Image Upload
   const imageTypes = ["image/png", "image/jpeg"];
@@ -155,6 +156,7 @@ export default function CreateQuote({ currentUser }) {
           displayName: currentUser.displayName,
           photoURL: currentUser.photoURL,
           text: quote ? quote : "",
+          textBackgroundColor: quoteColor,
           image: selectedImage ? await getImageUrl() : null,
           audio: selectedAudio ? await getAudioUrl() : null,
           favorites: [],
@@ -259,6 +261,11 @@ export default function CreateQuote({ currentUser }) {
               rows="5"
               placeholder="What do you want to quote about?"
             ></textarea>
+            <label>Choose background color : </label>
+            <input
+              onChange={(e) => setQuoteColor(e.target.value)}
+              type="color"
+            />
             <div style={{ display: "flex" }}>
               <div style={{ textAlign: "center" }}>
                 <div style={{ display: "flex", alignItems: "center" }}>

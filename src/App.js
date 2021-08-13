@@ -63,11 +63,9 @@ const useStyles = makeStyles((theme) => ({
 function App() {
   const classes = useStyles();
 
-  // Dark mode
-  const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode"));
-  let prefersDarkMode = useMediaQuery(
-    `(prefers-color-scheme: ${localStorage.getItem("darkMode")})`
-  );
+  // Light/Dark Mode   =>   Need to fix local storage
+  const [darkMode, setDarkMode] = useState(localStorage.getItem("theme"));
+  let prefersDarkMode = useMediaQuery(`(prefers-color-scheme: ${darkMode})`);
 
   const theme = useMemo(
     () =>
@@ -80,13 +78,18 @@ function App() {
   );
 
   useEffect(() => {
-    if (localStorage.getItem("darkMode") === "dark") setDarkMode(true);
-    else setDarkMode(false);
+    if (localStorage.getItem("theme") !== null) {
+      localStorage.getItem("theme") === "dark"
+        ? setDarkMode("dark")
+        : setDarkMode("light");
+    } else {
+      setDarkMode("light");
+    }
   }, []);
 
   const handleDarkMode = (data) => {
-    if (data === true) setDarkMode(true);
-    else setDarkMode(false);
+    if (data === true) setDarkMode("dark");
+    else setDarkMode("light");
   };
 
   const [currentUser, setCurrentUser] = useState({

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 
+import tinycolor from "tinycolor2";
+
 import { db, decrement, firebaseStorage, increment } from "../firebase/config";
 import firebase from "firebase";
 
@@ -21,6 +23,7 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Fade from "@material-ui/core/Fade";
 import { Equalizer } from "@material-ui/icons";
+import { QuoteSkeleton } from "./Skeletons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
   textBackground: {
     width: "100%",
     height: "200px",
-    backgroundColor: "#63C6EF",
+
     display: "grid",
     placeItems: "center",
     padding: "20px",
@@ -270,7 +273,9 @@ export default function Quote({
     window.speechSynthesis.speak(speech);
   };
 
-  return (
+  return !quoteId ? (
+    <QuoteSkeleton />
+  ) : (
     <Card className={classes.root}>
       <CardHeader
         avatar={
@@ -334,8 +339,22 @@ export default function Quote({
             {quote.text}
           </Typography>
         ) : (
-          <div className={classes.textBackground}>
-            <Typography align="center" variant="h6" color="textSecondary">
+          <div
+            className={classes.textBackground}
+            style={{
+              backgroundColor: `${quote.textBackgroundColor}`,
+            }}
+          >
+            <Typography
+              align="center"
+              variant="span"
+              color="textSecondary"
+              style={{
+                color: `${tinycolor(quote.textBackgroundColor)
+                  .complement()
+                  .toHexString()}`,
+              }}
+            >
               {quote.text}
             </Typography>
           </div>
@@ -346,6 +365,7 @@ export default function Quote({
       ) : (
         ""
       )}
+
       {quote.audio && (
         <audio className={classes.audio} controls src={quote.audio} />
       )}

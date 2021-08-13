@@ -120,21 +120,19 @@ export default function Navbar({ currentUser, loadDarkMode }) {
 
   const handleToggleDarkMode = () => {
     if (darkMode === false) {
-      console.log("dark mode value in if ", darkMode);
       setDarkMode(true);
       loadDarkMode(true);
-      localStorage.setItem("darkMode", "dark");
+      localStorage.setItem("theme", "dark");
     } else {
-      console.log("dark mode value in else ", darkMode);
       setDarkMode(false);
-      localStorage.setItem("darkMode", "light");
+      localStorage.setItem("theme", "light");
       loadDarkMode(false);
     }
   };
 
   useEffect(() => {
-    if (localStorage.getItem("darkMode")) {
-      if (localStorage.getItem("darkMode") === "dark") setDarkMode(true);
+    if (localStorage.getItem("theme")) {
+      if (localStorage.getItem("theme") === "dark") setDarkMode(true);
       else setDarkMode(false);
     }
   }, []);

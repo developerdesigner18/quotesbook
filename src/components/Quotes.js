@@ -27,9 +27,7 @@ const Quotes = ({ currentUser }) => {
     return () => unsub();
   }, []);
 
-  return !filteredContent.length ? (
-    [1, 2, 3, 4].map((skeleton) => <QuoteSkeleton />)
-  ) : (
+  return (
     <div>
       {filteredContent.map((doc) => (
         <Quote
