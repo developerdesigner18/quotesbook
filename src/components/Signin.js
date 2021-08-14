@@ -149,8 +149,8 @@ export default function Signin() {
           <Avatar onClick={handleLoginWithGmail} className={classes.avatar}>
             <MailOutline />
           </Avatar>
-          <Avatar className={classes.avatar}>
-            <FacebookIcon onClick={handleLoginWithFacebook} />
+          <Avatar onClick={handleLoginWithFacebook} className={classes.avatar}>
+            <FacebookIcon />
           </Avatar>
         </div>
         <Typography component="p" variant="h6">

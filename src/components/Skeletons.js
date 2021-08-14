@@ -12,7 +12,9 @@ export const QuoteSkeleton = () => {
         </Box>
         <Box width="100%">
           <Skeleton width="100%">
-            <Typography>Lorem ipsum dolor sit amet.</Typography>
+            <Typography>
+              Lorem ipsum dolor sit consectetur adipisicing.
+            </Typography>
           </Skeleton>
         </Box>
       </Box>
@@ -44,7 +46,7 @@ export const AuthorSkeleton = () => {
 
 export const AuthorsSkeleton = () => {
   return (
-    <div style={{ width: "100%", margin: "40px 20px" }}>
+    <div style={{ margin: "40px 20px" }}>
       <Box display="flex" alignItems="center">
         <Box margin={1}>
           <Skeleton variant="circle">
@@ -52,7 +54,7 @@ export const AuthorsSkeleton = () => {
           </Skeleton>
         </Box>
         <Skeleton width="100%">
-          <Typography variant="h4">.</Typography>
+          <Typography>.</Typography>
         </Skeleton>
       </Box>
       <Box margin={1} width="100%">
@@ -60,7 +62,7 @@ export const AuthorsSkeleton = () => {
           <Typography variant="h6">.</Typography>
         </Skeleton>
         <Skeleton width="100%">
-          <Typography variant="span">
+          <Typography variant="subtitle1">
             Lorem ipsum dolor sit amet consectetur, adipisicing elit.
             Doloremque, ut.
           </Typography>
@@ -76,6 +78,43 @@ export const PhotoSkeleton = () => {
       <Skeleton variant="rect" width="100%">
         <div style={{ paddingTop: "57%" }} />
       </Skeleton>
+    </div>
+  );
+};
+
+export const ProfileStatusSkeleton = () => {
+  return (
+    <div>
+      <Box display="flex" alignItems="center">
+        <Box margin={1}>
+          <Skeleton variant="circle">
+            <Avatar />
+          </Skeleton>
+        </Box>
+        <Box margin={1} width="100%">
+          <Skeleton variant="text" width="80%">
+            <Typography>.</Typography>
+          </Skeleton>
+        </Box>
+      </Box>
+      <Box margin={1} display="flex">
+        <Box margin={1}>
+          <Skeleton variant="rect">
+            <Avatar variant="square" />
+          </Skeleton>
+        </Box>
+
+        <Box margin={1}>
+          <Skeleton variant="rect">
+            <Avatar variant="square" />
+          </Skeleton>
+        </Box>
+      </Box>
+      <Box margin={1}>
+        <Skeleton variant="text" width="90%">
+          <Typography>.</Typography>
+        </Skeleton>
+      </Box>
     </div>
   );
 };

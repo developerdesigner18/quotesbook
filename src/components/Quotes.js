@@ -4,7 +4,6 @@ import { withRouter } from "react-router-dom";
 import { db } from "../firebase/config";
 
 import Quote from "./Quote";
-import { QuoteSkeleton } from "./Skeletons";
 
 const Quotes = ({ currentUser }) => {
   const [content, setContent] = useState([]);

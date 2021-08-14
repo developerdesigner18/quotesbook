@@ -47,27 +47,28 @@ export default function RandomAuthors() {
       ) : (
         <List>
           {randomAuthors.map((randomAuthor) => (
-            <ListItem
-              component={Link}
+            <Link
               to={`/author/${randomAuthor.uid}`}
-              button
+              style={{ textDecoration: "none", color: "inherit" }}
               key={randomAuthor.uid}
             >
-              <ListItemIcon>
-                <Avatar className={classes.avatar}>
-                  {randomAuthor.photoURL ? (
-                    <img
-                      src={randomAuthor.photoURL}
-                      style={{ width: "100%" }}
-                      alt={randomAuthor.displayName}
-                    />
-                  ) : (
-                    randomAuthor.displayName.charAt(0)
-                  )}
-                </Avatar>
-              </ListItemIcon>
-              <ListItemText primary={randomAuthor.displayName} />
-            </ListItem>
+              <ListItem button key={randomAuthor.uid}>
+                <ListItemIcon>
+                  <Avatar className={classes.avatar}>
+                    {randomAuthor.photoURL ? (
+                      <img
+                        src={randomAuthor.photoURL}
+                        style={{ width: "100%" }}
+                        alt={randomAuthor.displayName}
+                      />
+                    ) : (
+                      randomAuthor.displayName.charAt(0)
+                    )}
+                  </Avatar>
+                </ListItemIcon>
+                <ListItemText primary={randomAuthor.displayName} />
+              </ListItem>
+            </Link>
           ))}
         </List>
       )}

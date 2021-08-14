@@ -36,20 +36,30 @@ const Author = ({ currentUser, loadAuthorId }) => {
   return !user ? (
     <div style={{ width: "100%" }}>
       {[1, 2, 3, 4].map((skeleton) => (
-        <QuoteSkeleton />
+        <QuoteSkeleton key={skeleton} />
       ))}
     </div>
   ) : !quotes?.length ? (
-    <Typography>{`${
-      user?.displayName.split(" ")[0]
-    } has not created a quote yet!`}</Typography>
+    currentUser.uid ? (
+      <Typography align="center" gutterBottom>
+        {`
+        ${user?.displayName.split(" ")[0]}, you've not created a quote yet!
+      `}
+      </Typography>
+    ) : (
+      <Typography align="center" gutterBottom>
+        {`
+        ${user?.displayName.split(" ")[0]}, has not created a quote yet!
+      `}
+      </Typography>
+    )
   ) : (
     <div style={{ width: "100%" }}>
       {quotes.map((doc) => (
         <Quote
+          key={doc.id}
           currentUser={currentUser}
           authorId={authorId}
-          key={doc.id}
           quoteId={doc.id}
           quote={doc}
           quoteImage={doc.image}

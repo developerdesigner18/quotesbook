@@ -16,16 +16,9 @@ import { AuthorsSkeleton } from "./Skeletons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: "100%",
-    maxWidth: "36ch",
-    backgroundColor: theme.palette.background.paper,
-    textDecoration: "none",
-    "&:hover": {
-      color: theme.palette.info.dark,
-    },
-  },
-  inline: {
-    display: "inline",
+    maxWidth: "56ch",
+    marginBottom: "10px",
+    background: "transparent",
   },
 }));
 
@@ -52,53 +45,53 @@ const Authors = () => {
       {!users
         ? [1, 2, 3, 4].map((skeleton) => <AuthorsSkeleton />)
         : users.map((user) => (
-            <List
-              component={Link}
+            <Link
               to={`/author/${user.uid}`}
-              className={classes.root}
+              style={{ color: "inherit", textDecoration: "none" }}
             >
-              <ListItem alignItems="flex-start">
-                <ListItemAvatar>
-                  <Avatar alt="Remy Sharp" src={user.photoURL} />
-                </ListItemAvatar>
-                <ListItemText
-                  primary={user.displayName}
-                  secondary={
-                    <>
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        className={classes.inline}
-                        color="textPrimary"
-                      >
-                        {"Favorite Quote"}
-                      </Typography>
-                      {
-                        " — You will face many defeats in life, but never let yourself be defeated."
-                      }
-                      <CardActions style={{ paddingLeft: "0" }}>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginRight: "12px",
-                          }}
+              <List className={classes.root}>
+                <ListItem alignItems="flex-start">
+                  <ListItemAvatar>
+                    <Avatar alt="Remy Sharp" src={user.photoURL} />
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={user.displayName}
+                    secondary={
+                      <>
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          color="textPrimary"
                         >
-                          <BorderColorIcon
+                          {"Favorite Quote"}
+                        </Typography>
+                        {
+                          " — You will face many defeats in life, but never let yourself be defeated."
+                        }
+                        <CardActions style={{ paddingLeft: "0" }}>
+                          <div
                             style={{
-                              fontSize: "18px",
-                              marginRight: "10px",
+                              display: "flex",
+                              alignItems: "center",
+                              marginRight: "12px",
                             }}
-                          />
-                          <Typography>{user.createdCount}</Typography>
-                        </div>
-                      </CardActions>
-                    </>
-                  }
-                />
-              </ListItem>
-              <Divider variant="inset" component="li" />
-            </List>
+                          >
+                            <BorderColorIcon
+                              style={{
+                                fontSize: "18px",
+                                marginRight: "10px",
+                              }}
+                            />
+                            <Typography>{user.createdCount}</Typography>
+                          </div>
+                        </CardActions>
+                      </>
+                    }
+                  />
+                </ListItem>
+                <Divider variant="inset" component="li" />
+              </List>
+            </Link>
           ))}
     </div>
   );

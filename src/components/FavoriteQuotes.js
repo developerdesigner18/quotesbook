@@ -1,8 +1,11 @@
-import { Typography } from "@material-ui/core";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, withRouter } from "react-router-dom";
+
 import { db } from "../firebase/config";
+
 import Quote from "./Quote";
+
+import { Typography } from "@material-ui/core";
 
 const Quotes = ({ currentUser }) => {
   const { authorId } = useParams();

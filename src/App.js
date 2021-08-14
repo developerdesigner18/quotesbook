@@ -129,7 +129,9 @@ function App() {
           {!currentUser.uid ? <GuestUser /> : <RandomAuthors />}
         </Route>
         <Route path={`/author/:authorId`}>
-          {authorId && <ProfileStatus authorId={authorId} />}
+          {authorId && (
+            <ProfileStatus authorId={authorId} currentUser={currentUser} />
+          )}
           {!currentUser && <GuestUser />}
         </Route>
         <Route path="/authors">
@@ -182,6 +184,9 @@ function App() {
                   <FavoriteQuotes currentUser={currentUser} />
                 </Route>
                 <Route exact path={`/author/:authorId`}>
+                  {currentUser.uid === authorId && (
+                    <CreateQuote currentUser={currentUser} />
+                  )}
                   <Author
                     loadAuthorId={handleLoadAuthorId}
                     currentUser={currentUser}

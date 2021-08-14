@@ -46,16 +46,6 @@ const useStyles = makeStyles((theme) => ({
     margin: "0 auto",
     paddingTop: "56.25%", // 16:9
   },
-  expand: {
-    transform: "rotate(0deg)",
-    marginLeft: "auto",
-    transition: theme.transitions.create("transform", {
-      duration: theme.transitions.duration.shortest,
-    }),
-  },
-  expandOpen: {
-    transform: "rotate(180deg)",
-  },
   audio: {
     marginTop: "10px",
   },
@@ -66,7 +56,6 @@ const useStyles = makeStyles((theme) => ({
   textBackground: {
     width: "100%",
     height: "200px",
-
     display: "grid",
     placeItems: "center",
     padding: "20px",
@@ -363,7 +352,7 @@ export default function Quote({
           >
             <Typography
               align="center"
-              variant="span"
+              variant="subtitle2"
               color="textSecondary"
               style={{
                 color: `${tinycolor(quote.textBackgroundColor)

@@ -162,9 +162,6 @@ export default function Navbar({ currentUser, loadDarkMode }) {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>{currentUser.displayName}</MenuItem>
-      {currentUser.uid ? (
-        <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-      ) : null}
       <MenuItem onClick={handleSignOut}>
         {currentUser.uid ? "Sign Out" : "Sign In"}
       </MenuItem>
