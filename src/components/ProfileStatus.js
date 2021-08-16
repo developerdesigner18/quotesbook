@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-import { db } from "../firebase/config";
+import { db, firebaseStorage } from "../firebase/config";
+
+import { auth } from "../firebase/config";
 
 import { ProfileStatusSkeleton } from "./Skeletons";
 
@@ -12,11 +14,11 @@ import {
   Button,
   Divider,
   Grid,
-  IconButton,
   ListItem,
   ListItemIcon,
   Modal,
   TextField,
+  Tooltip,
 } from "@material-ui/core";
 import ListItemText from "@material-ui/core/ListItemText";
 import LinkedInIcon from "@material-ui/icons/LinkedIn";
@@ -56,6 +58,8 @@ const useStyles = makeStyles((theme) => ({
   large: {
     width: theme.spacing(7),
     height: theme.spacing(7),
+    margin: theme.spacing(1),
+    cursor: "pointer",
   },
 }));
 
@@ -80,8 +84,98 @@ export default function ProfileStatus({ authorId, currentUser }) {
       .onSnapshot((author) => setAuthor(author.data()));
   }, [authorId]);
 
-  const handleProfileURLChange = () => {
-    console.log("object");
+  // New Avatar Upload
+  const avatarTypes = ["image/png", "image/jpeg"];
+  const [avatarError, setAvatarError] = useState(null);
+  const [selectedAvatar, setSelectedAvatar] = useState(null);
+  const [avatarProgress, setAvatarProgress] = useState(0);
+
+  // onChange Avatar input
+  const handleAvatarChange = (e) => {
+    let selected = e.target.files[0];
+    if (selected && avatarTypes.includes(selected.type)) {
+      setAvatarError(null);
+      setSelectedAvatar(selected);
+    } else {
+      setSelectedAvatar(null);
+      setAvatarError("Please select a valid image file(png, jpeg).");
+    }
+  };
+
+  // Get Avatar url from firebase storage
+  async function getAvatarURL() {
+    return new Promise((resolve, reject) => {
+      const photoURLRef = firebaseStorage.ref(
+        `photoURL/${Date.now() + selectedAvatar.name}`
+      );
+      // Put avatar to the storage
+      photoURLRef.put(selectedAvatar).on(
+        "state_changed",
+        (snap) => {
+          let percentage = (snap.bytesTransferred / snap.totalBytes) * 100;
+          setAvatarProgress(percentage);
+        },
+        (error) => {
+          console.log(error.message);
+        },
+        () => {
+          // Get the avatar download url
+          photoURLRef.getDownloadURL().then((url) => {
+            resolve(url);
+          });
+        }
+      );
+    });
+  }
+
+  const [fullName, setFullName] = useState(currentUser.displayName);
+  const [linkedinLink, setLinkedinLink] = useState(currentUser.linkedinLink);
+  const [facebookLink, setFacebookLink] = useState(currentUser.facebookLink);
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+
+    // update userProfile
+    auth.currentUser
+      .updateProfile({
+        photoURL: selectedAvatar && (await getAvatarURL()),
+        displayName: fullName,
+      })
+      .then(async () => {
+        console.log("userProfile updated successfully!");
+
+        // Update users collection
+        db.collection("users")
+          .doc(currentUser.uid)
+          .update({
+            displayName: fullName,
+            photoURL: selectedAvatar && (await getAvatarURL()),
+            linkedinLink: linkedinLink,
+            facebookLink: facebookLink,
+          });
+
+        // Update quotes collection
+        // db.collection("quotes")
+        //   .where("uid", "==", currentUser.uid)
+        //   .onSnapshot((snap) => {
+        //     snap.forEach(async (doc) =>
+        //       doc.update({
+        //         displayName: fullName,
+        //         photoURL: selectedAvatar && (await getAvatarURL()),
+        //       })
+        //     );
+        //   });
+
+        // Delete old Avatar
+        firebaseStorage
+          .refFromURL(currentUser.photoURL)
+          .delete()
+          .then(() => console.log("Old Avatar deleted"))
+          .catch((error) => console.error(error));
+      })
+      .catch((error) => console.error(error.message));
+
+    // setOpenModal(false);
   };
 
   return !author ? (
@@ -111,8 +205,10 @@ export default function ProfileStatus({ authorId, currentUser }) {
         <ListItemText primary={author.displayName} />
       </ListItem>
       <ListItem>
-        <LinkedInIcon />
-        <FacebookIcon />
+        <LinkedInIcon
+          onClick={() => window.open(`https://${author.linkedinLink}`)}
+        />
+        <FacebookIcon onClick={() => window.open(`${author.facebookLink}`)} />
       </ListItem>
       <ListItem>
         <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
@@ -151,31 +247,34 @@ export default function ProfileStatus({ authorId, currentUser }) {
           <Typography>Edit Profile</Typography>
         </ListItem>
       )}
-      <Modal
-        open={openModal}
-        onClose={handleCloseModal}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-      >
-        <form className={classes.modalForm} noValidate autoComplete="off">
-          {/* <Avatar
-            variant="square"
-            src={currentUser.photoURL}
-            className={classes.large}
-          /> */}
+      <Modal open={openModal} onClose={handleCloseModal}>
+        <form
+          className={classes.modalForm}
+          noValidate
+          autoComplete="off"
+          onSubmit={handleSave}
+        >
           <label>
-            <Avatar
-              src={currentUser.photoURL}
-              variant="square"
-              className={classes.large}
-            />
-            <input type="file" onChange={handleProfileURLChange} />
+            <Tooltip title="Edit your Avatar" placement="right-end">
+              <Avatar
+                src={
+                  selectedAvatar
+                    ? URL.createObjectURL(selectedAvatar)
+                    : currentUser.photoURL
+                }
+                variant="square"
+                className={classes.large}
+              />
+            </Tooltip>
+            <input type="file" onChange={handleAvatarChange} />
           </label>
 
           <TextField
-            id="standard-basic"
-            label="Full Name"
+            onChange={(e) => {
+              setFullName(e.target.value);
+            }}
             defaultValue={currentUser.displayName}
+            label="Full Name"
           />
           <div className={classes.margin}>
             <Grid container spacing={1} alignItems="flex-end">
@@ -183,7 +282,13 @@ export default function ProfileStatus({ authorId, currentUser }) {
                 <LinkedInIcon />
               </Grid>
               <Grid item>
-                <TextField id="input-with-icon-grid" label="LinkedIn Link" />
+                <TextField
+                  onChange={(e) => {
+                    setLinkedinLink(e.target.value);
+                  }}
+                  defaultValue={author.linkedinLink}
+                  label="linkedIn Link"
+                />
               </Grid>
             </Grid>
           </div>
@@ -193,11 +298,22 @@ export default function ProfileStatus({ authorId, currentUser }) {
                 <FacebookIcon />
               </Grid>
               <Grid item>
-                <TextField id="input-with-icon-grid" label="Facebook Link" />
+                <TextField
+                  onChange={(e) => {
+                    setFacebookLink(e.target.value);
+                  }}
+                  defaultValue={author.facebookLink}
+                  label="Facebook Link"
+                />
               </Grid>
             </Grid>
           </div>
-          <Button variant="contained" color="primary" size="small">
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="small"
+          >
             Save
           </Button>
         </form>

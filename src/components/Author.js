@@ -12,15 +12,13 @@ const Author = ({ currentUser, loadAuthorId }) => {
 
   const [user, setUser] = useState(null);
   const [quotes, setQuotes] = useState(null);
-
   useEffect(() => {
     // Load authorId to App component
     authorId && loadAuthorId(authorId);
 
     db.collection("users")
       .doc(authorId)
-      .get()
-      .then((user) => {
+      .onSnapshot((user) => {
         setUser(user.data());
       });
 

@@ -96,6 +96,8 @@ function App() {
     uid: "",
     displayName: "",
     photoURL: "",
+    linkedinLink: "",
+    facebookLink: "",
   });
 
   useEffect(() => {
@@ -105,6 +107,8 @@ function App() {
           uid: user.uid,
           displayName: user.displayName,
           photoURL: user.photoURL,
+          linkedinLink: user.linkedinLink,
+          facebookLink: user.facebookLink,
         });
       } else {
         setCurrentUser({

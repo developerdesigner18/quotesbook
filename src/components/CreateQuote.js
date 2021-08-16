@@ -311,6 +311,7 @@ export default function CreateQuote({ currentUser }) {
             </div>
             <label>
               <div
+                onClick={handleQuoteSubmit}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -319,7 +320,6 @@ export default function CreateQuote({ currentUser }) {
               >
                 <input type="submit" value="Quote" style={{ padding: "0" }} />
                 <Button
-                  onClick={handleQuoteSubmit}
                   variant="contained"
                   color="primary"
                   size="small"

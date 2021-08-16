@@ -72,10 +72,10 @@ export default function Quote({
   quoteId,
 }) {
   const classes = useStyles();
+  const history = useHistory();
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-
-  const history = useHistory();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -384,15 +384,19 @@ export default function Quote({
           <FavoriteIcon style={{ color: isFavorited && "red" }} />
         </IconButton>
         <span>{quoteFavorites?.length}</span>
-        <IconButton
-          onClick={() => handleStarClick(currentUser, quoteId, quoteStars)}
-          aria-label="add to favorites"
-        >
-          <StarIcon style={{ color: isStarred && "gold" }} />
+        <IconButton aria-label="add to favorites">
+          <StarIcon
+            onClick={() => handleStarClick(currentUser, quoteId, quoteStars)}
+            style={{ color: isStarred && "gold" }}
+          />
         </IconButton>
         <span>{quoteStars?.length}</span>
-        <IconButton onClick={handleOpenModal}>
-          <ShareIcon aria-controls="panel2bh-content" id="panel2bh-header" />
+        <IconButton>
+          <ShareIcon
+            onClick={handleOpenModal}
+            aria-controls="panel2bh-content"
+            id="panel2bh-header"
+          />
         </IconButton>
         <Modal
           open={openModal}
