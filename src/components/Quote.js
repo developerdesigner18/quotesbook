@@ -285,7 +285,7 @@ export default function Quote({
       <CardHeader
         avatar={
           <Link to={`/author/${quote.uid}`} style={{ textDecoration: "none" }}>
-            <Avatar aria-label="recipe" className={classes.avatar}>
+            <Avatar className={classes.avatar}>
               {quote ? (
                 <img
                   src={quote.photoURL}
@@ -300,7 +300,7 @@ export default function Quote({
         }
         action={
           currentUser.uid === quote?.uid ? (
-            <IconButton aria-label="settings">
+            <IconButton>
               <MoreVertIcon
                 aria-controls="fade-menu"
                 aria-haspopup="true"
@@ -329,9 +329,11 @@ export default function Quote({
             </IconButton>
           ) : null
         }
-        title={`${quote.displayName?.split(" ")[0]} ${quote.displayName
-          ?.split(" ")[1]
-          .charAt(0)}.`}
+        title={`${quote.displayName?.split(" ")[0]} ${
+          quote.displayName?.split(" ")[1]
+            ? quote.displayName.split(" ")[1]?.charAt(0)
+            : ""
+        }`}
         subheader={new Date(quote.createdAt?.seconds * 1000).toDateString()}
       />
 
@@ -379,12 +381,11 @@ export default function Quote({
           onClick={() =>
             handleFavoriteClick(currentUser, quoteId, quoteFavorites)
           }
-          aria-label="add to favorites"
         >
           <FavoriteIcon style={{ color: isFavorited && "red" }} />
         </IconButton>
         <span>{quoteFavorites?.length}</span>
-        <IconButton aria-label="add to favorites">
+        <IconButton>
           <StarIcon
             onClick={() => handleStarClick(currentUser, quoteId, quoteStars)}
             style={{ color: isStarred && "gold" }}
@@ -392,18 +393,9 @@ export default function Quote({
         </IconButton>
         <span>{quoteStars?.length}</span>
         <IconButton>
-          <ShareIcon
-            onClick={handleOpenModal}
-            aria-controls="panel2bh-content"
-            id="panel2bh-header"
-          />
+          <ShareIcon onClick={handleOpenModal} />
         </IconButton>
-        <Modal
-          open={openModal}
-          onClose={handleCloseModal}
-          aria-labelledby="simple-modal-title"
-          aria-describedby="simple-modal-description"
-        >
+        <Modal open={openModal} onClose={handleCloseModal}>
           <div style={{ position: "absolute", top: "45vh", left: "45vw" }}>
             <FacebookShareButton url={`http://google.com`} quote={quote.text}>
               <FacebookIcon />

@@ -15,12 +15,16 @@ import FavoriteQuotes from "./components/FavoriteQuotes";
 import GuestUser from "./components/GuestUser";
 import ProfileStatus from "./components/ProfileStatus";
 
-import { createTheme } from "@material-ui/core";
-import { makeStyles, ThemeProvider } from "@material-ui/core/styles";
+import {
+  makeStyles,
+  ThemeProvider,
+  createTheme,
+} from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { blue } from "@material-ui/core/colors";
 
 const drawerWidth = 240;
 
@@ -71,7 +75,15 @@ function App() {
     () =>
       createTheme({
         palette: {
+          primary: blue,
           type: prefersDarkMode ? "dark" : "light",
+        },
+        typography: {
+          fontFamily: "Quicksand",
+          fontWeightLight: 400,
+          fontWeightRegular: 500,
+          fontWeightMedium: 600,
+          fontWeightBold: 700,
         },
       }),
     [prefersDarkMode]

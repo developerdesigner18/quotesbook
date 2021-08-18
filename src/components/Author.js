@@ -41,7 +41,7 @@ const Author = ({ currentUser, loadAuthorId }) => {
     currentUser.uid ? (
       <Typography align="center" gutterBottom>
         {`
-        ${user?.displayName.split(" ")[0]}, you've not created a quote yet!
+        ${user?.displayName?.split(" ")[0]}, you've not created a quote yet!
       `}
       </Typography>
     ) : (

@@ -62,7 +62,7 @@ export default function RandomAuthors() {
                         alt={randomAuthor.displayName}
                       />
                     ) : (
-                      randomAuthor.displayName.charAt(0)
+                      randomAuthor.displayName?.charAt(0)
                     )}
                   </Avatar>
                 </ListItemIcon>

@@ -12,6 +12,7 @@ import Typography from "@material-ui/core/Typography";
 import {
   Avatar,
   Button,
+  ButtonGroup,
   Divider,
   Grid,
   ListItem,
@@ -25,6 +26,7 @@ import LinkedInIcon from "@material-ui/icons/LinkedIn";
 import FacebookIcon from "@material-ui/icons/Facebook";
 import CreateIcon from "@material-ui/icons/Create";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
+import _ from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -77,11 +79,20 @@ export default function ProfileStatus({ authorId, currentUser }) {
   };
 
   const [author, setAuthor] = useState();
+  console.log(author);
+  const [linkedinLink, setLinkedinLink] = useState(null);
+  const [facebookLink, setFacebookLink] = useState(null);
+
+  let quotesArray = [];
 
   useEffect(() => {
     db.collection("users")
       .doc(authorId)
-      .onSnapshot((author) => setAuthor(author.data()));
+      .onSnapshot((author) => {
+        setAuthor(author.data());
+        setLinkedinLink(author.data().linkedinLink);
+        setFacebookLink(author.data().facebookLink);
+      });
   }, [authorId]);
 
   // New Avatar Upload
@@ -129,11 +140,10 @@ export default function ProfileStatus({ authorId, currentUser }) {
   }
 
   const [fullName, setFullName] = useState(currentUser.displayName);
-  const [linkedinLink, setLinkedinLink] = useState(currentUser.linkedinLink);
-  const [facebookLink, setFacebookLink] = useState(currentUser.facebookLink);
 
   const handleSave = async (e) => {
     e.preventDefault();
+    const batch = db.batch();
 
     // update userProfile
     auth.currentUser
@@ -142,40 +152,43 @@ export default function ProfileStatus({ authorId, currentUser }) {
         displayName: fullName,
       })
       .then(async () => {
-        console.log("userProfile updated successfully!");
+        // Batch
+        // Update a user in 'users' collection
+        const userRef = db.collection("users").doc(currentUser.uid);
+        batch.update(userRef, {
+          displayName: auth.currentUser.displayName,
+          photoURL: auth.currentUser.photoURL,
+          linkedinLink: linkedinLink,
+          facebookLink: facebookLink,
+        });
 
-        // Update users collection
-        db.collection("users")
-          .doc(currentUser.uid)
-          .update({
-            displayName: fullName,
-            photoURL: selectedAvatar && (await getAvatarURL()),
-            linkedinLink: linkedinLink,
-            facebookLink: facebookLink,
+        // Update quotes in 'quotes' collection
+        const quotesRef = db
+          .collection("quotes")
+          .where("uid", "==", currentUser.uid)
+          .get();
+        const batches = _.chunk((await quotesRef).docs, 500).map((quotes) => {
+          // const batch = db.batch()
+          quotes.forEach((quote) => {
+            batch.update(quote.ref, {
+              displayName: auth.currentUser.displayName,
+              photoURL: auth.currentUser.photoURL,
+            });
           });
+        });
 
-        // Update quotes collection
-        // db.collection("quotes")
-        //   .where("uid", "==", currentUser.uid)
-        //   .onSnapshot((snap) => {
-        //     snap.forEach(async (doc) =>
-        //       doc.update({
-        //         displayName: fullName,
-        //         photoURL: selectedAvatar && (await getAvatarURL()),
-        //       })
-        //     );
-        //   });
+        await Promise.all(batches);
 
-        // Delete old Avatar
-        firebaseStorage
-          .refFromURL(currentUser.photoURL)
-          .delete()
-          .then(() => console.log("Old Avatar deleted"))
-          .catch((error) => console.error(error));
-      })
-      .catch((error) => console.error(error.message));
+        return await batch
+          .commit()
+          .then(() => {
+            console.log("batch write successfull!");
+          })
+          .catch((e) => console.log("error while batch update ", e));
+      });
 
-    // setOpenModal(false);
+    handleCloseModal();
+    setTimeout(() => window.location.reload(), 2000);
   };
 
   return !author ? (
@@ -198,7 +211,7 @@ export default function ProfileStatus({ authorId, currentUser }) {
                 alt={author.displayName}
               />
             ) : (
-              author.displayName.charAt(0)
+              author.displayName?.charAt(0)
             )}
           </Avatar>
         </ListItemIcon>
@@ -273,7 +286,7 @@ export default function ProfileStatus({ authorId, currentUser }) {
             onChange={(e) => {
               setFullName(e.target.value);
             }}
-            defaultValue={currentUser.displayName}
+            defaultValue={author.displayName}
             label="Full Name"
           />
           <div className={classes.margin}>
@@ -308,14 +321,24 @@ export default function ProfileStatus({ authorId, currentUser }) {
               </Grid>
             </Grid>
           </div>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            size="small"
-          >
-            Save
-          </Button>
+          <ButtonGroup>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              size="small"
+            >
+              Save
+            </Button>
+            <Button
+              onClick={handleCloseModal}
+              variant="contained"
+              color="primary"
+              size="small"
+            >
+              Cancel
+            </Button>
+          </ButtonGroup>
         </form>
       </Modal>
     </div>

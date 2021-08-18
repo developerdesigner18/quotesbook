@@ -7,14 +7,16 @@ import Quote from "./Quote";
 
 const Quotes = ({ currentUser }) => {
   const [content, setContent] = useState([]);
-
   const filteredContent = content.filter(
     (quote) => !quote.favorites.includes(currentUser.uid)
   );
 
+  const [users, setUsers] = useState([]);
+
   useEffect(() => {
-    const unsub = db
-      .collection("quotes")
+    // Get quotes
+    // const unsub =
+    db.collection("quotes")
       .orderBy("createdAt", "desc")
       .onSnapshot((snap) => {
         let data = [];
@@ -23,13 +25,24 @@ const Quotes = ({ currentUser }) => {
         });
         setContent(data);
       });
-    return () => unsub();
+
+    // Get users
+    db.collection("users").onSnapshot((snap) => {
+      let data = [];
+      snap.forEach((doc) => {
+        data.push(doc.data());
+      });
+      setUsers(data);
+    });
+
+    // return () => unsub();
   }, []);
 
   return (
     <div>
       {filteredContent.map((doc) => (
         <Quote
+          users={users}
           key={doc.id}
           quoteId={doc.id}
           quote={doc}
