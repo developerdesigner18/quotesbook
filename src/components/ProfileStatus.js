@@ -13,6 +13,7 @@ import {
   Avatar,
   Button,
   ButtonGroup,
+  CircularProgress,
   Divider,
   Grid,
   ListItem,
@@ -63,6 +64,9 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     cursor: "pointer",
   },
+  avatar: {
+    objectFit: "cover",
+  },
 }));
 
 export default function ProfileStatus({ authorId, currentUser }) {
@@ -79,19 +83,20 @@ export default function ProfileStatus({ authorId, currentUser }) {
   };
 
   const [author, setAuthor] = useState();
-  console.log(author);
   const [linkedinLink, setLinkedinLink] = useState(null);
   const [facebookLink, setFacebookLink] = useState(null);
-
-  let quotesArray = [];
+  const [fullName, setFullName] = useState(null);
+  const [photoURL, setPhotoURL] = useState(null);
 
   useEffect(() => {
     db.collection("users")
       .doc(authorId)
       .onSnapshot((author) => {
         setAuthor(author.data());
-        setLinkedinLink(author.data().linkedinLink);
-        setFacebookLink(author.data().facebookLink);
+        setLinkedinLink(author.data()?.linkedinLink);
+        setFacebookLink(author.data()?.facebookLink);
+        setFullName(author.data().displayName);
+        setPhotoURL(author.data().photoURL);
       });
   }, [authorId]);
 
@@ -139,16 +144,15 @@ export default function ProfileStatus({ authorId, currentUser }) {
     });
   }
 
-  const [fullName, setFullName] = useState(currentUser.displayName);
-
   const handleSave = async (e) => {
     e.preventDefault();
     const batch = db.batch();
 
     // update userProfile
+
     auth.currentUser
       .updateProfile({
-        photoURL: selectedAvatar && (await getAvatarURL()),
+        photoURL: selectedAvatar ? await getAvatarURL() : photoURL,
         displayName: fullName,
       })
       .then(async () => {
@@ -158,8 +162,8 @@ export default function ProfileStatus({ authorId, currentUser }) {
         batch.update(userRef, {
           displayName: auth.currentUser.displayName,
           photoURL: auth.currentUser.photoURL,
-          linkedinLink: linkedinLink,
-          facebookLink: facebookLink,
+          linkedinLink: linkedinLink ? linkedinLink : "",
+          facebookLink: facebookLink ? facebookLink : "",
         });
 
         // Update quotes in 'quotes' collection
@@ -179,16 +183,27 @@ export default function ProfileStatus({ authorId, currentUser }) {
 
         await Promise.all(batches);
 
-        return await batch
+        await batch
           .commit()
           .then(() => {
             console.log("batch write successfull!");
           })
           .catch((e) => console.log("error while batch update ", e));
-      });
 
-    handleCloseModal();
-    setTimeout(() => window.location.reload(), 2000);
+        // Delete old Avatar
+        selectedAvatar &&
+          firebaseStorage
+            .refFromURL(currentUser.photoURL)
+            .delete()
+            .then(() => console.log("Old Avatar deleted successfully!"))
+            .catch((error) =>
+              console.log("Error deleting old Avatar: ", error)
+            );
+
+        setAvatarProgress(0);
+        handleCloseModal();
+        // setTimeout(() => window.location.reload(), 2000);
+      });
   };
 
   return !author ? (
@@ -203,11 +218,15 @@ export default function ProfileStatus({ authorId, currentUser }) {
         key={author.uid}
       >
         <ListItemIcon>
-          <Avatar className={classes.avatar}>
+          <Avatar>
             {author.photoURL ? (
               <img
                 src={author.photoURL}
-                style={{ width: "100%" }}
+                style={{
+                  height: "100%",
+                  width: "100%",
+                  objectFit: "cover",
+                }}
                 alt={author.displayName}
               />
             ) : (
@@ -267,26 +286,31 @@ export default function ProfileStatus({ authorId, currentUser }) {
           autoComplete="off"
           onSubmit={handleSave}
         >
-          <label>
+          <label style={{ display: "flex", alignItems: "center" }}>
             <Tooltip title="Edit your Avatar" placement="right-end">
               <Avatar
                 src={
                   selectedAvatar
                     ? URL.createObjectURL(selectedAvatar)
-                    : currentUser.photoURL
+                    : auth.currentUser.photoURL
                 }
                 variant="square"
                 className={classes.large}
               />
             </Tooltip>
             <input type="file" onChange={handleAvatarChange} />
+
+            {avatarProgress > 0 && (
+              <CircularProgress variant="static" value={avatarProgress} />
+            )}
           </label>
+          {avatarError && <div>{avatarError}</div>}
 
           <TextField
             onChange={(e) => {
               setFullName(e.target.value);
             }}
-            defaultValue={author.displayName}
+            defaultValue={currentUser.displayName}
             label="Full Name"
           />
           <div className={classes.margin}>

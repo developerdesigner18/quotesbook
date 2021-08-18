@@ -58,7 +58,11 @@ export default function RandomAuthors() {
                     {randomAuthor.photoURL ? (
                       <img
                         src={randomAuthor.photoURL}
-                        style={{ width: "100%" }}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
                         alt={randomAuthor.displayName}
                       />
                     ) : (

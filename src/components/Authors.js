@@ -52,7 +52,7 @@ const Authors = () => {
               <List className={classes.root}>
                 <ListItem alignItems="flex-start">
                   <ListItemAvatar>
-                    <Avatar alt="Remy Sharp" src={user.photoURL} />
+                    <Avatar alt={user.displayName} src={user.photoURL} />
                   </ListItemAvatar>
                   <ListItemText
                     primary={user.displayName}

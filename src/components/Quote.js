@@ -290,7 +290,11 @@ export default function Quote({
                 <img
                   src={quote.photoURL}
                   alt={quote.displayName}
-                  style={{ width: "100%" }}
+                  style={{
+                    height: "100%",
+                    width: "100%",
+                    objectFit: "cover",
+                  }}
                 />
               ) : (
                 "QB"
