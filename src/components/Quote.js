@@ -102,6 +102,7 @@ export default function Quote({
 
   // Delete Quote from firestore & files from firebase storage
   const handleDelete = (quoteId, quoteImage, quoteAudio) => {
+    // Delete quote from quotes collection
     if (window.confirm("Are you sure to delete this quote?")) {
       db.collection("quotes")
         .doc(quoteId)
@@ -113,6 +114,7 @@ export default function Quote({
           console.error("Error removing document: ", error);
         });
 
+      // Delete image from firebase storage
       quoteImage &&
         firebaseStorage
           .refFromURL(quoteImage)
@@ -124,6 +126,7 @@ export default function Quote({
             console.error("Error removing image: ", error);
           });
 
+      // Delete audio from firebase storage
       quoteAudio &&
         firebaseStorage
           .refFromURL(quoteAudio)
@@ -135,11 +138,31 @@ export default function Quote({
             console.error("Error removing audio: ", error);
           });
 
+      // Decrese createdCount of currentUser
       db.collection("users")
         .doc(currentUser.uid)
         .update({
           created: firebase.firestore.FieldValue.arrayRemove(quoteId),
           createdCount: decrement,
+        })
+        .then(() => console.log("current user created deleted..... "));
+
+      // Remove favorited from other users
+
+      db.collection("users")
+        .where("favorited", "array-contains", quoteId)
+        .get()
+        .then((users) => {
+          users.forEach((user) => {
+            console.log("name..........", user.data().displayName, decrement);
+            db.collection("users")
+              .doc(user.data().uid)
+              .update({
+                favorited: firebase.firestore.FieldValue.arrayRemove(quoteId),
+                favoritedCount: decrement,
+              })
+              .then(() => console.log("favorited deleted"));
+          });
         });
     }
   };
@@ -162,6 +185,7 @@ export default function Quote({
 
     setIsFavorited(!isFavorited);
 
+    // Add favorited and increase favoritedCount in users collection
     if (!quoteFavorites.includes(currentUser.uid)) {
       db.collection("users")
         .doc(currentUser.uid)
@@ -173,6 +197,7 @@ export default function Quote({
           console.error(error);
         });
 
+      // Add uid from quotes collection
       db.collection("quotes")
         .doc(quoteId)
         .update({
@@ -183,6 +208,7 @@ export default function Quote({
           console.error(error);
         });
     } else {
+      // Remove uid from users collection
       db.collection("users")
         .doc(currentUser.uid)
         .update({
@@ -193,6 +219,7 @@ export default function Quote({
           console.error(error);
         });
 
+      // Remove uid from quotes collection
       db.collection("quotes")
         .doc(quoteId)
         .update({

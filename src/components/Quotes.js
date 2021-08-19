@@ -15,8 +15,8 @@ const Quotes = ({ currentUser }) => {
 
   useEffect(() => {
     // Get quotes
-    // const unsub =
-    db.collection("quotes")
+    const unsub = db
+      .collection("quotes")
       .orderBy("createdAt", "desc")
       .onSnapshot((snap) => {
         let data = [];
@@ -35,7 +35,7 @@ const Quotes = ({ currentUser }) => {
       setUsers(data);
     });
 
-    // return () => unsub();
+    return () => unsub();
   }, []);
 
   return (

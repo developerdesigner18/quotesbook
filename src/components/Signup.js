@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Signin() {
+export default function Signup() {
   const classes = useStyles();
 
   const [fullName, setFullName] = useState("");
@@ -50,22 +50,26 @@ export default function Signin() {
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((cred) => {
-        db.collection("users")
-          .doc(cred.user.uid)
-          .set({
-            displayName: fullName,
-            photoURL: cred.user.photoURL,
-            favorited: [],
-            favoritedCount: 0,
-            starred: [],
-            starredCount: 0,
-            created: [],
-            createdCount: 0,
-            uid: cred.user.uid,
-          })
+        cred.user
+          .updateProfile({ displayName: fullName })
           .then(() => {
-            cred.user.updateProfile({ displayName: fullName });
+            console.log("updated...");
+            db.collection("users").doc(cred.user.uid).set({
+              displayName: fullName,
+              photoURL: cred.user.photoURL,
+              favorited: [],
+              favoritedCount: 0,
+              starred: [],
+              starredCount: 0,
+              created: [],
+              createdCount: 0,
+              uid: cred.user.uid,
+            });
             history.push("/");
+
+            // Firebase onAuthStateChanged listener cannot be triggered by updateProfile method!
+            // So window reload is a temporary solution!
+            window.location.reload();
           })
           .catch((error) => console.log(error));
       })

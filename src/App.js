@@ -110,6 +110,7 @@ function App() {
     photoURL: "",
     linkedinLink: "",
     facebookLink: "",
+    email: "",
   });
 
   useEffect(() => {
@@ -121,6 +122,7 @@ function App() {
           photoURL: user.photoURL,
           linkedinLink: user.linkedinLink,
           facebookLink: user.facebookLink,
+          email: user.email,
         });
       } else {
         setCurrentUser({

@@ -157,6 +157,7 @@ export default function ProfileStatus({ authorId, currentUser }) {
       })
       .then(async () => {
         // Batch
+
         // Update a user in 'users' collection
         const userRef = db.collection("users").doc(currentUser.uid);
         batch.update(userRef, {
@@ -171,15 +172,14 @@ export default function ProfileStatus({ authorId, currentUser }) {
           .collection("quotes")
           .where("uid", "==", currentUser.uid)
           .get();
-        const batches = _.chunk((await quotesRef).docs, 500).map((quotes) => {
-          // const batch = db.batch()
+        const batches = _.chunk((await quotesRef).docs, 500).map((quotes) =>
           quotes.forEach((quote) => {
             batch.update(quote.ref, {
               displayName: auth.currentUser.displayName,
               photoURL: auth.currentUser.photoURL,
             });
-          });
-        });
+          })
+        );
 
         await Promise.all(batches);
 
