@@ -17,6 +17,7 @@
     "fullName": "Full Name",
     "link": "Link",
     "save": "Save",
+    "cancel": "Cancel",
     "signInWith": "Sign In with",
     "or": "OR",
     "emailAddress": "Email Address",
@@ -27,6 +28,16 @@
     "alreadyHaveAnAccount": "Already have an account",
     "youAreUnique": "You're unique.",
     "toCreateYourAwesomeQuotes": "to create your awesome quotes",
-    "share": "Share"
-
+    "share": "Share",
+    "whatDoYouWantToQuoteAbout": "What do you want to quote about",
+    "chooseBackgroundColor": "Choose background color",
+    "postQuote": "Post Quote",
+    "pleaseSelectAValidAudioFile": "Please select a valid audio file",
+    "pleaseSelectAValidImageFile": "Please select a valid image file",
+    "youHaveNotCreatedAQuoteYet": "you've not created a quote yet",
+    "hasNotCreatedAQuoteYet": "has not created a quote yet",
+    "hasNotFavoritedAnyQuotesYet": "has not favorited any quotes yet",
+    "sendAResetEmailLink": "Send a reset email link",
+    "search": "Search"
+    
 }

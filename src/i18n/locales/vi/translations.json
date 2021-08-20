@@ -13,10 +13,11 @@
     "favoriteQuote": "Trích dẫn yêu thích",
     "favoriteQuotes": "Trích dẫn yêu thích",
     "editProfile": "Chỉnh sửa hồ sơ",
-    "editYourAvatar": "Edit your Avatar",
+    "editYourAvatar": "Chỉnh sửa ảnh đại diện của bạn",
     "fullName": "Họ và tên",
     "link": "Liên kết",
     "save": "Cứu",
+    "cancel": "Hủy bỏ",
     "signInWith": "Đăng nhập với",
     "or": "HOẶC",
     "emailAddress": "Địa chỉ email",
@@ -27,5 +28,16 @@
     "alreadyHaveAnAccount": "Bạn co săn san để tạo một tai khoản",
     "youAreUnique": "Bạn là độc nhất",
     "toCreateYourAwesomeQuotes": "để tạo ra những câu trích dẫn tuyệt vời của bạn",
-    "share": "Đăng lại"
+    "share": "Đăng lại",
+    "whatDoYouWantToQuoteAbout": "Bạn muốn trích dẫn về điều gì",
+    "chooseBackgroundColor": "Chọn màu nền",
+    "postQuote": "Đăng báo giá",
+    "pleaseSelectAValidAudioFile": "Vui lòng chọn một tệp âm thanh hợp lệ",
+    "pleaseSelectAValidImageFile": "Vui lòng chọn một tệp hình ảnh hợp lệ",
+    "youHaveNotCreatedAQuoteYet": "bạn vẫn chưa tạo báo giá",
+    "hasNotCreatedAQuoteYet": "chưa tạo báo giá",
+    "hasNotFavoritedAnyQuotesYet": "chưa yêu thích bất kỳ trích dẫn nào",
+    "sendAResetEmailLink": "Gửi một liên kết email đặt lại",
+    "search": "Tìm kiếm"
+
 }

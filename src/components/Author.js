@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../firebase/config";
 
+import { useTranslation } from "react-i18next";
+
 import Quote from "./Quote";
 
 import { Typography } from "@material-ui/core";
@@ -31,6 +33,8 @@ const Author = ({ currentUser, loadAuthorId }) => {
       });
   }, [authorId, loadAuthorId]);
 
+  const { t } = useTranslation();
+
   return !user ? (
     <div style={{ width: "100%" }}>
       {[1, 2, 3, 4].map((skeleton) => (
@@ -41,13 +45,13 @@ const Author = ({ currentUser, loadAuthorId }) => {
     currentUser.uid ? (
       <Typography align="center" gutterBottom>
         {`
-        ${user?.displayName?.split(" ")[0]}, you've not created a quote yet!
+        ${user?.displayName?.split(" ")[0]}, ${t("youHaveNotCreatedAQuoteYet")}!
       `}
       </Typography>
     ) : (
       <Typography align="center" gutterBottom>
         {`
-        ${user?.displayName.split(" ")[0]}, has not created a quote yet!
+        ${user?.displayName.split(" ")[0]}, ${t("hasNotCreatedAQuoteYet")}
       `}
       </Typography>
     )

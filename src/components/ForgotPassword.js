@@ -4,6 +4,8 @@ import { useHistory } from "react-router-dom";
 
 import { auth } from "../firebase/config";
 
+import { useTranslation } from "react-i18next";
+
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -53,6 +55,8 @@ export default function Signin() {
       });
   };
 
+  const { t } = useTranslation();
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -67,7 +71,7 @@ export default function Signin() {
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label={t("emailAddress")}
             name="email"
             autoComplete="email"
             autoFocus
@@ -81,7 +85,7 @@ export default function Signin() {
             color="primary"
             className={classes.submit}
           >
-            Send a reset email link
+            {t("sendAResetEmailLink")}
           </Button>
         </form>
       </div>

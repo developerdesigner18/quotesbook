@@ -3,6 +3,8 @@ import { useParams, withRouter } from "react-router-dom";
 
 import { db } from "../firebase/config";
 
+import { useTranslation } from "react-i18next";
+
 import Quote from "./Quote";
 
 import { Typography } from "@material-ui/core";
@@ -49,9 +51,11 @@ const Quotes = ({ currentUser }) => {
       });
   }, [authorId]);
 
+  const { t } = useTranslation();
+
   return !filteredQuotes.length ? (
     <Typography>
-      {`${user.displayName} has not favorited any quotes yet!`}
+      {`${user.displayName} ${t("hasNotFavoritedAnyQuotesYet")}!`}
     </Typography>
   ) : (
     <div>

@@ -241,7 +241,7 @@ export default function Navbar({ currentUser, loadDarkMode }) {
               <SearchIcon />
             </div>
             <InputBase
-              placeholder="Search…"
+              placeholder={`${t("search")}...`}
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,

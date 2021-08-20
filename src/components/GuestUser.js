@@ -36,7 +36,9 @@ export default function GuestUser() {
       <ListItem>
         <ListItemText>
           {t("youAreUnique")}. <br />
-          <Link to="/signin">{t("signIn")}</Link>{" "}
+          <Link to="/signin" style={{ color: "inherit" }}>
+            {t("signIn")}
+          </Link>{" "}
           {t("toCreateYourAwesomeQuotes")}.
         </ListItemText>
       </ListItem>

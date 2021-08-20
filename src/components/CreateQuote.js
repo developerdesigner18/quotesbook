@@ -72,7 +72,7 @@ export default function CreateQuote({ currentUser }) {
       setSelectedImage(selected);
     } else {
       setSelectedImage(null);
-      setImageError("Please select a valid image file(png, jpeg).");
+      setImageError(`${t("pleaseSelectAValidImageFile")}(png, jpeg).`);
     }
   };
 
@@ -90,7 +90,7 @@ export default function CreateQuote({ currentUser }) {
       setSelectedAudio(selected);
     } else {
       setSelectedAudio(null);
-      setAudioError("Please select a valid audio file(mpeg).");
+      setAudioError(`${t("pleaseSelectAValidAudioFile")}(mpeg).`);
     }
   };
 
@@ -271,9 +271,9 @@ export default function CreateQuote({ currentUser }) {
               maxLength="250"
               cols="30"
               rows="5"
-              placeholder="What do you want to quote about?"
+              placeholder={`${t("whatDoYouWantToQuoteAbout")}?`}
             ></textarea>
-            <label>Choose background color : </label>
+            <label>{t("chooseBackgroundColor")} : </label>
             <input
               onChange={(e) => setQuoteColor(e.target.value)}
               type="color"
@@ -338,7 +338,7 @@ export default function CreateQuote({ currentUser }) {
                   style={{ marginTop: "8px" }}
                 >
                   <AddIcon className={classes.icon} />
-                  Post Quote
+                  {t("postQuote")}
                 </Button>
               </div>
             </label>

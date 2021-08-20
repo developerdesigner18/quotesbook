@@ -291,12 +291,12 @@ export default function ProfileStatus({ authorId, currentUser }) {
           onSubmit={handleSave}
         >
           <label style={{ display: "flex", alignItems: "center" }}>
-            <Tooltip title="Edit your Avatar" placement="right-end">
+            <Tooltip title={t("editYourAvatar")} placement="right-end">
               <Avatar
                 src={
                   selectedAvatar
                     ? URL.createObjectURL(selectedAvatar)
-                    : auth.currentUser.photoURL
+                    : auth.currentUser?.photoURL
                 }
                 variant="square"
                 className={classes.large}
@@ -315,7 +315,7 @@ export default function ProfileStatus({ authorId, currentUser }) {
               setFullName(e.target.value);
             }}
             defaultValue={currentUser.displayName}
-            label="Full Name"
+            label={t("fullName")}
           />
           <div className={classes.margin}>
             <Grid container spacing={1} alignItems="flex-end">
@@ -328,7 +328,7 @@ export default function ProfileStatus({ authorId, currentUser }) {
                     setLinkedinLink(e.target.value);
                   }}
                   defaultValue={author.linkedinLink}
-                  label="linkedIn Link"
+                  label={`Linkedin ${t("link")}`}
                 />
               </Grid>
             </Grid>
@@ -344,7 +344,7 @@ export default function ProfileStatus({ authorId, currentUser }) {
                     setFacebookLink(e.target.value);
                   }}
                   defaultValue={author.facebookLink}
-                  label="Facebook Link"
+                  label={`Facebook ${t("link")}`}
                 />
               </Grid>
             </Grid>
@@ -356,7 +356,7 @@ export default function ProfileStatus({ authorId, currentUser }) {
               color="primary"
               size="small"
             >
-              Save
+              {t("save")}
             </Button>
             <Button
               onClick={handleCloseModal}
@@ -364,7 +364,7 @@ export default function ProfileStatus({ authorId, currentUser }) {
               color="primary"
               size="small"
             >
-              Cancel
+              {t("cancel")}
             </Button>
           </ButtonGroup>
         </form>
