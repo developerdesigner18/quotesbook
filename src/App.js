@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import { auth } from "./firebase/config";
 
+import { useTranslation } from "react-i18next";
+
 import Navbar from "./components/Navbar";
 import Signin from "./components/Signin";
 import Signup from "./components/Signup";
@@ -25,6 +27,7 @@ import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { blue } from "@material-ui/core/colors";
+import { Button, ButtonGroup } from "@material-ui/core";
 
 const drawerWidth = 240;
 
@@ -139,6 +142,13 @@ function App() {
     setAuthorId(data);
   };
 
+  const { i18n } = useTranslation();
+
+  const changeLanguage = (e) => {
+    console.log(e.target.value);
+    i18n.changeLanguage(e.target.value);
+  };
+
   const drawer = (
     <div>
       <div className={classes.toolbar} />
@@ -156,6 +166,16 @@ function App() {
           <RandomAuthors />
         </Route>
       </Switch>
+      <ButtonGroup
+        style={{ position: "absolute", left: "20px", bottom: "20px" }}
+      >
+        <Button onClick={changeLanguage} value="vi">
+          vi
+        </Button>
+        <Button onClick={changeLanguage} value="en">
+          en
+        </Button>
+      </ButtonGroup>
     </div>
   );
 

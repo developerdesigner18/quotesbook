@@ -5,6 +5,8 @@ import { db, firebaseStorage } from "../firebase/config";
 
 import { auth } from "../firebase/config";
 
+import { useTranslation } from "react-i18next";
+
 import { ProfileStatusSkeleton } from "./Skeletons";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -206,6 +208,8 @@ export default function ProfileStatus({ authorId, currentUser }) {
       });
   };
 
+  const { t } = useTranslation();
+
   return !author ? (
     <ProfileStatusSkeleton />
   ) : (
@@ -272,11 +276,11 @@ export default function ProfileStatus({ authorId, currentUser }) {
           to={`/author/${authorId}/favorite-quotes`}
           style={{ textDecoration: "none" }}
           color="inherit"
-        >{`Favorite Quotes (${author.favoritedCount})`}</Typography>
+        >{`${t("favoriteQuotes")} (${author.favoritedCount})`}</Typography>
       </ListItem>
       {currentUser.uid === authorId && (
         <ListItem button autoFocus onClick={handleOpenModal}>
-          <Typography>Edit Profile</Typography>
+          <Typography>{t("editProfile")}</Typography>
         </ListItem>
       )}
       <Modal open={openModal} onClose={handleCloseModal}>

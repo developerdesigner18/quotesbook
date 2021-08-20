@@ -3,6 +3,8 @@ import { useHistory, Link as RouterLink } from "react-router-dom";
 
 import { auth, db } from "../firebase/config";
 
+import { useTranslation } from "react-i18next";
+
 import { makeStyles } from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
@@ -76,6 +78,8 @@ export default function Signup() {
       .catch((error) => alert(error.message));
   };
 
+  const { t } = useTranslation();
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -84,7 +88,7 @@ export default function Signup() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign up
+          {t("signUp")}
         </Typography>
         <form className={classes.form} noValidate>
           <TextField
@@ -96,7 +100,7 @@ export default function Signup() {
             required
             fullWidth
             id="fullname"
-            label="Full Name"
+            label={t("fullName")}
             name="fullname"
             autoComplete="fullname"
             autoFocus
@@ -110,7 +114,7 @@ export default function Signup() {
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label={t("emailAddress")}
             name="email"
             autoComplete="email"
             autoFocus
@@ -124,14 +128,14 @@ export default function Signup() {
             required
             fullWidth
             name="password"
-            label="Password"
+            label={t("password")}
             type="password"
             id="password"
             autoComplete="current-password"
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
+            label={t("rememberMe")}
           />
           <Button
             onClick={handleOnSignup}
@@ -141,11 +145,15 @@ export default function Signup() {
             color="primary"
             className={classes.submit}
           >
-            Sign Up
+            {t("signUp")}
           </Button>
           <Grid item>
-            <RouterLink to="/signin" variant="body2">
-              {"Already have an account? Sign In"}
+            <RouterLink
+              to="/signin"
+              variant="body2"
+              style={{ color: "inherit" }}
+            >
+              {t("alreadyHaveAnAccount")}? {t("signIn")}
             </RouterLink>
           </Grid>
         </form>

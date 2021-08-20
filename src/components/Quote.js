@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 
-import tinycolor from "tinycolor2";
-
 import { db, decrement, firebaseStorage, increment } from "../firebase/config";
 import firebase from "firebase";
+
+import { useTranslation } from "react-i18next";
 
 import { QuoteSkeleton } from "./Skeletons";
 import {
@@ -305,10 +305,12 @@ export default function Quote({
     window.speechSynthesis.speak(speech);
   };
 
+  const { t } = useTranslation();
+
   return !quoteId ? (
     <QuoteSkeleton />
   ) : (
-    <Card className={classes.root}>
+    <Card className={classes.root} id={`#${quoteId}`}>
       <CardHeader
         avatar={
           <Link to={`/author/${quote.uid}`} style={{ textDecoration: "none" }}>
@@ -349,12 +351,12 @@ export default function Quote({
                 {/* <MenuItem
                   onClick={() => handleEdit(quoteId, quoteImage, quoteAudio)}
                 >
-                  Edit
+                  {t('edit')}
                 </MenuItem> */}
                 <MenuItem
                   onClick={() => handleDelete(quoteId, quoteImage, quoteAudio)}
                 >
-                  Delete
+                  {t("delete")}
                 </MenuItem>
               </Menu>
             </IconButton>
@@ -388,9 +390,7 @@ export default function Quote({
               variant="subtitle2"
               color="textSecondary"
               style={{
-                color: `${tinycolor(quote.textBackgroundColor)
-                  .complement()
-                  .toHexString()}`,
+                mixBlendMode: "difference",
               }}
             >
               {quote.text}
@@ -428,10 +428,13 @@ export default function Quote({
         </IconButton>
         <Modal open={openModal} onClose={handleCloseModal}>
           <div style={{ position: "absolute", top: "45vh", left: "45vw" }}>
-            <FacebookShareButton url={`http://google.com`} quote={quote.text}>
+            <FacebookShareButton
+              url={`https://localhost:3000/#${quoteId}`}
+              quote={quote.text}
+            >
               <FacebookIcon />
             </FacebookShareButton>
-            <LinkedinShareButton url={`http://google.com`}>
+            <LinkedinShareButton url={`https://localhost:3000/#${quoteId}`}>
               <LinkedinIcon />
             </LinkedinShareButton>
           </div>

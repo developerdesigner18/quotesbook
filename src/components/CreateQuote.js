@@ -2,6 +2,8 @@ import { useState } from "react";
 
 import firebase from "firebase";
 
+import { useTranslation } from "react-i18next";
+
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CreateIcon from "@material-ui/icons/Create";
@@ -192,6 +194,8 @@ export default function CreateQuote({ currentUser }) {
     setExpanded(!expanded);
   };
 
+  const { t } = useTranslation();
+
   return (
     <div
       style={{
@@ -232,7 +236,7 @@ export default function CreateQuote({ currentUser }) {
             aria-expanded={expanded}
             aria-label="show more"
           >
-            <Typography>Create your Quote</Typography>
+            <Typography>{t("createYourQuote")}</Typography>
             <CreateIcon />
           </IconButton>
         </div>

@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+
+import { useTranslation } from "react-i18next";
+
 import { CardActions, makeStyles } from "@material-ui/core";
 import BorderColorIcon from "@material-ui/icons/BorderColor";
 import {
@@ -40,6 +43,8 @@ const Authors = () => {
       });
   }, []);
 
+  const { t } = useTranslation();
+
   return (
     <div>
       {!users
@@ -63,7 +68,7 @@ const Authors = () => {
                           variant="body2"
                           color="textPrimary"
                         >
-                          {"Favorite Quote"}
+                          {t("favoriteQuote")}
                         </Typography>
                         {
                           " — You will face many defeats in life, but never let yourself be defeated."

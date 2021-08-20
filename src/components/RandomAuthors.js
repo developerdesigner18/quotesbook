@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { db } from "../firebase/config";
 import { Link } from "react-router-dom";
 
+import { useTranslation } from "react-i18next";
+
 import { AuthorSkeleton } from "./Skeletons";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -36,11 +38,13 @@ export default function RandomAuthors() {
     return () => unsub();
   }, []);
 
+  const { t } = useTranslation();
+
   return (
     <div>
       <Divider />
       <Typography align="center" color="textSecondary" variant="subtitle1">
-        Top Authors
+        {t("topAuthors")}
       </Typography>
       {!randomAuthors.length ? (
         [1, 2, 3, 4].map((skeleton) => <AuthorSkeleton key={skeleton} />)

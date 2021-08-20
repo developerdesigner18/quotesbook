@@ -4,6 +4,8 @@ import { useHistory, Link as RouterLink, Link } from "react-router-dom";
 
 import { auth } from "../firebase/config";
 
+import { useTranslation } from "react-i18next";
+
 import logo from "../assets/logo.png";
 
 import { alpha, makeStyles } from "@material-ui/core/styles";
@@ -150,7 +152,10 @@ export default function Navbar({ currentUser, loadDarkMode }) {
       .catch((error) => console.log(error));
   };
 
+  const { t } = useTranslation();
+
   const menuId = "primary-search-account-menu";
+
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -163,7 +168,7 @@ export default function Navbar({ currentUser, loadDarkMode }) {
     >
       <MenuItem onClick={handleMenuClose}>{currentUser.displayName}</MenuItem>
       <MenuItem onClick={handleSignOut}>
-        {currentUser.uid ? "Sign Out" : "Sign In"}
+        {currentUser.uid ? `${t("signOut")}` : `${t("signIn")}`}
       </MenuItem>
     </Menu>
   );
@@ -185,7 +190,7 @@ export default function Navbar({ currentUser, loadDarkMode }) {
           <FormatQuoteIcon />
           {/* </Badge> */}
         </IconButton>
-        <p>Quotes</p>
+        <p>{t("quotes")}</p>
       </MenuItem>
       <MenuItem component={Link} to={"/authors"}>
         <IconButton aria-label="show 11 new notifications" color="inherit">
@@ -193,7 +198,7 @@ export default function Navbar({ currentUser, loadDarkMode }) {
           <BorderColorIcon />
           {/* </Badge> */}
         </IconButton>
-        <p>Authors</p>
+        <p>{t("authors")}</p>
       </MenuItem>
       <MenuItem>
         <IconButton aria-label="show 11 new notifications" color="inherit">
@@ -201,7 +206,7 @@ export default function Navbar({ currentUser, loadDarkMode }) {
           <MicIcon />
           {/* </Badge> */}
         </IconButton>
-        <p>Podcasts</p>
+        <p>{t("podcasts")}</p>
       </MenuItem>
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
@@ -216,7 +221,7 @@ export default function Navbar({ currentUser, loadDarkMode }) {
             <Avatar src={currentUser.photoURL} />
           )}
         </IconButton>
-        <p>Account</p>
+        <p>{t("account")}</p>
       </MenuItem>
     </Menu>
   );

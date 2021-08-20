@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 
+import { useTranslation } from "react-i18next";
+
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import { Divider, ListItem, ListItemText } from "@material-ui/core";
@@ -25,19 +27,22 @@ const useStyles = makeStyles((theme) => ({
 
 export default function GuestUser() {
   const classes = useStyles();
+
+  const { t } = useTranslation();
   return (
     <div>
       <div className={classes.toolbar} />
       <Divider />
       <ListItem>
         <ListItemText>
-          You're unique. <br />
-          <Link to="/signin">Sign in</Link> to create your awesome quotes.
+          {t("youAreUnique")}. <br />
+          <Link to="/signin">{t("signIn")}</Link>{" "}
+          {t("toCreateYourAwesomeQuotes")}.
         </ListItemText>
       </ListItem>
       <ListItem>
         <Button variant="contained" color="primary" size="small">
-          Share
+          {t("share")}
         </Button>
       </ListItem>
     </div>

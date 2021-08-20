@@ -3,6 +3,8 @@ import { useHistory, Link as RouterLink } from "react-router-dom";
 
 import { auth, db, facebookProvider, googleProvider } from "../firebase/config";
 
+import { useTranslation } from "react-i18next";
+
 import { makeStyles } from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
@@ -140,12 +142,14 @@ export default function Signin() {
       .catch((error) => console.log(error.message));
   };
 
+  const { t } = useTranslation();
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <Typography component="p">Sign in with</Typography>
+          <Typography component="p">{t("signInWith")}</Typography>
           <Avatar onClick={handleLoginWithGmail} className={classes.avatar}>
             <MailOutline />
           </Avatar>
@@ -154,7 +158,7 @@ export default function Signin() {
           </Avatar>
         </div>
         <Typography component="p" variant="h6">
-          OR
+          {t("or")}
         </Typography>
         <form className={classes.form} noValidate>
           <TextField
@@ -166,7 +170,7 @@ export default function Signin() {
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label={t("emailAddress")}
             name="email"
             autoComplete="email"
             autoFocus
@@ -180,14 +184,14 @@ export default function Signin() {
             required
             fullWidth
             name="password"
-            label="Password"
+            label={t("password")}
             type="password"
             id="password"
             autoComplete="current-password"
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
+            label={t("rememberMe")}
           />
           <Button
             onClick={handleOnSubmit}
@@ -197,17 +201,21 @@ export default function Signin() {
             color="primary"
             className={classes.submit}
           >
-            Sign In
+            {t("signIn")}
           </Button>
           <Grid container>
             <Grid item xs>
               <Link href="/forgot-password" variant="body2">
-                Forgot password?
+                {t("forgotPassword")}?
               </Link>
             </Grid>
             <Grid item>
-              <RouterLink to="/signup" variant="body2">
-                {"New to Quote Book? Sign Up"}
+              <RouterLink
+                to="/signup"
+                variant="body2"
+                style={{ color: "inherit" }}
+              >
+                {t("newToQuotesBook")}? {t("signUp")}
               </RouterLink>
             </Grid>
           </Grid>
