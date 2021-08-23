@@ -255,34 +255,23 @@ export default function Navbar({ currentUser, loadDarkMode }) {
             <IconButton onClick={handleToggleDarkMode}>
               {darkMode ? <Brightness4Icon /> : <Brightness7Icon />}
             </IconButton>
-            <IconButton
-              component={RouterLink}
-              to={"/"}
-              aria-label="show 4 new mails"
-              color="inherit"
-            >
+            <IconButton component={RouterLink} to={"/"} color="inherit">
               {/* <Badge badgeContent={4} color="secondary"> */}
               <FormatQuoteIcon />
               {/* </Badge> */}
             </IconButton>
-            <IconButton
-              aria-label="show 17 new notifications"
-              color="inherit"
-              component={Link}
-              to={"/authors"}
-            >
+            <IconButton color="inherit" component={Link} to={"/authors"}>
               {/* <Badge badgeContent={17} color="secondary"> */}
               <BorderColorIcon />
               {/* </Badge> */}
             </IconButton>
-            <IconButton aria-label="show 17 new notifications" color="inherit">
+            <IconButton color="inherit">
               {/* <Badge badgeContent={17} color="secondary"> */}
               <MicIcon />
               {/* </Badge> */}
             </IconButton>
             <IconButton
               edge="end"
-              aria-label="account of current user"
               aria-controls={menuId}
               aria-haspopup="true"
               onClick={handleProfileMenuOpen}

@@ -38,6 +38,7 @@
     "hasNotCreatedAQuoteYet": "chưa tạo báo giá",
     "hasNotFavoritedAnyQuotesYet": "chưa yêu thích bất kỳ trích dẫn nào",
     "sendAResetEmailLink": "Gửi một liên kết email đặt lại",
-    "search": "Tìm kiếm"
-
+    "search": "Tìm kiếm",
+    "pleaseQuoteSomething": "Xin vui lòng trích dẫn một cái gì đó",
+    "areYouSureYouWantToDeleteThisQuote": "Bạn có chắc chắn muốn xóa báo giá này không"
 }

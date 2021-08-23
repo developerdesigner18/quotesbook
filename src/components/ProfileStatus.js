@@ -134,7 +134,7 @@ export default function ProfileStatus({ authorId, currentUser }) {
           setAvatarProgress(percentage);
         },
         (error) => {
-          console.log(error.message);
+          console.log("error: ", error.message);
         },
         () => {
           // Get the avatar download url

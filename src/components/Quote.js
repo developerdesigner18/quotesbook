@@ -26,7 +26,7 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import StarIcon from "@material-ui/icons/Star";
 import ShareIcon from "@material-ui/icons/Share";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import { CardMedia, Modal } from "@material-ui/core";
+import { Button, CardMedia, Modal } from "@material-ui/core";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Fade from "@material-ui/core/Fade";
@@ -60,6 +60,18 @@ const useStyles = makeStyles((theme) => ({
     placeItems: "center",
     padding: "20px",
   },
+  modalForm: {
+    "& > *": {
+      margin: theme.spacing(1),
+      // width: "25ch",
+    },
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    background: theme.palette.info.light,
+    padding: "50px",
+  },
 }));
 
 export default function Quote({
@@ -85,6 +97,7 @@ export default function Quote({
   };
 
   const [openModal, setOpenModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -92,6 +105,7 @@ export default function Quote({
 
   const handleCloseModal = () => {
     setOpenModal(false);
+    setDeleteModal(false);
   };
 
   // Edit quote
@@ -103,68 +117,67 @@ export default function Quote({
   // Delete Quote from firestore & files from firebase storage
   const handleDelete = (quoteId, quoteImage, quoteAudio) => {
     // Delete quote from quotes collection
-    if (window.confirm("Are you sure to delete this quote?")) {
-      db.collection("quotes")
-        .doc(quoteId)
+
+    db.collection("quotes")
+      .doc(quoteId)
+      .delete()
+      .then(() => {
+        console.log("Document successfully deleted!");
+      })
+      .catch((error) => {
+        console.error("Error removing document: ", error);
+      });
+
+    // Delete image from firebase storage
+    quoteImage &&
+      firebaseStorage
+        .refFromURL(quoteImage)
         .delete()
         .then(() => {
-          console.log("Document successfully deleted!");
+          console.log("Image successfully deleted!");
         })
         .catch((error) => {
-          console.error("Error removing document: ", error);
+          console.error("Error removing image: ", error);
         });
 
-      // Delete image from firebase storage
-      quoteImage &&
-        firebaseStorage
-          .refFromURL(quoteImage)
-          .delete()
-          .then(() => {
-            console.log("Image successfully deleted!");
-          })
-          .catch((error) => {
-            console.error("Error removing image: ", error);
-          });
-
-      // Delete audio from firebase storage
-      quoteAudio &&
-        firebaseStorage
-          .refFromURL(quoteAudio)
-          .delete()
-          .then(() => {
-            console.log("Audio successfully deleted!");
-          })
-          .catch((error) => {
-            console.error("Error removing audio: ", error);
-          });
-
-      // Decrese createdCount of currentUser
-      db.collection("users")
-        .doc(currentUser.uid)
-        .update({
-          created: firebase.firestore.FieldValue.arrayRemove(quoteId),
-          createdCount: decrement,
+    // Delete audio from firebase storage
+    quoteAudio &&
+      firebaseStorage
+        .refFromURL(quoteAudio)
+        .delete()
+        .then(() => {
+          console.log("Audio successfully deleted!");
         })
-        .then(() => console.log("current user created deleted..... "));
-
-      // Remove favorited from other users
-
-      db.collection("users")
-        .where("favorited", "array-contains", quoteId)
-        .get()
-        .then((users) => {
-          users.forEach((user) => {
-            console.log("name..........", user.data().displayName, decrement);
-            db.collection("users")
-              .doc(user.data().uid)
-              .update({
-                favorited: firebase.firestore.FieldValue.arrayRemove(quoteId),
-                favoritedCount: decrement,
-              })
-              .then(() => console.log("favorited deleted"));
-          });
+        .catch((error) => {
+          console.error("Error removing audio: ", error);
         });
-    }
+
+    // Decrese createdCount of currentUser
+    db.collection("users")
+      .doc(currentUser.uid)
+      .update({
+        created: firebase.firestore.FieldValue.arrayRemove(quoteId),
+        createdCount: decrement,
+      })
+      .then(() => console.log("current user created deleted..... "));
+
+    // Remove favorited from other users
+
+    db.collection("users")
+      .where("favorited", "array-contains", quoteId)
+      .get()
+      .then((users) => {
+        users.forEach((user) => {
+          console.log("name..........", user.data().displayName, decrement);
+          db.collection("users")
+            .doc(user.data().uid)
+            .update({
+              favorited: firebase.firestore.FieldValue.arrayRemove(quoteId),
+              favoritedCount: decrement,
+            })
+            .then(() => console.log("favorited deleted"));
+        });
+      });
   };
 
   // Favorite
@@ -310,7 +323,7 @@ export default function Quote({
   return !quoteId ? (
     <QuoteSkeleton />
   ) : (
-    <Card className={classes.root} id={`#${quoteId}`}>
+    <Card className={classes.root} id={quoteId}>
       <CardHeader
         avatar={
           <Link to={`/author/${quote.uid}`} style={{ textDecoration: "none" }}>
@@ -354,10 +367,29 @@ export default function Quote({
                   {t('edit')}
                 </MenuItem> */}
                 <MenuItem
-                  onClick={() => handleDelete(quoteId, quoteImage, quoteAudio)}
+                  onClick={() => {
+                    setDeleteModal(true);
+                  }}
                 >
                   {t("delete")}
                 </MenuItem>
+                <Modal open={deleteModal} onClose={handleCloseModal}>
+                  <div className={classes.modalForm}>
+                    <Typography gutterBottom>
+                      {t("areYouSureYouWantToDeleteThisQuote")}?
+                    </Typography>
+
+                    <Button
+                      onClick={() =>
+                        handleDelete(quoteId, quoteImage, quoteAudio)
+                      }
+                      variant="contained"
+                      color="secondary"
+                    >
+                      {t("delete")}
+                    </Button>
+                  </div>
+                </Modal>
               </Menu>
             </IconButton>
           ) : null
@@ -429,12 +461,12 @@ export default function Quote({
         <Modal open={openModal} onClose={handleCloseModal}>
           <div style={{ position: "absolute", top: "45vh", left: "45vw" }}>
             <FacebookShareButton
-              url={`https://localhost:3000/#${quoteId}`}
+              url={`http://localhost:3000/#${quoteId}`}
               quote={quote.text}
             >
               <FacebookIcon />
             </FacebookShareButton>
-            <LinkedinShareButton url={`https://localhost:3000/#${quoteId}`}>
+            <LinkedinShareButton url={`http://localhost:3000/#${quoteId}`}>
               <LinkedinIcon />
             </LinkedinShareButton>
           </div>

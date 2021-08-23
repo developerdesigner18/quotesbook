@@ -20,6 +20,7 @@ import {
   CircularProgress,
   Collapse,
   IconButton,
+  Modal,
   Typography,
 } from "@material-ui/core";
 
@@ -44,6 +45,18 @@ const useStyles = makeStyles((theme) => ({
     },
     marginBottom: "20px",
   },
+  modalForm: {
+    "& > *": {
+      margin: theme.spacing(1),
+      // width: "25ch",
+    },
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    background: theme.palette.info.light,
+    padding: "50px",
+  },
 }));
 
 export default function CreateQuote({ currentUser }) {
@@ -52,6 +65,16 @@ export default function CreateQuote({ currentUser }) {
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
+  };
+
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
   };
 
   // Quote Upload
@@ -147,7 +170,7 @@ export default function CreateQuote({ currentUser }) {
 
   const handleQuoteSubmit = async () => {
     if (!quote.length && !selectedImage && !selectedAudio) {
-      return alert("Please quote something!");
+      return handleOpenModal();
     }
 
     if (quote || selectedImage || selectedAudio) {
@@ -340,6 +363,11 @@ export default function CreateQuote({ currentUser }) {
                   <AddIcon className={classes.icon} />
                   {t("postQuote")}
                 </Button>
+                <Modal open={openModal} onClose={handleCloseModal}>
+                  <div className={classes.modalForm}>
+                    <Typography>{t("pleaseQuoteSomething")}!</Typography>
+                  </div>
+                </Modal>
               </div>
             </label>
           </CardContent>

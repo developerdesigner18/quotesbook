@@ -38,6 +38,7 @@
     "hasNotCreatedAQuoteYet": "has not created a quote yet",
     "hasNotFavoritedAnyQuotesYet": "has not favorited any quotes yet",
     "sendAResetEmailLink": "Send a reset email link",
-    "search": "Search"
-    
+    "search": "Search",
+    "pleaseQuoteSomething": "Please quote something",
+    "areYouSureYouWantToDeleteThisQuote": "Are you sure you want to delete this quote"
 }
