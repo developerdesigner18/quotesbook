@@ -166,9 +166,9 @@ export default function Navbar({ currentUser, loadDarkMode }) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>{currentUser.displayName}</MenuItem>
+      <MenuItem onClick={handleMenuClose}>{currentUser?.displayName}</MenuItem>
       <MenuItem onClick={handleSignOut}>
-        {currentUser.uid ? `${t("signOut")}` : `${t("signIn")}`}
+        {currentUser?.uid ? `${t("signOut")}` : `${t("signIn")}`}
       </MenuItem>
     </Menu>
   );
@@ -215,7 +215,7 @@ export default function Navbar({ currentUser, loadDarkMode }) {
           aria-haspopup="true"
           color="inherit"
         >
-          {!currentUser.photoURL ? (
+          {!currentUser?.photoURL ? (
             <AccountCircle />
           ) : (
             <Avatar src={currentUser.photoURL} />
@@ -288,10 +288,10 @@ export default function Navbar({ currentUser, loadDarkMode }) {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              {!currentUser.photoURL ? (
+              {!currentUser?.photoURL ? (
                 <AccountCircle />
               ) : (
-                <Avatar src={currentUser.photoURL} />
+                <Avatar src={currentUser?.photoURL} />
               )}
             </IconButton>
           </div>

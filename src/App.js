@@ -2,8 +2,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import { auth } from "./firebase/config";
 
-import { useTranslation } from "react-i18next";
-
 import Navbar from "./components/Navbar";
 import Signin from "./components/Signin";
 import Signup from "./components/Signup";
@@ -16,6 +14,7 @@ import RandomAuthors from "./components/RandomAuthors";
 import FavoriteQuotes from "./components/FavoriteQuotes";
 import GuestUser from "./components/GuestUser";
 import ProfileStatus from "./components/ProfileStatus";
+import Translator from "./components/Translator";
 
 import {
   makeStyles,
@@ -27,7 +26,6 @@ import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { blue } from "@material-ui/core/colors";
-import { Button, ButtonGroup } from "@material-ui/core";
 
 const drawerWidth = 240;
 
@@ -107,32 +105,14 @@ function App() {
     else setDarkMode("light");
   };
 
-  const [currentUser, setCurrentUser] = useState({
-    uid: "",
-    displayName: "",
-    photoURL: "",
-    linkedinLink: "",
-    facebookLink: "",
-    email: "",
-  });
-
+  const [currentUser, setCurrentUser] = useState(null);
+  console.log(currentUser);
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        setCurrentUser({
-          uid: user.uid,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
-          linkedinLink: user.linkedinLink,
-          facebookLink: user.facebookLink,
-          email: user.email,
-        });
+        setCurrentUser(user);
       } else {
-        setCurrentUser({
-          uid: "",
-          displayName: "",
-          photoURL: "",
-        });
+        setCurrentUser(null);
       }
     });
   }, []);
@@ -142,19 +122,12 @@ function App() {
     setAuthorId(data);
   };
 
-  const { i18n } = useTranslation();
-
-  const changeLanguage = (e) => {
-    console.log(e.target.value);
-    i18n.changeLanguage(e.target.value);
-  };
-
   const drawer = (
     <div>
       <div className={classes.toolbar} />
       <Switch>
         <Route exact path="/">
-          {!currentUser.uid ? <GuestUser /> : <RandomAuthors />}
+          {!currentUser ? <GuestUser /> : <RandomAuthors />}
         </Route>
         <Route path={`/author/:authorId`}>
           {authorId && (
@@ -166,16 +139,7 @@ function App() {
           <RandomAuthors />
         </Route>
       </Switch>
-      <ButtonGroup
-        style={{ position: "absolute", left: "20px", bottom: "20px" }}
-      >
-        <Button onClick={changeLanguage} value="vi">
-          vi
-        </Button>
-        <Button onClick={changeLanguage} value="en">
-          en
-        </Button>
-      </ButtonGroup>
+      <Translator currentUser={currentUser} />
     </div>
   );
 
@@ -215,14 +179,16 @@ function App() {
             <div>
               <Switch>
                 <Route exact path="/">
-                  {currentUser.uid && <CreateQuote currentUser={currentUser} />}
+                  {currentUser?.uid && (
+                    <CreateQuote currentUser={currentUser} />
+                  )}
                   <Quotes currentUser={currentUser} />
                 </Route>
                 <Route path={`/author/:authorId/favorite-quotes`}>
                   <FavoriteQuotes currentUser={currentUser} />
                 </Route>
                 <Route exact path={`/author/:authorId`}>
-                  {currentUser.uid === authorId && (
+                  {currentUser?.uid === authorId && (
                     <CreateQuote currentUser={currentUser} />
                   )}
                   <Author
