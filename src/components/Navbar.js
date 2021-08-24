@@ -166,7 +166,14 @@ export default function Navbar({ currentUser, loadDarkMode }) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>{currentUser?.displayName}</MenuItem>
+      <Link
+        to={`/author/${currentUser?.uid}`}
+        style={{ textDecoration: "none", color: "inherit" }}
+      >
+        <MenuItem onClick={handleMenuClose}>
+          {currentUser?.displayName}
+        </MenuItem>
+      </Link>
       <MenuItem onClick={handleSignOut}>
         {currentUser?.uid ? `${t("signOut")}` : `${t("signIn")}`}
       </MenuItem>

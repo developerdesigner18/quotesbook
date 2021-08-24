@@ -52,28 +52,33 @@ export default function Signup() {
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((cred) => {
-        cred.user
-          .updateProfile({ displayName: fullName })
-          .then(() => {
-            console.log("updated...");
-            db.collection("users").doc(cred.user.uid).set({
-              displayName: fullName,
-              photoURL: cred.user.photoURL,
-              favorited: [],
-              favoritedCount: 0,
-              starred: [],
-              starredCount: 0,
-              created: [],
-              createdCount: 0,
-              uid: cred.user.uid,
-            });
-            history.push("/");
-
-            // Firebase onAuthStateChanged listener cannot be triggered by updateProfile method!
-            // So window reload is a temporary solution!
-            window.location.reload();
+        db.collection("users")
+          .doc(cred.user.uid)
+          .set({
+            displayName: fullName,
+            photoURL: cred.user.photoURL,
+            favorited: [],
+            favoritedCount: 0,
+            starred: [],
+            starredCount: 0,
+            created: [],
+            createdCount: 0,
+            uid: cred.user.uid,
           })
-          .catch((error) => console.log(error));
+          .then(() => {
+            cred.user
+              .updateProfile({ displayName: fullName })
+              .then(() => {
+                console.log("updated...");
+
+                history.push("/");
+
+                // Firebase onAuthStateChanged listener cannot be triggered by updateProfile method!
+                // So window reload is a temporary solution!
+                window.location.reload();
+              })
+              .catch((error) => console.log(error));
+          });
       })
       .catch((error) => alert(error.message));
   };

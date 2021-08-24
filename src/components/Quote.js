@@ -188,12 +188,12 @@ export default function Quote({
     ) {
       setIsFavorited(true);
     }
-  }, [quoteFavorites, currentUser.uid]);
+  }, [quoteFavorites, currentUser?.uid]);
 
   const handleFavoriteClick = (currentUser, quoteId, quoteFavorites) => {
-    if (!currentUser.uid) {
-      alert("Please sign in to use the app!");
-      return history.push("/signin");
+    if (!currentUser) {
+      setDeleteModal(true);
+      return;
     }
 
     setIsFavorited(!isFavorited);
@@ -252,12 +252,12 @@ export default function Quote({
     if (quoteStars.find((quoteStar) => quoteStar === currentUser.uid)) {
       setIsStarred(true);
     }
-  }, [quoteStars, currentUser.uid]);
+  }, [quoteStars, currentUser?.uid]);
 
   const handleStarClick = (currentUser, quoteId, quoteStars) => {
-    if (!currentUser.uid) {
-      alert("Please sign in to use the app!");
-      return history.push("/signin");
+    if (!currentUser) {
+      setDeleteModal(true);
+      return;
     }
 
     setIsStarred(!isStarred);
@@ -345,7 +345,7 @@ export default function Quote({
           </Link>
         }
         action={
-          currentUser.uid === quote?.uid ? (
+          currentUser?.uid === quote?.uid ? (
             <IconButton>
               <MoreVertIcon
                 aria-controls="fade-menu"
@@ -378,7 +378,6 @@ export default function Quote({
                     <Typography gutterBottom>
                       {t("areYouSureYouWantToDeleteThisQuote")}?
                     </Typography>
-
                     <Button
                       onClick={() =>
                         handleDelete(quoteId, quoteImage, quoteAudio)
@@ -448,6 +447,19 @@ export default function Quote({
           <FavoriteIcon style={{ color: isFavorited && "red" }} />
         </IconButton>
         <span>{quoteFavorites?.length}</span>
+        <Modal open={deleteModal} onClose={handleCloseModal}>
+          <div className={classes.modalForm}>
+            <Typography gutterBottom>{t("signInToUseTheApp")}!</Typography>
+
+            <Button
+              onClick={() => history.push("/signin")}
+              variant="contained"
+              color="secondary"
+            >
+              {t("signIn")}
+            </Button>
+          </div>
+        </Modal>
         <IconButton>
           <StarIcon
             onClick={() => handleStarClick(currentUser, quoteId, quoteStars)}

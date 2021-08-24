@@ -8,7 +8,7 @@ import Quote from "./Quote";
 const Quotes = ({ currentUser }) => {
   const [content, setContent] = useState([]);
   const filteredContent = content.filter(
-    (quote) => !quote.favorites.includes(currentUser.uid)
+    (quote) => !quote.favorites.includes(currentUser?.uid)
   );
 
   const [users, setUsers] = useState([]);

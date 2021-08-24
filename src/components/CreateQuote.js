@@ -1,8 +1,11 @@
 import { useState } from "react";
 
 import firebase from "firebase";
+import { db, firebaseStorage, increment, timeStamp } from "../firebase/config";
 
 import { useTranslation } from "react-i18next";
+
+import Categories from "../material-components/Categories";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
@@ -25,7 +28,6 @@ import {
 } from "@material-ui/core";
 
 import "./CreateQuote.css";
-import { db, firebaseStorage, increment, timeStamp } from "../firebase/config";
 import { Delete } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
@@ -181,7 +183,7 @@ export default function CreateQuote({ currentUser }) {
           displayName: currentUser.displayName,
           photoURL: currentUser.photoURL,
           text: quote ? quote : "",
-          textBackgroundColor: quoteColor,
+          textBackgroundColor: !selectedImage ? quoteColor : "",
           image: selectedImage ? await getImageUrl() : null,
           audio: selectedAudio ? await getAudioUrl() : null,
           favorites: [],
@@ -286,6 +288,7 @@ export default function CreateQuote({ currentUser }) {
               </Avatar>
               {/* <SelectCatagory /> */}
             </div>
+            <Categories />
             <textarea
               onChange={(e) => setQuote(e.target.value)}
               value={quote}
@@ -296,11 +299,15 @@ export default function CreateQuote({ currentUser }) {
               rows="5"
               placeholder={`${t("whatDoYouWantToQuoteAbout")}?`}
             ></textarea>
-            <label>{t("chooseBackgroundColor")} : </label>
-            <input
-              onChange={(e) => setQuoteColor(e.target.value)}
-              type="color"
-            />
+            {!selectedImage && (
+              <div>
+                <label>{t("chooseBackgroundColor")} : </label>
+                <input
+                  onChange={(e) => setQuoteColor(e.target.value)}
+                  type="color"
+                />
+              </div>
+            )}
             <div style={{ display: "flex" }}>
               <div style={{ textAlign: "center" }}>
                 <div style={{ display: "flex", alignItems: "center" }}>
