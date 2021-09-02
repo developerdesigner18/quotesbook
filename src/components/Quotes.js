@@ -5,7 +5,29 @@ import { db } from "../firebase/config";
 
 import Quote from "./Quote";
 
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 const Quotes = ({ currentUser }) => {
+  // Deleted quote successfully - Snackbar
+  const [deleteAlert, setDeleteAlert] = useState(false);
+  console.log("dlete alert => ", deleteAlert);
+
+  const handleDeleteAlertClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setDeleteAlert(false);
+  };
+
+  const loadDeleteAlert = (data) => {
+    setDeleteAlert(data);
+  };
+
   const [content, setContent] = useState([]);
   const filteredContent = content.filter(
     (quote) => !quote.favorites.includes(currentUser?.uid)
@@ -52,8 +74,18 @@ const Quotes = ({ currentUser }) => {
           quoteFavorites={doc.favorites}
           quoteStars={doc.stars}
           quoteCreatedAt={doc.createdAt}
+          loadDeleteAlert={loadDeleteAlert}
         />
       ))}
+      <Snackbar
+        open={deleteAlert}
+        autoHideDuration={6000}
+        onClose={handleDeleteAlertClose}
+      >
+        <Alert onClose={handleDeleteAlertClose} severity="error">
+          Quote deleted successfully!
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

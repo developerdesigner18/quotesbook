@@ -14,6 +14,8 @@ import RandomAuthors from "./components/RandomAuthors";
 import FavoriteQuotes from "./components/FavoriteQuotes";
 import GuestUser from "./components/GuestUser";
 import ProfileStatus from "./components/ProfileStatus";
+import FloatingButton from "./components/FloatingButton";
+
 import Translator from "./components/Translator";
 
 import {
@@ -183,6 +185,7 @@ function App() {
                     <CreateQuote currentUser={currentUser} />
                   )}
                   <Quotes currentUser={currentUser} />
+                  <FloatingButton />
                 </Route>
                 <Route path={`/author/:authorId/favorite-quotes`}>
                   <FavoriteQuotes currentUser={currentUser} />
@@ -195,6 +198,7 @@ function App() {
                     loadAuthorId={handleLoadAuthorId}
                     currentUser={currentUser}
                   />
+                  {currentUser?.uid === authorId && <FloatingButton />}
                 </Route>
                 <Route path={"/authors"}>
                   <Authors />

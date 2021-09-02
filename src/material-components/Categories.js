@@ -21,8 +21,6 @@ export default function LimitTags() {
 
   const [categories, setCategories] = useState([]);
 
-  console.log(categories);
-
   const addCategory = (e) => {
     e.key === "Enter" && setCategories([...categories, e.target.value]);
   };
@@ -33,7 +31,7 @@ export default function LimitTags() {
         size="small"
         multiple
         limitTags={2}
-        id="multiple-limit-tags"
+        // id="multiple-limit-tags"
         options={categories}
         // getOptionLabel={(option) => option.title}
         // defaultValue={[categories[0]]}

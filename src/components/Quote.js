@@ -82,6 +82,7 @@ export default function Quote({
   quoteFavorites,
   quoteStars,
   quoteId,
+  loadDeleteAlert,
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -96,33 +97,19 @@ export default function Quote({
     setAnchorEl(null);
   };
 
-  const [openModal, setOpenModal] = useState(false);
+  const [signInModal, setSignInModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-
-  const handleOpenModal = () => {
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-    setDeleteModal(false);
-  };
-
-  // Edit quote
-  // const handleEdit = (quoteId, quoteImage, quoteAudio) => {
-  //   console.log("object");
-
-  // };
+  const [shareModal, setShareModal] = useState(false);
 
   // Delete Quote from firestore & files from firebase storage
   const handleDelete = (quoteId, quoteImage, quoteAudio) => {
     // Delete quote from quotes collection
-
     db.collection("quotes")
       .doc(quoteId)
       .delete()
       .then(() => {
         console.log("Document successfully deleted!");
+        loadDeleteAlert(true);
       })
       .catch((error) => {
         console.error("Error removing document: ", error);
@@ -184,7 +171,7 @@ export default function Quote({
   const [isFavorited, setIsFavorited] = useState(false);
   useEffect(() => {
     if (
-      quoteFavorites.find((quoteFavorite) => quoteFavorite === currentUser.uid)
+      quoteFavorites.find((quoteFavorite) => quoteFavorite === currentUser?.uid)
     ) {
       setIsFavorited(true);
     }
@@ -192,7 +179,7 @@ export default function Quote({
 
   const handleFavoriteClick = (currentUser, quoteId, quoteFavorites) => {
     if (!currentUser) {
-      setDeleteModal(true);
+      setSignInModal(true);
       return;
     }
 
@@ -256,7 +243,7 @@ export default function Quote({
 
   const handleStarClick = (currentUser, quoteId, quoteStars) => {
     if (!currentUser) {
-      setDeleteModal(true);
+      setSignInModal(true);
       return;
     }
 
@@ -323,167 +310,175 @@ export default function Quote({
   return !quoteId ? (
     <QuoteSkeleton />
   ) : (
-    <Card className={classes.root} id={quoteId}>
-      <CardHeader
-        avatar={
-          <Link to={`/author/${quote.uid}`} style={{ textDecoration: "none" }}>
-            <Avatar className={classes.avatar}>
-              {quote ? (
-                <img
-                  src={quote.photoURL}
-                  alt={quote.displayName}
-                  style={{
-                    height: "100%",
-                    width: "100%",
-                    objectFit: "cover",
-                  }}
-                />
-              ) : (
-                "QB"
-              )}
-            </Avatar>
-          </Link>
-        }
-        action={
-          currentUser?.uid === quote?.uid ? (
-            <IconButton>
-              <MoreVertIcon
-                aria-controls="fade-menu"
-                aria-haspopup="true"
-                onClick={handleClick}
-              />
-
-              <Menu
-                id="fade-menu"
-                anchorEl={anchorEl}
-                keepMounted
-                open={open}
-                onClose={handleClose}
-                TransitionComponent={Fade}
-              >
-                {/* <MenuItem
-                  onClick={() => handleEdit(quoteId, quoteImage, quoteAudio)}
-                >
-                  {t('edit')}
-                </MenuItem> */}
-                <MenuItem
-                  onClick={() => {
-                    setDeleteModal(true);
-                  }}
-                >
-                  {t("delete")}
-                </MenuItem>
-                <Modal open={deleteModal} onClose={handleCloseModal}>
-                  <div className={classes.modalForm}>
-                    <Typography gutterBottom>
-                      {t("areYouSureYouWantToDeleteThisQuote")}?
-                    </Typography>
-                    <Button
-                      onClick={() =>
-                        handleDelete(quoteId, quoteImage, quoteAudio)
-                      }
-                      variant="contained"
-                      color="secondary"
-                    >
-                      {t("delete")}
-                    </Button>
-                  </div>
-                </Modal>
-              </Menu>
-            </IconButton>
-          ) : null
-        }
-        title={`${quote.displayName?.split(" ")[0]} ${
-          quote.displayName?.split(" ")[1]
-            ? quote.displayName.split(" ")[1]?.charAt(0)
-            : ""
-        }`}
-        subheader={new Date(quote.createdAt?.seconds * 1000).toDateString()}
-      />
-
-      <CardContent>
-        {quote.text && (
-          <Equalizer className={classes.equalizer} onClick={handleSpeech} />
-        )}
-        {quote.image ? (
-          <Typography variant="body2" color="textSecondary" component="p">
-            {quote.text}
-          </Typography>
-        ) : (
-          <div
-            className={classes.textBackground}
-            style={{
-              backgroundColor: `${quote.textBackgroundColor}`,
-            }}
-          >
-            <Typography
-              align="center"
-              variant="subtitle2"
-              color="textSecondary"
-              style={{
-                mixBlendMode: "difference",
-              }}
+    <div>
+      <Card className={classes.root} id={quoteId}>
+        <CardHeader
+          avatar={
+            <Link
+              to={`/author/${quote.uid}`}
+              style={{ textDecoration: "none" }}
             >
+              <Avatar className={classes.avatar}>
+                {quote ? (
+                  <img
+                    src={quote.photoURL}
+                    alt={quote.displayName}
+                    style={{
+                      height: "100%",
+                      width: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                ) : (
+                  "QB"
+                )}
+              </Avatar>
+            </Link>
+          }
+          action={
+            currentUser?.uid === quote?.uid ? (
+              <IconButton>
+                <MoreVertIcon
+                  aria-controls="fade-menu"
+                  aria-haspopup="true"
+                  onClick={handleClick}
+                />
+
+                <Menu
+                  id="fade-menu"
+                  anchorEl={anchorEl}
+                  keepMounted
+                  open={open}
+                  onClose={handleClose}
+                  TransitionComponent={Fade}
+                >
+                  <MenuItem
+                    onClick={() => {
+                      setDeleteModal(true);
+                    }}
+                  >
+                    {t("delete")}
+                  </MenuItem>
+                  <Modal
+                    open={deleteModal}
+                    onClose={() => setDeleteModal(false)}
+                  >
+                    <div className={classes.modalForm}>
+                      <Typography gutterBottom>
+                        {t("areYouSureYouWantToDeleteThisQuote")}?
+                      </Typography>
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          handleDelete(quoteId, quoteImage, quoteAudio);
+                        }}
+                        variant="contained"
+                        color="secondary"
+                      >
+                        {t("delete")}
+                      </Button>
+                    </div>
+                  </Modal>
+                </Menu>
+              </IconButton>
+            ) : null
+          }
+          title={`${quote.displayName?.split(" ")[0]} ${
+            quote.displayName?.split(" ")[1]
+              ? quote.displayName.split(" ")[1]?.charAt(0)
+              : ""
+          }`}
+          subheader={new Date(quote.createdAt?.seconds * 1000).toDateString()}
+        />
+
+        <CardContent>
+          {quote.text && (
+            <Equalizer className={classes.equalizer} onClick={handleSpeech} />
+          )}
+          {quote.image ? (
+            <Typography variant="body2" color="textSecondary" component="p">
               {quote.text}
             </Typography>
-          </div>
+          ) : (
+            <div
+              className={classes.textBackground}
+              style={{
+                backgroundColor: `${quote.textBackgroundColor}`,
+              }}
+            >
+              <Typography
+                align="center"
+                variant="subtitle2"
+                color="textSecondary"
+                style={{
+                  mixBlendMode: "difference",
+                }}
+              >
+                {quote.text}
+              </Typography>
+            </div>
+          )}
+        </CardContent>
+        {quote.image ? (
+          <CardMedia className={classes.media} image={quote.image} />
+        ) : (
+          ""
         )}
-      </CardContent>
-      {quote.image ? (
-        <CardMedia className={classes.media} image={quote.image} />
-      ) : (
-        ""
-      )}
 
-      {quote.audio && (
-        <audio className={classes.audio} controls src={quote.audio} />
-      )}
-      <CardActions disableSpacing>
-        <IconButton
-          onClick={() =>
-            handleFavoriteClick(currentUser, quoteId, quoteFavorites)
-          }
-        >
-          <FavoriteIcon style={{ color: isFavorited && "red" }} />
-        </IconButton>
-        <span>{quoteFavorites?.length}</span>
-        <Modal open={deleteModal} onClose={handleCloseModal}>
-          <div className={classes.modalForm}>
-            <Typography gutterBottom>{t("signInToUseTheApp")}!</Typography>
+        {quote.audio && (
+          <audio className={classes.audio} controls src={quote.audio} />
+        )}
+        <CardActions disableSpacing>
+          <IconButton
+            onClick={() =>
+              handleFavoriteClick(currentUser, quoteId, quoteFavorites)
+            }
+          >
+            <FavoriteIcon style={{ color: isFavorited && "red" }} />
+          </IconButton>
+          <span>{quoteFavorites?.length}</span>
+          <Modal open={signInModal} onClose={() => setSignInModal(false)}>
+            <div className={classes.modalForm}>
+              <Typography gutterBottom>{t("signInToUseTheApp")}!</Typography>
 
-            <Button
-              onClick={() => history.push("/signin")}
-              variant="contained"
-              color="secondary"
-            >
-              {t("signIn")}
-            </Button>
-          </div>
-        </Modal>
-        <IconButton>
-          <StarIcon
-            onClick={() => handleStarClick(currentUser, quoteId, quoteStars)}
-            style={{ color: isStarred && "gold" }}
-          />
-        </IconButton>
-        <span>{quoteStars?.length}</span>
-        <IconButton>
-          <ShareIcon onClick={handleOpenModal} />
-        </IconButton>
-        <Modal open={openModal} onClose={handleCloseModal}>
-          <div style={{ position: "absolute", top: "45vh", left: "45vw" }}>
-            <FacebookShareButton
-              url={`http://localhost:3000/#${quoteId}`}
-              quote={quote.text}
-            >
-              <FacebookIcon />
-            </FacebookShareButton>
-            <LinkedinShareButton url={`http://localhost:3000/#${quoteId}`}>
-              <LinkedinIcon />
-            </LinkedinShareButton>
-          </div>
-        </Modal>
-      </CardActions>
-    </Card>
+              <Button
+                onClick={() => history.push("/signin")}
+                variant="contained"
+                color="secondary"
+              >
+                {t("signIn")}
+              </Button>
+            </div>
+          </Modal>
+          <IconButton>
+            <StarIcon
+              onClick={() => handleStarClick(currentUser, quoteId, quoteStars)}
+              style={{ color: isStarred && "gold" }}
+            />
+          </IconButton>
+          <span>{quoteStars?.length}</span>
+          <IconButton>
+            <ShareIcon
+              onClick={() => {
+                setShareModal(true);
+              }}
+            />
+          </IconButton>
+          <Modal open={shareModal} onClose={() => setShareModal(false)}>
+            <div style={{ position: "absolute", top: "45vh", left: "45vw" }}>
+              <FacebookShareButton
+                url={`http://localhost:3000/#${quoteId}`}
+                quote={quote.text}
+              >
+                <FacebookIcon />
+              </FacebookShareButton>
+              <LinkedinShareButton url={`http://localhost:3000/#${quoteId}`}>
+                <LinkedinIcon />
+              </LinkedinShareButton>
+            </div>
+          </Modal>
+        </CardActions>
+      </Card>
+    </div>
   );
 }

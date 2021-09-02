@@ -13,8 +13,8 @@ import CreateIcon from "@material-ui/icons/Create";
 import ImageIcon from "@material-ui/icons/Image";
 import AudiotrackIcon from "@material-ui/icons/Audiotrack";
 import AddIcon from "@material-ui/icons/Add";
+import { Delete } from "@material-ui/icons";
 import clsx from "clsx";
-
 import {
   Avatar,
   Button,
@@ -24,11 +24,12 @@ import {
   Collapse,
   IconButton,
   Modal,
+  Snackbar,
   Typography,
 } from "@material-ui/core";
+import MuiAlert from "@material-ui/lab/Alert";
 
 import "./CreateQuote.css";
-import { Delete } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,6 +62,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 export default function CreateQuote({ currentUser }) {
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
@@ -77,6 +82,18 @@ export default function CreateQuote({ currentUser }) {
 
   const handleCloseModal = () => {
     setOpenModal(false);
+  };
+
+  // Posted quote successfully - Snackbar
+
+  const [postAlert, setPostAlert] = useState(false);
+
+  const handlePostAlertClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setPostAlert(false);
   };
 
   // Quote Upload
@@ -217,6 +234,7 @@ export default function CreateQuote({ currentUser }) {
     setAudioProgress(0);
 
     setExpanded(!expanded);
+    setPostAlert(true);
   };
 
   const { t } = useTranslation();
@@ -370,6 +388,7 @@ export default function CreateQuote({ currentUser }) {
                   <AddIcon className={classes.icon} />
                   {t("postQuote")}
                 </Button>
+
                 <Modal open={openModal} onClose={handleCloseModal}>
                   <div className={classes.modalForm}>
                     <Typography>{t("pleaseQuoteSomething")}!</Typography>
@@ -380,6 +399,15 @@ export default function CreateQuote({ currentUser }) {
           </CardContent>
         </Card>
       </Collapse>
+      <Snackbar
+        open={postAlert}
+        autoHideDuration={6000}
+        onClose={handlePostAlertClose}
+      >
+        <Alert onClose={handlePostAlertClose} severity="success">
+          Quote posted successfully!
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
