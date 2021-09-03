@@ -185,7 +185,7 @@ function App() {
                     <CreateQuote currentUser={currentUser} />
                   )}
                   <Quotes currentUser={currentUser} />
-                  <FloatingButton />
+                  <FloatingButton currentUser={currentUser} />
                 </Route>
                 <Route path={`/author/:authorId/favorite-quotes`}>
                   <FavoriteQuotes currentUser={currentUser} />

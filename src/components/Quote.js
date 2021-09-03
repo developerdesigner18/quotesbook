@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
+import config from "../config";
 
 import { db, decrement, firebaseStorage, increment } from "../firebase/config";
 import firebase from "firebase";
@@ -197,7 +198,7 @@ export default function Quote({
           console.error(error);
         });
 
-      // Add uid from quotes collection
+      // Add uid in quotes collection
       db.collection("quotes")
         .doc(quoteId)
         .update({
@@ -467,12 +468,12 @@ export default function Quote({
           <Modal open={shareModal} onClose={() => setShareModal(false)}>
             <div style={{ position: "absolute", top: "45vh", left: "45vw" }}>
               <FacebookShareButton
-                url={`http://localhost:3000/#${quoteId}`}
+                url={`${config.app_url}/#${quoteId}`}
                 quote={quote.text}
               >
                 <FacebookIcon />
               </FacebookShareButton>
-              <LinkedinShareButton url={`http://localhost:3000/#${quoteId}`}>
+              <LinkedinShareButton url={`${config.app_url}/#${quoteId}`}>
                 <LinkedinIcon />
               </LinkedinShareButton>
             </div>

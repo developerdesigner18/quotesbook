@@ -1,8 +1,21 @@
 import { useState, useEffect } from "react";
+
+import PostQuote from "./PostQuote";
+
 import { Fab, Modal } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
+import { makeStyles } from "@material-ui/styles";
 
-const FloatingButton = () => {
+const useStyles = makeStyles({
+  modalForm: {
+    display: "grid",
+    placeItems: "center",
+  },
+});
+
+const FloatingButton = ({ currentUser }) => {
+  const classes = useStyles();
+
   const [offset, setOffset] = useState(0);
 
   useEffect(() => {
@@ -30,8 +43,12 @@ const FloatingButton = () => {
       >
         <EditIcon />
       </Fab>
-      <Modal open={openModal} onClose={handleCloseModal}>
-        <h1>Hello</h1>
+      <Modal
+        open={openModal}
+        onClose={handleCloseModal}
+        className={classes.modalForm}
+      >
+        <PostQuote currentUser={currentUser} source={"floatingButton"} />
       </Modal>
     </div>
   ) : (

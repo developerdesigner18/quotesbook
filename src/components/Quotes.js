@@ -15,7 +15,6 @@ function Alert(props) {
 const Quotes = ({ currentUser }) => {
   // Deleted quote successfully - Snackbar
   const [deleteAlert, setDeleteAlert] = useState(false);
-  console.log("dlete alert => ", deleteAlert);
 
   const handleDeleteAlertClose = (event, reason) => {
     if (reason === "clickaway") {
