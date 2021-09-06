@@ -5,9 +5,9 @@ admin.initializeApp();
 
 exports.addAdminRole = functions.https.onCall((data, context) => {
   console.log(data.email);
-  //   if (context.auth.token.admin !== true) {
-  //     return { error: "Only admins can add other admins!!!" };
-  //   }
+  // if (context.auth.token.admin !== true) {
+  //   return { error: "Only admins can add other admins!!!" };
+  // }
 
   return admin
     .auth()

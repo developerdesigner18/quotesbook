@@ -41,6 +41,7 @@
     "search": "Tìm kiếm",
     "pleaseQuoteSomething": "Xin vui lòng trích dẫn một cái gì đó",
     "areYouSureYouWantToDeleteThisQuote": "Bạn có chắc chắn muốn xóa báo giá này không",
-    "signInToUseTheApp": "Đăng nhập để sử dụng ứng dụng"
-
+    "signInToUseTheApp": "Đăng nhập để sử dụng ứng dụng",
+    "quotePostedSuccessfully": "Trích dẫn đã được đăng thành công",
+    "quoteDeletedSuccessfully": "Đã xóa báo giá thành công"
 }

@@ -3,6 +3,8 @@ import { withRouter } from "react-router-dom";
 
 import { db } from "../firebase/config";
 
+import { useTranslation } from "react-i18next";
+
 import Quote from "./Quote";
 
 import Snackbar from "@material-ui/core/Snackbar";
@@ -59,6 +61,8 @@ const Quotes = ({ currentUser }) => {
     return () => unsub();
   }, []);
 
+  const { t } = useTranslation();
+
   return (
     <div>
       {filteredContent.map((doc) => (
@@ -82,7 +86,7 @@ const Quotes = ({ currentUser }) => {
         onClose={handleDeleteAlertClose}
       >
         <Alert onClose={handleDeleteAlertClose} severity="error">
-          Quote deleted successfully!
+          {`${t("quoteDeletedSuccessfully")}!`}
         </Alert>
       </Snackbar>
     </div>

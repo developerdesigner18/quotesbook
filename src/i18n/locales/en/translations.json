@@ -41,5 +41,7 @@
     "search": "Search",
     "pleaseQuoteSomething": "Please quote something",
     "areYouSureYouWantToDeleteThisQuote": "Are you sure you want to delete this quote",
-    "signInToUseTheApp": "Sign in to use the App"
+    "signInToUseTheApp": "Sign in to use the App",
+    "quotePostedSuccessfully": "Quote posted successfully",
+    "quoteDeletedSuccessfully": "Quote deleted successfully"
 }

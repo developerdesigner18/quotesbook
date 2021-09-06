@@ -5,8 +5,6 @@ import { db, firebaseStorage, increment, timeStamp } from "../firebase/config";
 
 import { useTranslation } from "react-i18next";
 
-import Categories from "../material-components/Categories";
-
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import ImageIcon from "@material-ui/icons/Image";
@@ -18,9 +16,7 @@ import {
   Button,
   CardContent,
   CircularProgress,
-  Modal,
   Snackbar,
-  Typography,
 } from "@material-ui/core";
 import MuiAlert from "@material-ui/lab/Alert";
 
@@ -58,29 +54,15 @@ function Alert(props) {
 }
 
 export default function PostQuote({ currentUser, source }) {
-  console.log("in function", source);
   const classes = useStyles({ source });
-  const [expanded, setExpanded] = useState(false);
-
-  const [openModal, setOpenModal] = useState(false);
-
-  const handleOpenModal = () => {
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
 
   // Posted quote successfully - Snackbar
-
   const [postAlert, setPostAlert] = useState(false);
 
   const handlePostAlertClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
-
     setPostAlert(false);
   };
 
@@ -177,7 +159,7 @@ export default function PostQuote({ currentUser, source }) {
 
   const handleQuoteSubmit = async () => {
     if (!quote.length && !selectedImage && !selectedAudio) {
-      return handleOpenModal();
+      return;
     }
 
     if (quote || selectedImage || selectedAudio) {
@@ -221,7 +203,7 @@ export default function PostQuote({ currentUser, source }) {
     setAudioError(null);
     setAudioProgress(0);
 
-    setExpanded(!expanded);
+    // Post Alert Snackbar
     setPostAlert(true);
   };
 
@@ -328,7 +310,11 @@ export default function PostQuote({ currentUser, source }) {
             >
               <input type="submit" value="Quote" style={{ padding: "0" }} />
               <Button
-                variant="contained"
+                variant={
+                  !quote.length && !selectedImage && !selectedAudio
+                    ? "disabled"
+                    : "contained"
+                }
                 color="primary"
                 size="small"
                 style={{ marginTop: "8px" }}
@@ -336,12 +322,6 @@ export default function PostQuote({ currentUser, source }) {
                 <AddIcon className={classes.icon} />
                 {t("postQuote")}
               </Button>
-
-              <Modal open={openModal} onClose={handleCloseModal}>
-                <div className={classes.modalForm}>
-                  <Typography>{t("pleaseQuoteSomething")}!</Typography>
-                </div>
-              </Modal>
             </div>
           </label>
         </CardContent>
@@ -352,7 +332,7 @@ export default function PostQuote({ currentUser, source }) {
         onClose={handlePostAlertClose}
       >
         <Alert onClose={handlePostAlertClose} severity="success">
-          Quote posted successfully!
+          {`${t("quotePostedSuccessfully")}!`}
         </Alert>
       </Snackbar>
     </div>

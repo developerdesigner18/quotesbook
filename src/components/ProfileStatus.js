@@ -87,6 +87,7 @@ export default function ProfileStatus({ authorId, currentUser }) {
   const [author, setAuthor] = useState();
   const [linkedinLink, setLinkedinLink] = useState(null);
   const [facebookLink, setFacebookLink] = useState(null);
+  const [favoriteQuote, setFavoriteQuote] = useState(null);
   const [fullName, setFullName] = useState(null);
   const [photoURL, setPhotoURL] = useState(null);
 
@@ -97,6 +98,7 @@ export default function ProfileStatus({ authorId, currentUser }) {
         setAuthor(author.data());
         setLinkedinLink(author.data()?.linkedinLink);
         setFacebookLink(author.data()?.facebookLink);
+        setFavoriteQuote(author.data()?.favoriteQuote);
         setFullName(author.data().displayName);
         setPhotoURL(author.data().photoURL);
       });
@@ -167,6 +169,7 @@ export default function ProfileStatus({ authorId, currentUser }) {
           photoURL: auth.currentUser.photoURL,
           linkedinLink: linkedinLink ? linkedinLink : "",
           facebookLink: facebookLink ? facebookLink : "",
+          favoriteQuote: favoriteQuote ? favoriteQuote : "",
         });
 
         // Update quotes in 'quotes' collection
@@ -317,6 +320,13 @@ export default function ProfileStatus({ authorId, currentUser }) {
             defaultValue={currentUser.displayName}
             label={t("fullName")}
           />
+          <TextField
+            onChange={(e) => {
+              setFavoriteQuote(e.target.value);
+            }}
+            defaultValue={currentUser.favoriteQuote}
+            label={t("favoriteQuote")}
+          />
           <div className={classes.margin}>
             <Grid container spacing={1} alignItems="flex-end">
               <Grid item>
@@ -349,6 +359,7 @@ export default function ProfileStatus({ authorId, currentUser }) {
               </Grid>
             </Grid>
           </div>
+
           <ButtonGroup>
             <Button
               type="submit"

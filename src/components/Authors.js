@@ -63,16 +63,18 @@ const Authors = () => {
                     primary={user.displayName}
                     secondary={
                       <>
-                        <Typography
-                          component="span"
-                          variant="body2"
-                          color="textPrimary"
-                        >
-                          {t("favoriteQuote")}
-                        </Typography>
-                        {
-                          " — You will face many defeats in life, but never let yourself be defeated."
-                        }
+                        {user.favoriteQuote && (
+                          <>
+                            <Typography
+                              component="span"
+                              variant="body2"
+                              color="textPrimary"
+                            >
+                              {t("favoriteQuote ")}
+                            </Typography>
+                            {user.favoriteQuote}
+                          </>
+                        )}
                         <CardActions style={{ paddingLeft: "0" }}>
                           <div
                             style={{
