@@ -17,24 +17,20 @@ function Alert(props) {
 const Quotes = ({ currentUser }) => {
   // Deleted quote successfully - Snackbar
   const [deleteAlert, setDeleteAlert] = useState(false);
-
   const handleDeleteAlertClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
     setDeleteAlert(false);
   };
-
   const loadDeleteAlert = (data) => {
     setDeleteAlert(data);
   };
 
   const [content, setContent] = useState([]);
-  const filteredContent = content.filter(
-    (quote) => !quote.favorites.includes(currentUser?.uid)
-  );
 
-  const [users, setUsers] = useState([]);
+  // TODO: Need to remove current user's favorited quotes from homepage
+  const filteredContent = content;
 
   useEffect(() => {
     // Get quotes
@@ -48,34 +44,25 @@ const Quotes = ({ currentUser }) => {
         });
         setContent(data);
       });
-
-    // Get users
-    db.collection("users").onSnapshot((snap) => {
-      let data = [];
-      snap.forEach((doc) => {
-        data.push(doc.data());
-      });
-      setUsers(data);
-    });
-
     return () => unsub();
   }, []);
 
   const { t } = useTranslation();
 
-  return (
+  return !filteredContent ? (
+    <h1>No quotes to display</h1>
+  ) : (
     <div>
       {filteredContent.map((doc) => (
         <Quote
-          users={users}
           key={doc.id}
           quoteId={doc.id}
           quote={doc}
           currentUser={currentUser}
           quoteImage={doc.image}
           quoteAudio={doc.audio}
-          quoteFavorites={doc.favorites}
-          quoteStars={doc.stars}
+          favoritesCount={doc.favoritesCount}
+          starsCount={doc.starsCount}
           quoteCreatedAt={doc.createdAt}
           loadDeleteAlert={loadDeleteAlert}
         />

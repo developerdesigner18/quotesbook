@@ -80,9 +80,10 @@ export default function Quote({
   quote,
   quoteImage,
   quoteAudio,
-  quoteFavorites,
-  quoteStars,
+  favoritesCount,
+  starsCount,
   quoteId,
+  quoteCreatedAt,
   loadDeleteAlert,
 }) {
   const classes = useStyles();
@@ -103,7 +104,14 @@ export default function Quote({
   const [shareModal, setShareModal] = useState(false);
 
   // Delete Quote from firestore & files from firebase storage
-  const handleDelete = (quoteId, quoteImage, quoteAudio) => {
+
+  const handleDelete = async () => {
+    // callable function test <----------Working fine
+    // const deleteQuote = firebase.functions().httpsCallable("deleteQuote");
+    // deleteQuote({ uid: currentUser.uid, quoteId }).then((result) => {
+    //   console.log(result);
+    // });
+
     // Delete quote from quotes collection
     db.collection("quotes")
       .doc(quoteId)
@@ -114,6 +122,42 @@ export default function Quote({
       })
       .catch((error) => {
         console.error("Error removing document: ", error);
+      });
+
+    // Decrese createdCount of currentUser
+    db.collection("users")
+      .doc(currentUser.uid)
+      .update({
+        created: firebase.firestore.FieldValue.arrayRemove(quoteId),
+        createdCount: decrement,
+      });
+
+    // Remove from favorites collection
+    // Decrese favoritedCount from current and other users
+    db.collection("favorites")
+      .where("quoteId", "==", quoteId)
+      .get()
+      .then((doc) => {
+        doc.forEach((quote) => {
+          db.collection("users").doc(quote.data().uid).update({
+            favoritedCount: decrement,
+          });
+          quote.ref.delete();
+        });
+      });
+
+    // Remove from stars collection
+    // Decrese starredCount from current and other users
+    db.collection("stars")
+      .where("quoteId", "==", quoteId)
+      .get()
+      .then((doc) => {
+        doc.forEach((quote) => {
+          db.collection("users").doc(quote.data().uid).update({
+            starredCount: decrement,
+          });
+          quote.ref.delete();
+        });
       });
 
     // Delete image from firebase storage
@@ -139,159 +183,155 @@ export default function Quote({
         .catch((error) => {
           console.error("Error removing audio: ", error);
         });
-
-    // Decrese createdCount of currentUser
-    db.collection("users")
-      .doc(currentUser.uid)
-      .update({
-        created: firebase.firestore.FieldValue.arrayRemove(quoteId),
-        createdCount: decrement,
-      })
-      .then(() => console.log("current user created deleted..... "));
-
-    // Remove favorited from other users
-
-    db.collection("users")
-      .where("favorited", "array-contains", quoteId)
-      .get()
-      .then((users) => {
-        users.forEach((user) => {
-          console.log("name..........", user.data().displayName, decrement);
-          db.collection("users")
-            .doc(user.data().uid)
-            .update({
-              favorited: firebase.firestore.FieldValue.arrayRemove(quoteId),
-              favoritedCount: decrement,
-            })
-            .then(() => console.log("favorited deleted"));
-        });
-      });
   };
 
   // Favorite
+  const [favoritedQuotes, setFavoritedQuotes] = useState([]);
+
+  useEffect(() => {
+    currentUser &&
+      db
+        .collection("favorites")
+        .where("uid", "==", currentUser?.uid)
+        .where("quoteId", "==", quoteId)
+        .onSnapshot((snap) => {
+          let data = [];
+          snap.forEach((doc) => {
+            data.push({ ...doc.data(), id: doc.id });
+          });
+          setFavoritedQuotes(data);
+        });
+  }, [currentUser, quoteId]);
+
   const [isFavorited, setIsFavorited] = useState(false);
   useEffect(() => {
     if (
-      quoteFavorites.find((quoteFavorite) => quoteFavorite === currentUser?.uid)
+      favoritedQuotes.find(
+        (favoritedUser) => favoritedUser.uid === currentUser?.uid
+      )
     ) {
       setIsFavorited(true);
     }
-  }, [quoteFavorites, currentUser?.uid]);
+  }, [favoritedQuotes, currentUser?.uid]);
 
-  const handleFavoriteClick = (currentUser, quoteId, quoteFavorites) => {
+  const handleFavoriteClick = () => {
     if (!currentUser) {
       setSignInModal(true);
       return;
     }
-
     setIsFavorited(!isFavorited);
 
-    // Add favorited and increase favoritedCount in users collection
-    if (!quoteFavorites.includes(currentUser.uid)) {
-      db.collection("users")
-        .doc(currentUser.uid)
-        .update({
-          favorited: firebase.firestore.FieldValue.arrayUnion(quoteId),
-          favoritedCount: increment,
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-
-      // Add uid in quotes collection
-      db.collection("quotes")
-        .doc(quoteId)
-        .update({
-          favorites: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
-          favoritesCount: increment,
-        })
-        .catch((error) => {
-          console.error(error);
+    const foundUser = favoritedQuotes.find(
+      (quote) => quote.quoteId === quoteId
+    );
+    if (foundUser) {
+      db.collection("favorites")
+        .doc(foundUser.id)
+        .delete()
+        .then((doc) => {
+          db.collection("users").doc(currentUser.uid).update({
+            favoritedCount: decrement,
+          });
+          db.collection("quotes").doc(quoteId).update({
+            favoritesCount: decrement,
+          });
         });
     } else {
-      // Remove uid from users collection
-      db.collection("users")
-        .doc(currentUser.uid)
-        .update({
-          favorited: firebase.firestore.FieldValue.arrayRemove(quoteId),
-          favoritedCount: decrement,
+      db.collection("favorites")
+        .add({
+          uid: currentUser.uid,
+          quoteId: quoteId,
         })
-        .catch((error) => {
-          console.error(error);
-        });
-
-      // Remove uid from quotes collection
-      db.collection("quotes")
-        .doc(quoteId)
-        .update({
-          favorites: firebase.firestore.FieldValue.arrayRemove(currentUser.uid),
-          favoritesCount: decrement,
-        })
-        .catch((error) => {
-          console.error(error);
+        .then((doc) => {
+          db.collection("users").doc(currentUser.uid).update({
+            favoritedCount: increment,
+          });
+          db.collection("quotes").doc(quoteId).update({
+            favoritesCount: increment,
+          });
         });
     }
   };
 
   // Star
-  const [isStarred, setIsStarred] = useState(false);
-
+  const [starredQuotes, setStarredQuotes] = useState([]);
   useEffect(() => {
-    if (quoteStars.find((quoteStar) => quoteStar === currentUser.uid)) {
+    currentUser &&
+      db
+        .collection("stars")
+        .where("uid", "==", currentUser?.uid)
+        .where("quoteId", "==", quoteId)
+        .onSnapshot((snap) => {
+          let data = [];
+          snap.forEach((doc) => {
+            data.push({ ...doc.data(), id: doc.id });
+          });
+          setStarredQuotes(data);
+        });
+  }, [currentUser, quoteId]);
+
+  const [isStarred, setIsStarred] = useState(false);
+  useEffect(() => {
+    if (
+      starredQuotes.find(
+        (starredQuote) => starredQuote.uid === currentUser?.uid
+      )
+    ) {
       setIsStarred(true);
     }
-  }, [quoteStars, currentUser?.uid]);
+  }, [starredQuotes, currentUser?.uid]);
 
-  const handleStarClick = (currentUser, quoteId, quoteStars) => {
+  const handleStarClick = () => {
     if (!currentUser) {
       setSignInModal(true);
       return;
     }
-
     setIsStarred(!isStarred);
 
-    if (!quoteStars.includes(currentUser.uid)) {
-      db.collection("users")
-        .doc(currentUser.uid)
-        .update({
-          starred: firebase.firestore.FieldValue.arrayUnion(quoteId),
-          starredCount: increment,
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-
-      db.collection("quotes")
-        .doc(quoteId)
-        .update({
-          stars: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
-          starsCount: increment,
-        })
-        .catch((error) => {
-          console.error(error);
+    const foundUser = starredQuotes.find((quote) => quote.quoteId === quoteId);
+    if (foundUser) {
+      db.collection("stars")
+        .doc(foundUser.id)
+        .delete()
+        .then((doc) => {
+          db.collection("users").doc(currentUser.uid).update({
+            starredCount: decrement,
+          });
+          db.collection("quotes").doc(quoteId).update({
+            starsCount: decrement,
+          });
         });
     } else {
-      db.collection("users")
-        .doc(currentUser.uid)
-        .update({
-          starred: firebase.firestore.FieldValue.arrayRemove(quoteId),
-          starredCount: decrement,
+      db.collection("stars")
+        .add({
+          uid: currentUser.uid,
+          quoteId: quoteId,
         })
-        .catch((error) => {
-          console.error(error);
-        });
-
-      db.collection("quotes")
-        .doc(quoteId)
-        .update({
-          stars: firebase.firestore.FieldValue.arrayRemove(currentUser.uid),
-          starsCount: decrement,
-        })
-        .catch((error) => {
-          console.error(error);
+        .then((doc) => {
+          db.collection("users").doc(currentUser.uid).update({
+            starredCount: increment,
+          });
+          db.collection("quotes").doc(quoteId).update({
+            starsCount: increment,
+          });
         });
     }
   };
+
+  // Text color
+  // var darkOrLight = (red, green, blue) => {
+  //   var brightness;
+  //   brightness = red * 299 + green * 587 + blue * 114;
+  //   brightness = brightness / 255000;
+
+  //   // values range from 0 to 1
+  //   // anything greater than 0.5 should be bright enough for dark text
+  //   if (brightness >= 0.5) {
+  //     return "black";
+  //   } else {
+  //     return "white";
+  //   }
+  // };
 
   // Text-To-Speech
 
@@ -370,9 +410,7 @@ export default function Quote({
                       </Typography>
                       <Button
                         type="button"
-                        onClick={() => {
-                          handleDelete(quoteId, quoteImage, quoteAudio);
-                        }}
+                        onClick={handleDelete}
                         variant="contained"
                         color="secondary"
                       >
@@ -389,7 +427,7 @@ export default function Quote({
               ? quote.displayName.split(" ")[1]?.charAt(0)
               : ""
           }`}
-          subheader={new Date(quote.createdAt?.seconds * 1000).toDateString()}
+          subheader={new Date(quoteCreatedAt?.seconds * 1000).toDateString()}
         />
 
         <CardContent>
@@ -411,9 +449,9 @@ export default function Quote({
                 align="center"
                 variant="subtitle2"
                 color="textSecondary"
-                style={{
-                  mixBlendMode: "difference",
-                }}
+                // style={{
+                //   color: { darkOrLight },
+                // }}
               >
                 {quote.text}
               </Typography>
@@ -430,14 +468,10 @@ export default function Quote({
           <audio className={classes.audio} controls src={quote.audio} />
         )}
         <CardActions disableSpacing>
-          <IconButton
-            onClick={() =>
-              handleFavoriteClick(currentUser, quoteId, quoteFavorites)
-            }
-          >
+          <IconButton onClick={handleFavoriteClick}>
             <FavoriteIcon style={{ color: isFavorited && "red" }} />
           </IconButton>
-          <span>{quoteFavorites?.length}</span>
+          <span>{favoritesCount}</span>
           <Modal open={signInModal} onClose={() => setSignInModal(false)}>
             <div className={classes.modalForm}>
               <Typography gutterBottom>{t("signInToUseTheApp")}!</Typography>
@@ -453,11 +487,11 @@ export default function Quote({
           </Modal>
           <IconButton>
             <StarIcon
-              onClick={() => handleStarClick(currentUser, quoteId, quoteStars)}
+              onClick={handleStarClick}
               style={{ color: isStarred && "gold" }}
             />
           </IconButton>
-          <span>{quoteStars?.length}</span>
+          <span>{starsCount}</span>
           <IconButton>
             <ShareIcon
               onClick={() => {

@@ -43,5 +43,6 @@
     "areYouSureYouWantToDeleteThisQuote": "Are you sure you want to delete this quote",
     "signInToUseTheApp": "Sign in to use the App",
     "quotePostedSuccessfully": "Quote posted successfully",
-    "quoteDeletedSuccessfully": "Quote deleted successfully"
+    "quoteDeletedSuccessfully": "Quote deleted successfully",
+    "profileUpdatedSuccessfully": "Profile updated successfully"
 }

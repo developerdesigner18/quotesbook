@@ -2,27 +2,21 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 
 admin.initializeApp();
+const db = admin.firestore();
 
-exports.addAdminRole = functions.https.onCall((data, context) => {
-  console.log(data.email);
-  // if (context.auth.token.admin !== true) {
-  //   return { error: "Only admins can add other admins!!!" };
-  // }
+// // Create and Deploy Your First Cloud Functions
+// // https://firebase.google.com/docs/functions/write-firebase-functions
+//
+exports.helloWorld = functions.https.onRequest((request, response) => {
+  functions.logger.info("Hello logs!", { structuredData: true });
+  response.send("Hello from Firebase!");
+});
 
-  return admin
-    .auth()
-    .getUserByEmail(data.email)
-    .then((user) => {
-      return admin.auth().setCustomUserClaims(user.uid, {
-        admin: true,
-      });
-    })
-    .then(() => {
-      return {
-        message: `Success! ${data.email} has been made an admin!`,
-      };
-    })
-    .catch((error) => {
-      return error;
-    });
+exports.deleteQuote = functions.https.onCall((data, context) => {
+  const { uid, quoteId } = data;
+  db.collection("quotes")
+    .doc(quoteId)
+    .delete()
+    .then(() => {});
+  return "quote deleted successfully!";
 });

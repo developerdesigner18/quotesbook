@@ -21,11 +21,25 @@ const Quotes = ({ currentUser }) => {
   );
 
   useEffect(() => {
-    // Get user's favorite quotes
-    db.collection("users")
-      .doc(authorId)
-      .onSnapshot((doc) => {
-        setFavoritedQuotes(doc.data()?.favorited);
+    db.collection("favorites")
+      .where("uid", "==", authorId)
+      .onSnapshot((snap) => {
+        let data = [];
+        snap.forEach((doc) => {
+          data.push(doc.data().quoteId);
+        });
+        setFavoritedQuotes(data);
+      });
+
+    // Get all quotes
+    db.collection("quotes")
+      .orderBy("createdAt", "desc")
+      .onSnapshot((snap) => {
+        let data = [];
+        snap.docs.forEach((doc) => {
+          data.push({ ...doc.data(), id: doc.id });
+        });
+        setQuotes(data);
       });
 
     // Get user
@@ -38,18 +52,38 @@ const Quotes = ({ currentUser }) => {
         }
       })
       .catch((error) => console.error(error));
-
-    // Get all quotes
-    db.collection("quotes")
-      .orderBy("createdAt", "desc")
-      .onSnapshot((snap) => {
-        let data = [];
-        snap.docs.forEach((doc) => {
-          data.push({ ...doc.data(), id: doc.id });
-        });
-        setQuotes(data);
-      });
   }, [authorId]);
+
+  // useEffect(() => {
+  //   // Get user's favorite quotes
+  //   db.collection("users")
+  //     .doc(authorId)
+  //     .onSnapshot((doc) => {
+  //       setFavoritedQuotes(doc.data()?.favorited);
+  //     });
+
+  //   // Get user
+  //   db.collection("users")
+  //     .doc(authorId)
+  //     .get()
+  //     .then((doc) => {
+  //       if (doc.exists) {
+  //         setUser(doc.data());
+  //       }
+  //     })
+  //     .catch((error) => console.error(error));
+
+  //   // Get all quotes
+  //   db.collection("quotes")
+  //     .orderBy("createdAt", "desc")
+  //     .onSnapshot((snap) => {
+  //       let data = [];
+  //       snap.docs.forEach((doc) => {
+  //         data.push({ ...doc.data(), id: doc.id });
+  //       });
+  //       setQuotes(data);
+  //     });
+  // }, [authorId]);
 
   const { t } = useTranslation();
 
@@ -67,7 +101,8 @@ const Quotes = ({ currentUser }) => {
           currentUser={currentUser}
           quoteImage={doc.image}
           quoteAudio={doc.audio}
-          quoteFavorites={doc.favorites}
+          // quoteFavorites={doc.favorites}
+          favoritesCount={doc.favoritesCount}
           quoteStars={doc.stars}
           quoteCreatedAt={doc.createdAt}
         />

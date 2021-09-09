@@ -57,9 +57,9 @@ export default function Signup() {
           .set({
             displayName: fullName,
             photoURL: cred.user.photoURL,
-            favorited: [],
+            // favorited: [],
             favoritedCount: 0,
-            starred: [],
+            // starred: [],
             starredCount: 0,
             created: [],
             createdCount: 0,

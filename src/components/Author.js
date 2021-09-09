@@ -66,8 +66,8 @@ const Author = ({ currentUser, loadAuthorId }) => {
           quote={doc}
           quoteImage={doc.image}
           quoteAudio={doc.audio}
-          quoteFavorites={doc.favorites}
-          quoteStars={doc.stars}
+          favoritesCount={doc.favoritesCount}
+          starsCount={doc.starsCount}
           quoteCreatedAt={doc.createdAt}
         />
       ))}

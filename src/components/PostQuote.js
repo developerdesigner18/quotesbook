@@ -173,9 +173,9 @@ export default function PostQuote({ currentUser, source }) {
           textBackgroundColor: !selectedImage ? quoteColor : "",
           image: selectedImage ? await getImageUrl() : null,
           audio: selectedAudio ? await getAudioUrl() : null,
-          favorites: [],
+          // favorites: [],
           favoritesCount: 0,
-          stars: [],
+          // stars: [],
           starsCount: 0,
           createdAt: timeStamp,
         })
@@ -220,10 +220,10 @@ export default function PostQuote({ currentUser, source }) {
         <CardContent>
           <div style={{ marginBottom: "20px" }}>
             <Avatar className={classes.avatar}>
-              {currentUser.photoURL ? (
+              {currentUser?.photoURL ? (
                 <img
-                  src={currentUser.photoURL}
-                  alt={currentUser.displayName}
+                  src={currentUser?.photoURL}
+                  alt={currentUser?.displayName}
                   style={{
                     height: "100%",
                     width: "100%",
@@ -231,7 +231,7 @@ export default function PostQuote({ currentUser, source }) {
                   }}
                 />
               ) : (
-                currentUser.displayName?.charAt(0)
+                currentUser?.displayName?.charAt(0)
               )}
             </Avatar>
             {/* <SelectCatagory /> */}

@@ -91,9 +91,9 @@ export default function Signin() {
             .set({
               displayName: cred.user.displayName,
               photoURL: cred.user.photoURL,
-              favorited: [],
+              // favorited: [],
               favoritedCount: 0,
-              starred: [],
+              // starred: [],
               starredCount: 0,
               created: [],
               createdCount: 0,

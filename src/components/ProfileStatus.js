@@ -7,6 +7,8 @@ import { auth } from "../firebase/config";
 
 import { useTranslation } from "react-i18next";
 
+import _ from "lodash";
+
 import { ProfileStatusSkeleton } from "./Skeletons";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -21,6 +23,7 @@ import {
   ListItem,
   ListItemIcon,
   Modal,
+  Snackbar,
   TextField,
   Tooltip,
 } from "@material-ui/core";
@@ -29,7 +32,7 @@ import LinkedInIcon from "@material-ui/icons/LinkedIn";
 import FacebookIcon from "@material-ui/icons/Facebook";
 import CreateIcon from "@material-ui/icons/Create";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
-import _ from "lodash";
+import MuiAlert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -71,6 +74,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 export default function ProfileStatus({ authorId, currentUser }) {
   const classes = useStyles();
 
@@ -84,12 +91,22 @@ export default function ProfileStatus({ authorId, currentUser }) {
     setOpenModal(false);
   };
 
-  const [author, setAuthor] = useState();
-  const [linkedinLink, setLinkedinLink] = useState(null);
-  const [facebookLink, setFacebookLink] = useState(null);
-  const [favoriteQuote, setFavoriteQuote] = useState(null);
-  const [fullName, setFullName] = useState(null);
-  const [photoURL, setPhotoURL] = useState(null);
+  // Updated profile successfully - Snackbar
+  const [saveAlert, setSaveAlert] = useState(false);
+
+  const handleSaveAlertClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSaveAlert(false);
+  };
+
+  const [author, setAuthor] = useState(null);
+  const [linkedinLink, setLinkedinLink] = useState("");
+  const [facebookLink, setFacebookLink] = useState("");
+  const [favoriteQuote, setFavoriteQuote] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [photoURL, setPhotoURL] = useState("");
 
   useEffect(() => {
     db.collection("users")
@@ -123,7 +140,7 @@ export default function ProfileStatus({ authorId, currentUser }) {
   };
 
   // Get Avatar url from firebase storage
-  async function getAvatarURL() {
+  const getAvatarURL = async () => {
     return new Promise((resolve, reject) => {
       const photoURLRef = firebaseStorage.ref(
         `photoURL/${Date.now() + selectedAvatar.name}`
@@ -146,14 +163,13 @@ export default function ProfileStatus({ authorId, currentUser }) {
         }
       );
     });
-  }
+  };
 
   const handleSave = async (e) => {
     e.preventDefault();
     const batch = db.batch();
 
     // update userProfile
-
     auth.currentUser
       .updateProfile({
         photoURL: selectedAvatar ? await getAvatarURL() : photoURL,
@@ -209,6 +225,7 @@ export default function ProfileStatus({ authorId, currentUser }) {
         handleCloseModal();
         // setTimeout(() => window.location.reload(), 2000);
       });
+    setSaveAlert(true);
   };
 
   const { t } = useTranslation();
@@ -245,9 +262,23 @@ export default function ProfileStatus({ authorId, currentUser }) {
       </ListItem>
       <ListItem>
         <LinkedInIcon
-          onClick={() => window.open(`https://${author.linkedinLink}`)}
+          onClick={() =>
+            window.open(
+              linkedinLink
+                ? `https://${author.linkedinLink}`
+                : "http://linkedin.com"
+            )
+          }
         />
-        <FacebookIcon onClick={() => window.open(`${author.facebookLink}`)} />
+        <FacebookIcon
+          onClick={() =>
+            window.open(
+              facebookLink
+                ? `https://${author.facebookLink}`
+                : "http://facebook.com"
+            )
+          }
+        />
       </ListItem>
       <ListItem>
         <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
@@ -324,7 +355,7 @@ export default function ProfileStatus({ authorId, currentUser }) {
             onChange={(e) => {
               setFavoriteQuote(e.target.value);
             }}
-            defaultValue={currentUser.favoriteQuote}
+            defaultValue={favoriteQuote}
             label={t("favoriteQuote")}
           />
           <div className={classes.margin}>
@@ -337,7 +368,7 @@ export default function ProfileStatus({ authorId, currentUser }) {
                   onChange={(e) => {
                     setLinkedinLink(e.target.value);
                   }}
-                  defaultValue={author.linkedinLink}
+                  defaultValue={linkedinLink}
                   label={`Linkedin ${t("link")}`}
                 />
               </Grid>
@@ -353,7 +384,7 @@ export default function ProfileStatus({ authorId, currentUser }) {
                   onChange={(e) => {
                     setFacebookLink(e.target.value);
                   }}
-                  defaultValue={author.facebookLink}
+                  defaultValue={facebookLink}
                   label={`Facebook ${t("link")}`}
                 />
               </Grid>
@@ -380,6 +411,15 @@ export default function ProfileStatus({ authorId, currentUser }) {
           </ButtonGroup>
         </form>
       </Modal>
+      <Snackbar
+        open={saveAlert}
+        autoHideDuration={6000}
+        onClose={handleSaveAlertClose}
+      >
+        <Alert onClose={handleSaveAlertClose} severity="success">
+          {`${t("profileUpdatedSuccessfully")}!`}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

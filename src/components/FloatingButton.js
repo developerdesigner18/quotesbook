@@ -7,6 +7,16 @@ import EditIcon from "@material-ui/icons/Edit";
 import { makeStyles } from "@material-ui/styles";
 
 const useStyles = makeStyles({
+  main: {
+    position: "fixed",
+    bottom: "20px",
+    right: "20px",
+    display: "flex",
+    alignItems: "center",
+  },
+  text: {
+    marginRight: "10px",
+  },
   modalForm: {
     display: "grid",
     placeItems: "center",
@@ -35,12 +45,9 @@ const FloatingButton = ({ currentUser }) => {
   };
 
   return offset >= 200 ? (
-    <div>
-      <Fab
-        color="primary"
-        style={{ position: "fixed", bottom: "20px", right: "20px" }}
-        onClick={handleOpenModal}
-      >
+    <div className={classes.main}>
+      {/* <Typography className={classes.text}>Quote something!</Typography> */}
+      <Fab color="primary" onClick={handleOpenModal}>
         <EditIcon />
       </Fab>
       <Modal
