@@ -21,6 +21,7 @@ const Quotes = ({ currentUser }) => {
   );
 
   useEffect(() => {
+    // Get quoteId from author's favorit's collection
     db.collection("favorites")
       .where("uid", "==", authorId)
       .onSnapshot((snap) => {
@@ -54,37 +55,6 @@ const Quotes = ({ currentUser }) => {
       .catch((error) => console.error(error));
   }, [authorId]);
 
-  // useEffect(() => {
-  //   // Get user's favorite quotes
-  //   db.collection("users")
-  //     .doc(authorId)
-  //     .onSnapshot((doc) => {
-  //       setFavoritedQuotes(doc.data()?.favorited);
-  //     });
-
-  //   // Get user
-  //   db.collection("users")
-  //     .doc(authorId)
-  //     .get()
-  //     .then((doc) => {
-  //       if (doc.exists) {
-  //         setUser(doc.data());
-  //       }
-  //     })
-  //     .catch((error) => console.error(error));
-
-  //   // Get all quotes
-  //   db.collection("quotes")
-  //     .orderBy("createdAt", "desc")
-  //     .onSnapshot((snap) => {
-  //       let data = [];
-  //       snap.docs.forEach((doc) => {
-  //         data.push({ ...doc.data(), id: doc.id });
-  //       });
-  //       setQuotes(data);
-  //     });
-  // }, [authorId]);
-
   const { t } = useTranslation();
 
   return !filteredQuotes.length ? (
@@ -101,8 +71,9 @@ const Quotes = ({ currentUser }) => {
           currentUser={currentUser}
           quoteImage={doc.image}
           quoteAudio={doc.audio}
-          // quoteFavorites={doc.favorites}
+          topics={doc.topics}
           favoritesCount={doc.favoritesCount}
+          starsCount={doc.starsCount}
           quoteStars={doc.stars}
           quoteCreatedAt={doc.createdAt}
         />

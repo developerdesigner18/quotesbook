@@ -1,6 +1,7 @@
 {
+    "quotesBook": "Quotes Book",
     "topAuthors": "Top Authors",
-    "createYourQuote": "Create your Quote",
+    "createQuote": "Create Quote",
     "quotes": "Quotes",
     "authors": "Authors",
     "podcasts": "Podcasts",

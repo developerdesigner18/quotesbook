@@ -61,6 +61,7 @@ const Quotes = ({ currentUser }) => {
           currentUser={currentUser}
           quoteImage={doc.image}
           quoteAudio={doc.audio}
+          topics={doc.topics}
           favoritesCount={doc.favoritesCount}
           starsCount={doc.starsCount}
           quoteCreatedAt={doc.createdAt}

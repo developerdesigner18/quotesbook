@@ -27,7 +27,7 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import StarIcon from "@material-ui/icons/Star";
 import ShareIcon from "@material-ui/icons/Share";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import { Button, CardMedia, Modal } from "@material-ui/core";
+import { Button, CardMedia, Chip, Modal } from "@material-ui/core";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Fade from "@material-ui/core/Fade";
@@ -73,6 +73,10 @@ const useStyles = makeStyles((theme) => ({
     background: theme.palette.info.light,
     padding: "50px",
   },
+  chip: {
+    marginRight: "5px",
+    marginTop: "10px",
+  },
 }));
 
 export default function Quote({
@@ -80,6 +84,7 @@ export default function Quote({
   quote,
   quoteImage,
   quoteAudio,
+  topics,
   favoritesCount,
   starsCount,
   quoteId,
@@ -104,7 +109,6 @@ export default function Quote({
   const [shareModal, setShareModal] = useState(false);
 
   // Delete Quote from firestore & files from firebase storage
-
   const handleDelete = async () => {
     // callable function test <----------Working fine
     // const deleteQuote = firebase.functions().httpsCallable("deleteQuote");
@@ -112,25 +116,24 @@ export default function Quote({
     //   console.log(result);
     // });
 
+    const batch = db.batch();
     // Delete quote from quotes collection
-    db.collection("quotes")
-      .doc(quoteId)
-      .delete()
-      .then(() => {
-        console.log("Document successfully deleted!");
-        loadDeleteAlert(true);
-      })
-      .catch((error) => {
-        console.error("Error removing document: ", error);
-      });
+    const quoteRef = db.collection("quotes").doc(quoteId);
+    batch.delete(quoteRef);
+    // .then(() => {
+    //   console.log("Document successfully deleted!");
+    //   loadDeleteAlert(true);
+    // })
+    // .catch((error) => {
+    //   console.error("Error removing document: ", error);
+    // });
 
-    // Decrese createdCount of currentUser
-    db.collection("users")
-      .doc(currentUser.uid)
-      .update({
-        created: firebase.firestore.FieldValue.arrayRemove(quoteId),
-        createdCount: decrement,
-      });
+    // Remove created quoteId and Decrese createdCount of currentUser
+    const userRef = db.collection("users").doc(currentUser.uid);
+    batch.update(userRef, {
+      created: firebase.firestore.FieldValue.arrayRemove(quoteId),
+      createdCount: decrement,
+    });
 
     // Remove from favorites collection
     // Decrese favoritedCount from current and other users
@@ -139,7 +142,7 @@ export default function Quote({
       .get()
       .then((doc) => {
         doc.forEach((quote) => {
-          db.collection("users").doc(quote.data().uid).update({
+          const quoteRef = db.collection("users").doc(quote.data().uid).update({
             favoritedCount: decrement,
           });
           quote.ref.delete();
@@ -153,12 +156,22 @@ export default function Quote({
       .get()
       .then((doc) => {
         doc.forEach((quote) => {
-          db.collection("users").doc(quote.data().uid).update({
-            starredCount: decrement,
-          });
+          const quoteRef = db
+            .collection("users")
+            .doc(quote.data().uid)
+            .update(quoteRef, {
+              starredCount: decrement,
+            });
           quote.ref.delete();
         });
       });
+
+    await batch
+      .commit()
+      .then(() => {
+        console.log("batch delete successfull!");
+      })
+      .catch((error) => console.log("error while batch delete ", error));
 
     // Delete image from firebase storage
     quoteImage &&
@@ -203,6 +216,7 @@ export default function Quote({
         });
   }, [currentUser, quoteId]);
 
+  // Check whether currentUser has already favorited the quote
   const [isFavorited, setIsFavorited] = useState(false);
   useEffect(() => {
     if (
@@ -270,6 +284,7 @@ export default function Quote({
         });
   }, [currentUser, quoteId]);
 
+  // Check whether currentUser has already starred the quote
   const [isStarred, setIsStarred] = useState(false);
   useEffect(() => {
     if (
@@ -467,6 +482,13 @@ export default function Quote({
         {quote.audio && (
           <audio className={classes.audio} controls src={quote.audio} />
         )}
+        {topics && topics.length
+          ? topics.map((topic) => (
+              <Link to={`/quotes/${topic}`} style={{ textDecoration: "none" }}>
+                <Chip className={classes.chip} label={topic} size="small" />
+              </Link>
+            ))
+          : ""}
         <CardActions disableSpacing>
           <IconButton onClick={handleFavoriteClick}>
             <FavoriteIcon style={{ color: isFavorited && "red" }} />

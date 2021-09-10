@@ -5,6 +5,8 @@ import { db, firebaseStorage, increment, timeStamp } from "../firebase/config";
 
 import { useTranslation } from "react-i18next";
 
+import Topics from "../material-components/Topics";
+
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import ImageIcon from "@material-ui/icons/Image";
@@ -64,6 +66,13 @@ export default function PostQuote({ currentUser, source }) {
       return;
     }
     setPostAlert(false);
+  };
+
+  // Topics Upload
+  const [topics, setTopics] = useState([]);
+
+  const loadTopics = (data) => {
+    setTopics(data);
   };
 
   // Quote Upload
@@ -156,7 +165,6 @@ export default function PostQuote({ currentUser, source }) {
       );
     });
   }
-
   const handleQuoteSubmit = async () => {
     if (!quote.length && !selectedImage && !selectedAudio) {
       return;
@@ -178,6 +186,7 @@ export default function PostQuote({ currentUser, source }) {
           // stars: [],
           starsCount: 0,
           createdAt: timeStamp,
+          topics,
         })
         .then((ref) =>
           db
@@ -194,6 +203,8 @@ export default function PostQuote({ currentUser, source }) {
 
     // Reset all states after submit a quote
     setQuote("");
+
+    setTopics([]);
 
     setSelectedImage(null);
     setImageError(null);
@@ -234,9 +245,8 @@ export default function PostQuote({ currentUser, source }) {
                 currentUser?.displayName?.charAt(0)
               )}
             </Avatar>
-            {/* <SelectCatagory /> */}
           </div>
-          {/* <Categories /> */}
+          <Topics loadTopics={loadTopics} />
           <textarea
             onChange={(e) => setQuote(e.target.value)}
             value={quote}

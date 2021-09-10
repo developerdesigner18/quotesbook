@@ -81,7 +81,7 @@ export default function CreateQuote({ currentUser }) {
             aria-expanded={expanded}
             aria-label="show more"
           >
-            <Typography>{t("createYourQuote")}</Typography>
+            <Typography>{t("createQuote")}</Typography>
             <CreateIcon />
           </IconButton>
         </div>

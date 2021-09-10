@@ -16,6 +16,7 @@ import FavoriteQuotes from "./components/FavoriteQuotes";
 import GuestUser from "./components/GuestUser";
 import ProfileStatus from "./components/ProfileStatus";
 import FloatingButton from "./components/FloatingButton";
+// import About from "./components/About";
 
 import Translator from "./components/Translator";
 
@@ -142,6 +143,9 @@ function App() {
           <RandomAuthors />
         </Route>
       </Switch>
+      {/* <Route path="/">
+        <About />
+      </Route> */}
       <Translator currentUser={currentUser} />
     </div>
   );
