@@ -39,6 +39,10 @@ export default function CreateQuote({ currentUser }) {
     setExpanded(!expanded);
   };
 
+  const loadExpansion = (data) => {
+    setExpanded(data);
+  };
+
   const { t } = useTranslation();
 
   return (
@@ -88,7 +92,7 @@ export default function CreateQuote({ currentUser }) {
       </Card>
 
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <PostQuote currentUser={currentUser} />
+        <PostQuote currentUser={currentUser} loadExpansion={loadExpansion} />
       </Collapse>
     </div>
   );

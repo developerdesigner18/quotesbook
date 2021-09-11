@@ -5,7 +5,7 @@ import { db, firebaseStorage, increment, timeStamp } from "../firebase/config";
 
 import { useTranslation } from "react-i18next";
 
-import Topics from "../material-components/Topics";
+import TopicSelector from "./TopicSelector";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
@@ -55,7 +55,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function PostQuote({ currentUser, source }) {
+export default function PostQuote({ currentUser, source, loadExpansion }) {
   const classes = useStyles({ source });
 
   // Posted quote successfully - Snackbar
@@ -181,24 +181,30 @@ export default function PostQuote({ currentUser, source }) {
           textBackgroundColor: !selectedImage ? quoteColor : "",
           image: selectedImage ? await getImageUrl() : null,
           audio: selectedAudio ? await getAudioUrl() : null,
-          // favorites: [],
           favoritesCount: 0,
-          // stars: [],
           starsCount: 0,
           createdAt: timeStamp,
           topics,
         })
-        .then((ref) =>
-          db
-            .collection("users")
+        .then((ref) => {
+          // Update the user in users collection
+          db.collection("users")
             .doc(currentUser.uid)
             .update({
               created: firebase.firestore.FieldValue.arrayUnion(ref.id),
               favoritedCount: 0,
               starredCount: 0,
               createdCount: increment,
-            })
-        );
+            });
+
+          // Add quote ref to topics collection
+          topics.length &&
+            db.collection("topics").add({
+              quoteId: ref.id,
+              uid: currentUser.uid,
+              topics,
+            });
+        });
     }
 
     // Reset all states after submit a quote
@@ -216,6 +222,9 @@ export default function PostQuote({ currentUser, source }) {
 
     // Post Alert Snackbar
     setPostAlert(true);
+
+    // Load CreateQuote Expansion false
+    loadExpansion(false);
   };
 
   const { t } = useTranslation();
@@ -246,7 +255,7 @@ export default function PostQuote({ currentUser, source }) {
               )}
             </Avatar>
           </div>
-          <Topics loadTopics={loadTopics} />
+          <TopicSelector loadTopics={loadTopics} />
           <textarea
             onChange={(e) => setQuote(e.target.value)}
             value={quote}

@@ -1,5 +1,8 @@
 /* eslint-disable no-use-before-define */
 import { useState } from "react";
+
+import { useTranslation } from "react-i18next";
+
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
@@ -13,11 +16,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Topics({ loadTopics }) {
+export default function TopicSelector({ loadTopics }) {
   const classes = useStyles();
 
   const [selectedTopics, setSelectedTopics] = useState("");
+  console.log("topics", selectedTopics);
   loadTopics(selectedTopics);
+
+  const { t } = useTranslation();
 
   return (
     <div className={classes.root}>
@@ -26,7 +32,6 @@ export default function Topics({ loadTopics }) {
         multiple
         id="tags-standard"
         options={topics}
-        getOptionLabel={(option) => option}
         getOptionDisabled={(options) =>
           selectedTopics.length > 1 ? true : false
         }
@@ -34,8 +39,8 @@ export default function Topics({ loadTopics }) {
           <TextField
             {...params}
             variant="standard"
-            label="Topic"
-            placeholder="Select up to 2 topics"
+            label={t("topic")}
+            placeholder={t("selectUpTo2Topics")}
           />
         )}
         onChange={(e, val) => {

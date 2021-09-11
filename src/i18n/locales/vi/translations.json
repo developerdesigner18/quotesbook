@@ -45,5 +45,8 @@
     "signInToUseTheApp": "Đăng nhập để sử dụng ứng dụng",
     "quotePostedSuccessfully": "Trích dẫn đã được đăng thành công",
     "quoteDeletedSuccessfully": "Đã xóa báo giá thành công",
-    "profileUpdatedSuccessfully": "Hô sơ được cập nhật thành công"
+    "profileUpdatedSuccessfully": "Hô sơ được cập nhật thành công",
+    "topic": "Đề tài",
+    "selectUpTo2Topics": "Chọn tối đa 2 chủ đề",
+    "topics": "Chủ đề"
 }

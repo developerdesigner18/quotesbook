@@ -44,6 +44,10 @@ const FloatingButton = ({ currentUser }) => {
     setOpenModal(false);
   };
 
+  const loadExpansion = (data) => {
+    setOpenModal(false);
+  };
+
   return offset >= 200 ? (
     <div className={classes.main}>
       {/* <Typography className={classes.text}>Quote something!</Typography> */}
@@ -55,7 +59,11 @@ const FloatingButton = ({ currentUser }) => {
         onClose={handleCloseModal}
         className={classes.modalForm}
       >
-        <PostQuote currentUser={currentUser} source={"floatingButton"} />
+        <PostQuote
+          currentUser={currentUser}
+          source={"floatingButton"}
+          loadExpansion={loadExpansion}
+        />
       </Modal>
     </div>
   ) : (

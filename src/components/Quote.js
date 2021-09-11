@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import config from "../config";
 
+import _ from "lodash";
+
 import { db, decrement, firebaseStorage, increment } from "../firebase/config";
 import firebase from "firebase";
 
@@ -75,7 +77,6 @@ const useStyles = makeStyles((theme) => ({
   },
   chip: {
     marginRight: "5px",
-    marginTop: "10px",
   },
 }));
 
@@ -120,13 +121,6 @@ export default function Quote({
     // Delete quote from quotes collection
     const quoteRef = db.collection("quotes").doc(quoteId);
     batch.delete(quoteRef);
-    // .then(() => {
-    //   console.log("Document successfully deleted!");
-    //   loadDeleteAlert(true);
-    // })
-    // .catch((error) => {
-    //   console.error("Error removing document: ", error);
-    // });
 
     // Remove created quoteId and Decrese createdCount of currentUser
     const userRef = db.collection("users").doc(currentUser.uid);
@@ -142,7 +136,7 @@ export default function Quote({
       .get()
       .then((doc) => {
         doc.forEach((quote) => {
-          const quoteRef = db.collection("users").doc(quote.data().uid).update({
+          db.collection("users").doc(quote.data().uid).update({
             favoritedCount: decrement,
           });
           quote.ref.delete();
@@ -156,20 +150,31 @@ export default function Quote({
       .get()
       .then((doc) => {
         doc.forEach((quote) => {
-          const quoteRef = db
-            .collection("users")
-            .doc(quote.data().uid)
-            .update(quoteRef, {
-              starredCount: decrement,
-            });
+          db.collection("users").doc(quote.data().uid).update({
+            starredCount: decrement,
+          });
           quote.ref.delete();
         });
       });
+
+    // Remove from topics collection
+    const topicRef = db
+      .collection("topics")
+      .where("quoteId", "==", quoteId)
+      .get();
+    const batches = _.chunk((await topicRef).docs, 500).forEach((topics) => {
+      topics.forEach((topic) => {
+        batch.delete(topic.ref);
+      });
+    });
+
+    await Promise.all(batches);
 
     await batch
       .commit()
       .then(() => {
         console.log("batch delete successfull!");
+        loadDeleteAlert(true);
       })
       .catch((error) => console.log("error while batch delete ", error));
 
@@ -444,7 +449,6 @@ export default function Quote({
           }`}
           subheader={new Date(quoteCreatedAt?.seconds * 1000).toDateString()}
         />
-
         <CardContent>
           {quote.text && (
             <Equalizer className={classes.equalizer} onClick={handleSpeech} />
@@ -478,17 +482,24 @@ export default function Quote({
         ) : (
           ""
         )}
-
-        {quote.audio && (
-          <audio className={classes.audio} controls src={quote.audio} />
-        )}
-        {topics && topics.length
-          ? topics.map((topic) => (
-              <Link to={`/quotes/${topic}`} style={{ textDecoration: "none" }}>
-                <Chip className={classes.chip} label={topic} size="small" />
-              </Link>
-            ))
-          : ""}
+        <div style={{ padding: "0 16px" }}>
+          {quote.audio && (
+            <audio className={classes.audio} controls src={quote.audio} />
+          )}{" "}
+        </div>
+        <br />
+        <div style={{ padding: "0 16px" }}>
+          {topics && topics.length
+            ? topics.map((topic) => (
+                <Link
+                  to={`/quotes/${topic}`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <Chip className={classes.chip} label={topic} size="small" />
+                </Link>
+              ))
+            : ""}
+        </div>
         <CardActions disableSpacing>
           <IconButton onClick={handleFavoriteClick}>
             <FavoriteIcon style={{ color: isFavorited && "red" }} />

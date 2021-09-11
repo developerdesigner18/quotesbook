@@ -12,7 +12,9 @@ import Quotes from "./components/Quotes";
 import Authors from "./components/Authors";
 import Author from "./components/Author";
 import RandomAuthors from "./components/RandomAuthors";
+import Topics from "./components/Topics";
 import FavoriteQuotes from "./components/FavoriteQuotes";
+import TopicQuotes from "./components/TopicQuotes";
 import GuestUser from "./components/GuestUser";
 import ProfileStatus from "./components/ProfileStatus";
 import FloatingButton from "./components/FloatingButton";
@@ -132,6 +134,7 @@ function App() {
       <Switch>
         <Route exact path="/">
           {!currentUser ? <GuestUser /> : <RandomAuthors />}
+          <Topics />
         </Route>
         <Route path={`/author/:authorId`}>
           {authorId && (
@@ -194,6 +197,9 @@ function App() {
                 </Route>
                 <Route path={`/author/:authorId/favorite-quotes`}>
                   <FavoriteQuotes currentUser={currentUser} />
+                </Route>
+                <Route path={"/quotes/:topic"}>
+                  <TopicQuotes currentUser={currentUser} />
                 </Route>
                 <Route exact path={`/author/:authorId`}>
                   {currentUser?.uid === authorId && (

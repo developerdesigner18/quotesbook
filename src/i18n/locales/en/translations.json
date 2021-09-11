@@ -45,5 +45,8 @@
     "signInToUseTheApp": "Sign in to use the App",
     "quotePostedSuccessfully": "Quote posted successfully",
     "quoteDeletedSuccessfully": "Quote deleted successfully",
-    "profileUpdatedSuccessfully": "Profile updated successfully"
+    "profileUpdatedSuccessfully": "Profile updated successfully",
+    "topic": "Topic",
+    "selectUpTo2Topics": "Select up to 2 topics",
+    "topics": "Topics"
 }
