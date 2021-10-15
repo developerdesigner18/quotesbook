@@ -15,6 +15,17 @@ import ListItemText from "@material-ui/core/ListItemText";
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
   toolbar: theme.mixins.toolbar,
+  listItem: {
+    padding: 4,
+    fontSize: "10px",
+  },
+  listItemIcon: {
+    minWidth: "40px",
+  },
+  avatar: {
+    width: "30px",
+    height: "30px",
+  },
 }));
 
 export default function RandomAuthors() {
@@ -25,7 +36,7 @@ export default function RandomAuthors() {
   useEffect(() => {
     const unsub = db
       .collection("users")
-      .where("createdCount", ">=", 0)
+      .where("createdCount", ">=", 1)
       .orderBy("createdCount", "asc")
       .limit(8)
       .onSnapshot((users) => {
@@ -56,8 +67,12 @@ export default function RandomAuthors() {
               style={{ textDecoration: "none", color: "inherit" }}
               key={randomAuthor.uid}
             >
-              <ListItem button key={randomAuthor.uid}>
-                <ListItemIcon>
+              <ListItem
+                button
+                key={randomAuthor.uid}
+                className={classes.listItem}
+              >
+                <ListItemIcon className={classes.listItemIcon}>
                   <Avatar className={classes.avatar}>
                     {randomAuthor.photoURL ? (
                       <img

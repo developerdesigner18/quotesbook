@@ -70,7 +70,7 @@ const Authors = () => {
                               variant="body2"
                               color="textPrimary"
                             >
-                              {t("favoriteQuote ")}
+                              {`${t("favoriteQuote")} >> `}
                             </Typography>
                             {user.favoriteQuote}
                           </>

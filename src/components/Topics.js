@@ -36,7 +36,7 @@ export default function Topics() {
               to={`/quotes/${topic}`}
               style={{ textDecoration: "none", color: "inherit" }}
             >
-              <ListItem button>
+              <ListItem button className={listItem}>
                 <ListItemText primary={topic} />
               </ListItem>
             </Link>
